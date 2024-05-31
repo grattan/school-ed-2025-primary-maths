@@ -1,0 +1,27 @@
+<style>
+
+  body {
+    font-family: "Helvetica", light;
+  }
+
+h1, h2, h3, h4 {
+  font-family: "Helvetica";
+  font-size: 15;
+}
+
+.title {
+  font-family: "Helvetica", bold;
+  margin-right: 250px;
+  color: #2B2B2B;
+}
+
+
+h1, h2 {
+  color: #f68b33;
+}
+
+
+a, a:hover {
+  color: #e59b7f;
+}
+</style>
