@@ -30,7 +30,7 @@ data_frame |>
              linetype = "dashed") +
   coord_flip() +
   # theme and labels
-  theme_grattan(base_family = "serif") +
+  theme_grattan() +
   grattan_y_continuous(labels = comma,
                        limits = c(-1, 1)) +
   labs(
@@ -39,3 +39,40 @@ data_frame |>
     x = "", y = NULL,
     caption = "Source: 2024 Grattan Institute survey of primary mathematics teachers. Notes: Sample size included 2,314 teachers. Odds ratio results are from a logistic regression. Odds ratio shows the relative likelihood of teachers reporting a nervousness to teach maths if they have that characteristic. So an odds ratio of 0.5 means that there is a 50 per cent increase in the likelihood of agreeing or strongly agreeing with the statement, all else being constant."
   )
+
+# Likelihood of agreeing with the statements 'I would describe myself as strong at maths'
+
+data_frame <-
+  tribble(
+    ~demographic, ~category, ~result,
+    "Government", "Sector", 0.42,
+    "Catholic", "Sector", 0.46,
+    "Independent", "Sector", 0.56,
+    "Metropolitan", "Location", 0.51,
+    "Regional", "Location", 0.48,
+    "Remote", "Location", 0.46,
+    "Mostly disadvantaged", "Advantage", 0.36,
+    "Mix of advantage", "Advantage", 0.48,
+    "Mostly advantaged", "Advantage", 0.61,
+  )
+
+data_frame |>
+  ggplot(aes(
+    x = reorder(demographic, result),
+    y = result
+  )) +
+  geom_col() +
+  coord_flip() +
+  # theme and labels
+  theme_grattan(flipped = T) +
+  grattan_y_continuous(labels = percent,
+                       limits = c(0, 1)) +
+  facet_wrap(~category, ncol = 1, scales = "free_y") +
+  labs(
+    title = "Across many schools, about half of teachers feel they are strong at maths",
+    subtitle = "Percentage of teachers agreeing or strongly agreeing with the statement 'I would describe myself as strong at maths'",
+    x = "", y = NULL,
+    caption = "Source: 2024 Grattan Institute survey of primary mathematics teachers. Notes: Sample size included 2,314 teachers. Chi-squared tests indicated that differences between schools were significant."
+  )
+
+
