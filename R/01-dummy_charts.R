@@ -1,4 +1,6 @@
-# dummy charts to test survey analysis
+# Dummy charts to test potential survey questions.
+#
+# Nick Parkinson. June 2024.
 
 # Mathematics confidence ==============================================================
 # Likelihood of agreeing with "I feel nervous when teaching maths". Imagining results from a logistic regression.
@@ -14,7 +16,7 @@ data_frame <-
     "Employed in a disadvantaged school", 0.13, 0.035
   )
 
-data_frame |>
+p1 <- data_frame |>
   ggplot(aes(
     x = reorder(demographic, odds_ratio),
     ymin = (odds_ratio - 1.65 * odds_ratio_se),
@@ -56,7 +58,7 @@ data_frame <-
     "Mostly advantaged", "Advantage", 0.61,
   )
 
-data_frame |>
+p2 <-  data_frame |>
   ggplot(aes(
     x = reorder(demographic, result),
     y = result
@@ -72,7 +74,61 @@ data_frame |>
     title = "Across many schools, about half of teachers feel they are strong at maths",
     subtitle = "Percentage of teachers agreeing or strongly agreeing with the statement 'I would describe myself as strong at maths'",
     x = "", y = NULL,
-    caption = "Source: 2024 Grattan Institute survey of primary mathematics teachers. Notes: Sample size included 2,314 teachers. Chi-squared tests indicated that differences between schools were significant."
+    caption = "Source: 2024 Grattan Institute survey of primary mathematics teachers. Notes: Sample size included 2,314 teachers. Chi-squared tests indicated that differences between school characteristics were significant."
   )
 
+## Practices at my school =====
 
+# By level of advantage
+
+data_frame <-
+  tribble(
+    ~question, ~demographic, ~pct,
+    "My school has highly skilled maths teachers", "Advantaged", 0.71,
+    "My school has highly skilled maths teachers", "Mix of advantage", 0.68,
+    "My school has highly skilled maths teachers", "Disadvantaged", 0.61,
+    "Teachers receive frequent feedback on their maths instruction", "Advantaged", 0.59,
+    "Teachers receive frequent feedback on their maths instruction", "Mix of advantage", 0.56,
+    "Teachers receive frequent feedback on their maths instruction", "Disadvantaged", 0.49,
+    "There is an effective model to support students who struggle in maths", "Advantaged", 0.68,
+    "There is an effective model to support students who struggle in maths", "Mix of advantage", 0.64,
+    "There is an effective model to support students who struggle in maths", "Disadvantaged", 0.52,
+    "Teachers get the support they need to be better maths teachers", "Advantaged", 0.56,
+    "Teachers get the support they need to be better maths teachers", "Mix of advantage", 0.53,
+    "Teachers get the support they need to be better maths teachers", "Disadvantaged", 0.43,
+    "Teachers use lesson materials from a whole-of-school maths curriculum", "Advantaged", 0.46,
+    "Teachers use lesson materials from a whole-of-school maths curriculum", "Mix of advantage", 0.41,
+    "Teachers use lesson materials from a whole-of-school maths curriculum", "Disadvantaged", 0.37,
+  )
+
+p3 <- data_frame |>
+  ggplot(aes(
+    x = reorder(
+      str_wrap(question, 30),
+      pct),
+    y = pct,
+    fill = reorder(demographic, pct),
+    col =  reorder(demographic, pct)
+  )) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  ggdirectlabel::geom_richlegend(aes(label = reorder(demographic, -pct)),
+                                 size = 18/.pt,
+                                legend.position = "bottomright",
+                                vjust = 0) +
+  # theme and labels
+  theme_grattan(flipped = T) +
+  grattan_y_continuous(labels = percent,
+                       limits = c(0, 1)) +
+  labs(
+    title = "Many schools, and particularly disadvatanged ones, are struggling to embed an effective maths approach",
+    subtitle = "Percentage of teachers agreeing or strongly agreeing with each statement",
+    x = "", y = NULL,
+    caption = "Source: 2024 Grattan Institute survey of primary mathematics teachers. Notes: Sample size included 2,314 teachers. Chi-squared tests indicated that differences between levels of advantage were significant."
+  )
+
+# Export =====
+
+plot_list <- list(p1, p2, p3)
+
+grattan_save_pptx(plot_list, filename = "atlas/dummy_plots.pptx", type = "fullslide")
