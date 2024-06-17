@@ -9,7 +9,6 @@ source("R/00-setup.R")
 # 1. Read in NAPLAN data ----
 # Note: Dataset is here: https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/naplan-national-report-archive#dataset.
 # Note: Chat GPT might be able to help.
-naplan_raw <- read_xlsx("naplan_data.xlsx")
 
 # 2. Filter NAPLAN data for Numeracy results ----
 
