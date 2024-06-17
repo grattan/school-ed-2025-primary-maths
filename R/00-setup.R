@@ -5,10 +5,6 @@
 
 # packages ---------------------------------------------------------------------
 
-# extra fonts ------
-library(extrafont)
-library(sysfonts)
-
 # broad ----------
 library(tidyverse)
 library(lubridate)
