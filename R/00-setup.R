@@ -13,6 +13,7 @@ library(readxl)
 library(purrr)
 library(glue)
 library(grattantheme) # remotes::install_github("grattan/grattantheme")
+library(haven)
 
 # specific ------
 library(ggtext)     # for chart labelling

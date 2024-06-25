@@ -1,6 +1,6 @@
 .Rproj.user
 .DS_Store
 
-data\*
+data/
 
-atlas\*
+atlas/
