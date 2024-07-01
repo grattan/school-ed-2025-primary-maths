@@ -15,9 +15,9 @@ LSAY2009 <- read_dta("data/lsay_data/LSAY_Y09.dta")
 
 ```
 
+ASCED code looking for 070103 (Teacher Education: Primary) Looking at field of study: Main area of study/training in this course.
 
-ASCED code looking for 070103 (Teacher Education: Primary)
-Looking at field of study: Main area of study/training in this course.
+## Y03
 
 How many primary school teachers are in the data set?
 
@@ -26,7 +26,7 @@ How many primary school teachers are in the data set?
 #sum rows function
 #filter if it is greater than or equal to 1
 
-UNIQUE_CURRENT_TEACHERS <- LSAY2003 %>%
+UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
   # selecting variables for current area of study
   select(STIDSTD, LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088) %>%
   # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
@@ -41,11 +41,10 @@ UNIQUE_CURRENT_TEACHERS <- LSAY2003 %>%
   # Keep TRUE values
   filter(unique_teachers)
 
-UNIQUE_CURRENT_TEACHERS
+UNIQUE_STUDYING_TEACHERS
 
 
 ```
-
 
 ```{r}
 # taking a deeper look at  student id 2659 and 9362
@@ -55,12 +54,12 @@ closer_look <- LSAY2003 %>%
   select(STIDSTD, LDCZ087, LHC087)
 closer_look
 ```
-Student 2659 went into another field of study four years after: Business management
-Student 10049 went into another field of study four years after too??: Human Movement
 
-* How many are working as primary school teachers
--  Look for legit teachers
-- ^ same method
+Student 2659 went into another field of study four years after: Business management Student 10049 went into another field of study four years after too??: Human Movement
+
+-   How many are working as primary school teachers
+-   Look for legit teachers
+
 
 ```{r}
 
@@ -83,7 +82,6 @@ UNIQUE_LEGIT_TEACHERS
 
  
 ```
-
 
 ```{r}
 # SEEING THE AMOUNT PEOPLE WHO WERE PRIMARY SCHOOL TEACHERS AT ANY POINT
@@ -117,6 +115,84 @@ teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% UNIQUE_LEGIT_TEACHERS$STIDSTD, ]
 selected_columns <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
 teacher_jobs <- teacher_jobs[, selected_columns]
 
-teacher_jobs
+
+
 ```
+
++------------------+------------------------------------------------------+
+| Codes            | Field of Education                                   |
++==================+======================================================+
+| 70101            | Teacher Education: Early Childhood                   |
++------------------+------------------------------------------------------+
+| 70103            | Teacher Education: Primary                           |
++------------------+------------------------------------------------------+
+| 70109            | Teacher Education: Vocational Education and Training |
++------------------+------------------------------------------------------+
+| 70199            | Teacher Education, n.e.c.                            |
++------------------+------------------------------------------------------+
+| 70115            | English as a Second Language Teaching                |
++------------------+------------------------------------------------------+
+| 90503            | Children's Services                                  |
+|                  |                                                      |
+|                  | (Human Welfare Studies and Services)                 |
++------------------+------------------------------------------------------+
+| 91703            | Religious Studies                                    |
+|                  |                                                      |
+|                  | (Philosophy and Religious Studies)                   |
++------------------+------------------------------------------------------+
+| 92101            | Sport and Recreation Activities                      |
+|                  |                                                      |
+|                  | (Sport and Recreation)                               |
++------------------+------------------------------------------------------+
+| 100101           | Music                                                |
+|                  |                                                      |
+|                  | (Performing Arts)                                    |
++------------------+------------------------------------------------------+
+| 80101            | Accounting                                           |
++------------------+------------------------------------------------------+
+
+Questions about the data:
+
+-   Teachers respondent rate (one year they respond and then all the other years they don't) but are asked similar questions
+
+-   Teacher Education, n.e.c.
+
+```{r}
+# How many school leavers enrol in primary school teaching courses
+#taking the IDs of individuals who had enrolled in primary school teaching at some point
+studying_teachers <- unique(UNIQUE_STUDYING_TEACHERS$STIDSTD)
+# filter the LSAY2003 data for those IDs and high school leaving variables.
+studying_teachers_y12 <- LSAY2003 %>% 
+  filter(STIDSTD %in% studying_teachers) %>% 
+  select(STIDSTD, LBWDV01, LCWDV01, LEWDV01, LIWDV01) %>%
+   mutate(Studying_Teacher = rowSums(select(., LBWDV01, LCWDV01, LEWDV01, LIWDV01) == 1, na.rm = TRUE) > 0)
+
+```
+
+Only two of those studying primary school teaching in 2003 LSAY were school leavers. However both seemed to have return back to school to complete.
+
+What year level were these two when they left (cross-check to determine if its one year)
+
+2999 & 10049 (leavers)
+
+```{r}
+# closer look at the school leavers (year and level)
+school_leavers_year_level <- LSAY2003 %>% 
+  filter(STIDSTD %in% c(2999, 10049)) %>% 
+  select(STIDSTD, LBB001, LCB001, LDB001, LEB001, LEA005, LFB001, LFA006)
+school_leavers_year_level
+```
+
+Both left in year 11 
+
+```{r}
+school_leavers_year <- LSAY2003 %>% 
+  filter(STIDSTD %in% c(2999, 10049)) %>% 
+  select(STIDSTD, LBA002B, LCA002B, LDA002B, LEA002B, LFA002Y)
+school_leavers_year
+```
+
+2999 LEFT IN 2003, 10049 LEFT IN 2004.
+* 2999 left in 2003 then went back to complete year 12 in 2005
+* 10049 left in 2004 and then went back to complete year 12 in 2005.
 
