@@ -183,7 +183,7 @@ school_leavers_year_level <- LSAY2003 %>%
 school_leavers_year_level
 ```
 
-Both left in year 11 
+Both left in year 11. 
 
 ```{r}
 school_leavers_year <- LSAY2003 %>% 
