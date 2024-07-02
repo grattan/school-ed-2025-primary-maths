@@ -303,6 +303,15 @@ overall_school_mean #using intsvy package method
 There is a discrepancy between the two different methods.
 https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm  `instvy`
 
+```{r}
+# trying to use intsvy for just teachers
+# need to revisit intsvy package code and figure out why NA values forced in after subset
+teacher_ids <- UNIQUE_LEGIT_TEACHERS$STIDSTD
+teacher_data_intsvy <- LSAY2003[LSAY2003$STIDSTD %in% teacher_ids, ]
+pisa_teacher_means_intsvy <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STIDSTD", data = teacher_data_intsvy)
+
+```
+
 
 Questions:
  - weights when subsetting for teachers.
