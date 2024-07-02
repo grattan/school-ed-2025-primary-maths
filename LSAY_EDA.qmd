@@ -60,7 +60,6 @@ Student 2659 went into another field of study four years after: Business managem
 -   How many are working as primary school teachers
 -   Look for legit teachers
 
-
 ```{r}
 
 UNIQUE_LEGIT_TEACHERS <- LSAY2003 %>%
@@ -119,37 +118,39 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
 
-+------------------+------------------------------------------------------+
-| Codes            | Field of Education                                   |
-+==================+======================================================+
-| 70101            | Teacher Education: Early Childhood                   |
-+------------------+------------------------------------------------------+
-| 70103            | Teacher Education: Primary                           |
-+------------------+------------------------------------------------------+
-| 70109            | Teacher Education: Vocational Education and Training |
-+------------------+------------------------------------------------------+
-| 70199            | Teacher Education, n.e.c.                            |
-+------------------+------------------------------------------------------+
-| 70115            | English as a Second Language Teaching                |
-+------------------+------------------------------------------------------+
-| 90503            | Children's Services                                  |
-|                  |                                                      |
-|                  | (Human Welfare Studies and Services)                 |
-+------------------+------------------------------------------------------+
-| 91703            | Religious Studies                                    |
-|                  |                                                      |
-|                  | (Philosophy and Religious Studies)                   |
-+------------------+------------------------------------------------------+
-| 92101            | Sport and Recreation Activities                      |
-|                  |                                                      |
-|                  | (Sport and Recreation)                               |
-+------------------+------------------------------------------------------+
-| 100101           | Music                                                |
-|                  |                                                      |
-|                  | (Performing Arts)                                    |
-+------------------+------------------------------------------------------+
-| 80101            | Accounting                                           |
-+------------------+------------------------------------------------------+
++-----------------+------------------------------------------------------+
+| Codes           | Field of Education                                   |
++=================+======================================================+
+| 70101           | Teacher Education: Early Childhood                   |
++-----------------+------------------------------------------------------+
+| 70103           | Teacher Education: Primary                           |
++-----------------+------------------------------------------------------+
+| 70109           | Teacher Education: Vocational Education and Training |
++-----------------+------------------------------------------------------+
+| 70199           | Teacher Education, n.e.c.                            |
+|                 |                                                      |
+|                 | -   special needs                                    |
++-----------------+------------------------------------------------------+
+| 70115           | English as a Second Language Teaching                |
++-----------------+------------------------------------------------------+
+| 90503           | Children's Services                                  |
+|                 |                                                      |
+|                 | (Human Welfare Studies and Services)                 |
++-----------------+------------------------------------------------------+
+| 91703           | Religious Studies                                    |
+|                 |                                                      |
+|                 | (Philosophy and Religious Studies)                   |
++-----------------+------------------------------------------------------+
+| 92101           | Sport and Recreation Activities                      |
+|                 |                                                      |
+|                 | (Sport and Recreation)                               |
++-----------------+------------------------------------------------------+
+| 100101          | Music                                                |
+|                 |                                                      |
+|                 | (Performing Arts)                                    |
++-----------------+------------------------------------------------------+
+| 80101           | Accounting                                           |
++-----------------+------------------------------------------------------+
 
 Questions about the data:
 
@@ -183,7 +184,7 @@ school_leavers_year_level <- LSAY2003 %>%
 school_leavers_year_level
 ```
 
-Both left in year 11. 
+Both left in year 11.
 
 ```{r}
 school_leavers_year <- LSAY2003 %>% 
@@ -192,7 +193,29 @@ school_leavers_year <- LSAY2003 %>%
 school_leavers_year
 ```
 
-2999 LEFT IN 2003, 10049 LEFT IN 2004.
-* 2999 left in 2003 then went back to complete year 12 in 2005
-* 10049 left in 2004 and then went back to complete year 12 in 2005.
+2999 LEFT IN 2003, 10049 LEFT IN 2004. \* 2999 left in 2003 then went back to complete year 12 in 2005 \* 10049 left in 2004 and then went back to complete year 12 in 2005.
+
+# PISA PVs
+
+-   Determine the percentage of primary teachers in the sample below the National proficient standard
+
+-   Determine the average achievement of primary teachers in the sample (in PISA points)
+
+```{r}
+# understanding PVs (exploratory understanding)
+library(intsvy)
+pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003)
+# calculate average mathematics score by state PV1MATH - PV5MATH
+```
+
+1 = ACT, 2 = NSW, 3 = VIC, 4 = QLD, 5 = SA, 6 = WA, 7 = TAS, 8 = NT
+
+https://www.acer.org/files/PISA_screen.pdf
+
+" In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of PISA 2003. "
+
+
+```{r}
+
+```
 
