@@ -204,7 +204,7 @@ school_leavers_year
 ```{r}
 # understanding PVs (exploratory understanding)
 library(intsvy)
-pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003)
+pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) #1:5 will have to be amended to 10 post 2015
 # calculate average mathematics score by state PV1MATH - PV5MATH
 ```
 
@@ -214,8 +214,33 @@ https://www.acer.org/files/PISA_screen.pdf
 
 " In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of PISA 2003. "
 
+https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm#:~:text=The%20R%20package%20intsvy%20allows,other%20formats%20directly%20into%20R.
 
 ```{r}
+library(survey)
+# attempting to subset the data to just those working/worked as PS teacher & calculate summary statistics
+teacher_ids <- UNIQUE_LEGIT_TEACHERS$STIDSTD
+teacher_data <- LSAY2003[LSAY2003$STIDSTD %in% teacher_ids, ]
+teacher_design <- svydesign(ids = ~1, weights = ~W_FSTUWT, data = teacher_data)
+
+# calculating for each plausible value
+mean_pv1 <- svymean(~PV1MATH, teacher_design)
+mean_pv2 <- svymean(~PV2MATH, teacher_design)
+mean_pv3 <- svymean(~PV3MATH, teacher_design)
+mean_pv4 <- svymean(~PV4MATH, teacher_design)
+mean_pv5 <- svymean(~PV5MATH, teacher_design)
+
+#extracting means
+mean_pv1_val <- coef(mean_pv1)
+mean_pv2_val <- coef(mean_pv2)
+mean_pv3_val <- coef(mean_pv3)
+mean_pv4_val <- coef(mean_pv4)
+mean_pv5_val <- coef(mean_pv5)
+
+# overall mean
+overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
+
+# need to fact check that this accounts for the weights properly after subsetting the data to just those working as PS teachers
 
 ```
 
