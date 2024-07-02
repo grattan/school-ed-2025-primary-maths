@@ -154,9 +154,6 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 
 Questions about the data:
 
--   Teachers respondent rate (one year they respond and then all the other years they don't) but are asked similar questions
-
--   Teacher Education, n.e.c.
 
 ```{r}
 # How many school leavers enrol in primary school teaching courses
@@ -216,31 +213,97 @@ https://www.acer.org/files/PISA_screen.pdf
 
 https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm#:~:text=The%20R%20package%20intsvy%20allows,other%20formats%20directly%20into%20R.
 
+
+
 ```{r}
 library(survey)
-# attempting to subset the data to just those working/worked as PS teacher & calculate summary statistics
+
+# include only PS teachers
 teacher_ids <- UNIQUE_LEGIT_TEACHERS$STIDSTD
 teacher_data <- LSAY2003[LSAY2003$STIDSTD %in% teacher_ids, ]
-teacher_design <- svydesign(ids = ~1, weights = ~W_FSTUWT, data = teacher_data)
 
-# calculating for each plausible value
+# survey options to handle strata with only one PSU
+options(survey.lonely.psu = "adjust")
+
+# create survey design object: stratification by schoolid? each obs independent
+teacher_design <- svydesign(ids = ~1, strata = ~SCHOOLID, weights = ~W_FSTUWT, data = teacher_data)
+
+# calc mean math scores for each PV
 mean_pv1 <- svymean(~PV1MATH, teacher_design)
 mean_pv2 <- svymean(~PV2MATH, teacher_design)
 mean_pv3 <- svymean(~PV3MATH, teacher_design)
 mean_pv4 <- svymean(~PV4MATH, teacher_design)
 mean_pv5 <- svymean(~PV5MATH, teacher_design)
 
-#extracting means
+# extracting means
 mean_pv1_val <- coef(mean_pv1)
 mean_pv2_val <- coef(mean_pv2)
 mean_pv3_val <- coef(mean_pv3)
 mean_pv4_val <- coef(mean_pv4)
 mean_pv5_val <- coef(mean_pv5)
 
-# overall mean
+# overall mean score
 overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
 
-# need to fact check that this accounts for the weights properly after subsetting the data to just those working as PS teachers
+
+overall_mean_math_pv
+
+hist(teacher_data$PV1MATH, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
+  abline(v = mean(teacher_data$PV1MATH), col = "red")
+  
+hist(teacher_data$W_FSTUWT, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
+  abline(v = mean(teacher_data$PV1MATH), col = "red")
 
 ```
 
+
+```{r}
+# fact checking to see if survey gives similar results to intsvy package
+
+# survey options to handle strata with only one PSU
+options(survey.lonely.psu = "adjust")
+
+# create survey design object: stratification by schoolid? each obs independent
+teacher_design <- svydesign(ids = ~1, strata = ~SCHOOLID, weights = ~W_FSTUWT, data = LSAY2003)
+
+# calc mean math scores for each PV
+mean_pv1 <- svymean(~PV1MATH, teacher_design)
+mean_pv2 <- svymean(~PV2MATH, teacher_design)
+mean_pv3 <- svymean(~PV3MATH, teacher_design)
+mean_pv4 <- svymean(~PV4MATH, teacher_design)
+mean_pv5 <- svymean(~PV5MATH, teacher_design)
+
+# extracting means
+mean_pv1_val <- coef(mean_pv1)
+mean_pv2_val <- coef(mean_pv2)
+mean_pv3_val <- coef(mean_pv3)
+mean_pv4_val <- coef(mean_pv4)
+mean_pv5_val <- coef(mean_pv5)
+
+# overall mean score
+overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
+
+
+overall_mean_math_pv
+
+# Using intsvy to get mean for school
+
+library(intsvy)
+
+pisa_means_intsvy <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "SCHOOLID", data = LSAY2003)
+overall_school_mean <- mean(pisa_means_intsvy$Mean)
+
+
+overall_mean_math_pv #using survey package method
+overall_school_mean #using intsvy package method
+
+
+```
+
+There is a discrepancy between the two different methods.
+https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm  `instvy`
+
+
+Questions:
+ - weights when subsetting for teachers.
+ -
