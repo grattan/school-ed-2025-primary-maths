@@ -8,10 +8,11 @@ editor: visual
 library(haven)
 library(tidyverse)
 library(dplyr)
-LSAY2015 <- read_dta("data/lsay_data/LSAY_Y15.dta")
-LSAY2003 <- read_dta("data/lsay_data/LSAY_Y03.dta")
-LSAY2006 <- read_dta("data/lsay_data/LSAY_Y06.dta")
-LSAY2009 <- read_dta("data/lsay_data/LSAY_Y09.dta")
+library(survey)
+library(intsvy)
+
+LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
+
 
 ```
 
@@ -216,7 +217,7 @@ https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm#:~:text=
 
 
 ```{r}
-library(survey)
+
 
 # include only PS teachers
 teacher_ids <- UNIQUE_LEGIT_TEACHERS$STIDSTD
@@ -245,14 +246,14 @@ mean_pv5_val <- coef(mean_pv5)
 # overall mean score
 overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
 
-
 overall_mean_math_pv
 
-hist(teacher_data$PV1MATH, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
-  abline(v = mean(teacher_data$PV1MATH), col = "red")
+#histograms
+#hist(teacher_data$PV1MATH, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
+ # abline(v = mean(teacher_data$PV1MATH), col = "red")
   
-hist(teacher_data$W_FSTUWT, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
-  abline(v = mean(teacher_data$PV1MATH), col = "red")
+#hist(teacher_data$W_FSTUWT, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
+  #abline(v = mean(teacher_data$PV1MATH), col = "red")
 
 ```
 
@@ -288,8 +289,6 @@ overall_mean_math_pv
 
 # Using intsvy to get mean for school
 
-library(intsvy)
-
 pisa_means_intsvy <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "SCHOOLID", data = LSAY2003)
 overall_school_mean <- mean(pisa_means_intsvy$Mean)
 
@@ -303,16 +302,96 @@ overall_school_mean #using intsvy package method
 There is a discrepancy between the two different methods.
 https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm  `instvy`
 
+
 ```{r}
-# trying to use intsvy for just teachers
-# need to revisit intsvy package code and figure out why NA values forced in after subset
-teacher_ids <- UNIQUE_LEGIT_TEACHERS$STIDSTD
-teacher_data_intsvy <- LSAY2003[LSAY2003$STIDSTD %in% teacher_ids, ]
-pisa_teacher_means_intsvy <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STIDSTD", data = teacher_data_intsvy)
+options(survey.lonely.psu = "adjust")
+
+# school-level stratification and student-level sampling
+teacher_design <- svydesign(
+  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
+  strata = ~STATEID + SECTOR,  # stratification variables as per tech report
+  weights = ~W_FSTUWT,  # weights column in the data frame
+  data = teacher_data, # teacher data frame
+  nest = TRUE  
+)
+
+# mean math scores for each plausible value
+mean_pv1 <- svymean(~PV1MATH, teacher_design)
+mean_pv2 <- svymean(~PV2MATH, teacher_design)
+mean_pv3 <- svymean(~PV3MATH, teacher_design)
+mean_pv4 <- svymean(~PV4MATH, teacher_design)
+mean_pv5 <- svymean(~PV5MATH, teacher_design)
+
+# taking only the means
+mean_pv1_val <- coef(mean_pv1)
+mean_pv2_val <- coef(mean_pv2)
+mean_pv3_val <- coef(mean_pv3)
+mean_pv4_val <- coef(mean_pv4)
+mean_pv5_val <- coef(mean_pv5)
+
+# finding the overall mean score by averaging all the means of PVs
+overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
+
+# average math score for teachers
+overall_mean_math_pv
 
 ```
 
+http://software-tecnico-libre.es/en/article-by-topic/all_sections/all-topics/all-articles/pisa-data-analytics-plausible-values
+"When we perform any calculations involving the plausible values, the procedure is always the same, we compute separately with each of the five values and, finally, we perform the mean of the five results, either regression coefficients, means, correlation coefficients, or any other estimator."
+--> we assume survey package is handling the weights in the set up
+--> so in some instances STIDSTD (e.g.) could have multiple observations within it, which is why we need to do the double mean
 
-Questions:
- - weights when subsetting for teachers.
- -
+```{r}
+library(survey)
+
+# mean math scores for each teacher across each pv first
+mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design, svymean)
+mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design, svymean)
+mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design, svymean)
+mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design, svymean)
+mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design, svymean)
+
+# creating a data frame with ID and mean for each PV for each ID
+teacher_means <- data.frame(
+  STIDSTD = mean_pv1_by_teacher$STIDSTD,
+  mean_pv1 = mean_pv1_by_teacher$PV1MATH,
+  mean_pv2 = mean_pv2_by_teacher$PV2MATH,
+  mean_pv3 = mean_pv3_by_teacher$PV3MATH,
+  mean_pv4 = mean_pv4_by_teacher$PV4MATH,
+  mean_pv5 = mean_pv5_by_teacher$PV5MATH
+)
+
+# second average across the row for each teacher
+teacher_means$mean_score = rowMeans(teacher_means[, -1])
+
+threshold <- 549.5463 # average for teacher performance
+proficient_standard <- 482 # level 3 proficient standard
+
+# how many teachers are below teacher avg
+teacher_means$below_avg_teacher = teacher_means$mean_score < threshold 
+
+# how many teachers are below proficient standard (482)
+teacher_means$below_prof_avg = teacher_means$mean_score < proficient_standard
+
+
+```
+
+```{r}
+# seeing how many are below average -- true = below average (549.5463)
+teachers_below_avg <- table(teacher_means$below_prof_avg)
+teachers_below_avg
+```
+
+```{r}
+# seeing how many are below proficient standard -- true = below proficient standard (482)
+teachers_below_profstand <- table(teacher_means$below_prof_avg)
+teachers_below_profstand
+```
+
+
+```{r}
+# look at teacher_means and create possible row at the bottom w/ percentage above/below average
+
+```
+
