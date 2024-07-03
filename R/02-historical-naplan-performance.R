@@ -5,10 +5,21 @@
 ##''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 source("R/00-setup.R")
+library(tidyverse)
+library(lubridate)
+library(grattantheme)
 
 # 1. Read in NAPLAN data ----
 # Note: Dataset is here: https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/naplan-national-report-archive#dataset.
 # Note: Chat GPT might be able to help.
+
+library(readxl)
+
+naplan_data <- read_xlsx("data/naplan_results_2008_to_2022.xlsx", sheet = "Data")
+
+naplan_data
+
+
 
 # 2. Filter NAPLAN data for Numeracy results ----
 
