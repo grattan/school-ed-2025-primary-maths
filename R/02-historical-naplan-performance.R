@@ -60,6 +60,12 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 # Note: Figure 1.1 here could be a guide: https://grattan.edu.au/wp-content/uploads/2024/03/Spreading-success-Why-Australia-should-trial-multi-school-organisations.pdf
 # Note: You could adapt lines 77 to 110 in my code here: https://github.com/grattan/school-ed-2024-improving_schools/blob/main/R/03-chronic_underperformers.R
 
+#Filter the naplan numeracy results for year level and year
+
+filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
+    group_by(YEAR_LEVEL)
+
+
 # 5. Create a function to chart the NAPLAN scores in the past decade (2012-22) for each jurisdiction
 # Note: This chapter provides an introduction to functional programming. https://r4ds.had.co.nz/functions.html.
 # Note: You might find it helpful to look at my code here (https://github.com/grattan/school-ed-2022-teaching-assistants-analysis/blob/main/teacher-assistant-analysis.R) which has a function that charts teaching assistants for each jurisdiction, and here (https://github.com/grattan/school-ed-2023-naplan-analyser/blob/master/NAPLAN_analyser/app.R) which creates an app that spits out the 2023 NAPLAN data for each state and territory.
