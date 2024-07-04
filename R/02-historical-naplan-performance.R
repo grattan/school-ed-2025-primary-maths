@@ -62,6 +62,11 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 
 #Filter the naplan numeracy results for year level and year
 
+library(ggplot2)
+library(scales)
+
+
+
 filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
     group_by(YEAR_LEVEL)
 
