@@ -49,9 +49,9 @@ intercept <- 213.536
 
 naplan_numeracy_eyl <-
   naplan_numeracy_data %>%
-    mutate(numeracy_eyl == exp((numeracy-intercept)/slope))
+    mutate(numeracy_eyl = exp((MEAN-intercept)/slope))
 
-
+head(naplan_numeracy_eyl$numeracy_eyl)
 
 # 4. Chart national NAPLAN scale scores for the past decade (2012-22) for each year level ----
 # Note: Filter and chart within the one chunk of code
