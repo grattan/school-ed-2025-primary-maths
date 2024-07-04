@@ -27,7 +27,7 @@ naplan_data
 
 naplan_numeracy_data <-
   naplan_data %>%
-    filter(domain == "Numeracy")
+    filter(DOMAIN == "Numeracy")
 
 
 # 3. Convert NAPLAN scale scores to equivalent years of learning ----
