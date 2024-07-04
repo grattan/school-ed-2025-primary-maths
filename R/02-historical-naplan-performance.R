@@ -14,14 +14,21 @@ library(grattantheme)
 # Note: Chat GPT might be able to help.
 
 library(readxl)
+library(dplyr)
 
-naplan_data <- read_xlsx("data/naplan_results_2008_to_2022.xlsx", sheet = "Data")
+naplan_data <- read_excel("data/naplan_results_2008_to_2022.xlsx", sheet = "Data")
+
+#There were 50 or more warnings. First 50 were all of the form "Expecting logical in AJ2709 / R2709C36: got 'Above'. Or same but with 'close to'. That is, appear to be querying the data class for the my school comparative performance variables.
 
 naplan_data
 
 
-
 # 2. Filter NAPLAN data for Numeracy results ----
+
+naplan_numeracy_data <-
+  naplan_data %>%
+    filter(domain == "Numeracy")
+
 
 # 3. Convert NAPLAN scale scores to equivalent years of learning ----
 # Note: Use ACARA equation on page 128, here: https://www.nap.edu.au/docs/default-source/default-document-library/naplan-2022-technical-report.pdf
