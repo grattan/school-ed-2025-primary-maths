@@ -33,6 +33,26 @@ naplan_numeracy_data <-
 # 3. Convert NAPLAN scale scores to equivalent years of learning ----
 # Note: Use ACARA equation on page 128, here: https://www.nap.edu.au/docs/default-source/default-document-library/naplan-2022-technical-report.pdf
 
+
+#The formula for the mean NAPLAN score for a particular year level is
+# Mean score (Y) = a * ln(x) + b, where for numeracy results slope (a) = 170.861 and intercept (b) = 213.536
+#That is -     Y = 170.861 ln(x) + 213.536
+
+#For effective years of learning, formula works in reverse (to go from NAPLAN score to effective years of learning)
+# x = e^((Y-b)/a)
+
+#Define constants
+slope <- 170.861
+intercept <- 213.536
+
+#Create a new variable for the effective years of learning in numeracy, which is calculated by reference to NAPLAN numeracy scores, based on the formula for effective years of learning above.
+
+naplan_numeracy_eyl <-
+  naplan_numeracy_data %>%
+    mutate(numeracy_eyl == exp((numeracy-intercept)/slope))
+
+
+
 # 4. Chart national NAPLAN scale scores for the past decade (2012-22) for each year level ----
 # Note: Filter and chart within the one chunk of code
 # Note: Try make the y-axis start at EYL1 and show breaks for every two equivalent year levels
