@@ -71,7 +71,7 @@ currentDate <- Sys.Date()
 
 filename <- paste("data/survey", currentDate, ".csv", set = "")
 
-write.csv(raw_survey_data, file = filename)
+# write.csv(raw_survey_data, file = filename)
 
 # Check what data looks like
 raw_survey_data |>
