@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nick Parkinson">
+<meta name="dcterms.date" content="2024-07-01">
+
+<title>Making it count: Improving primary school maths</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="grattan_survey_analysis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="grattan_survey_analysis_files/libs/quarto-html/quarto.js"></script>
+<script src="grattan_survey_analysis_files/libs/quarto-html/popper.min.js"></script>
+<script src="grattan_survey_analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="grattan_survey_analysis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="grattan_survey_analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="grattan_survey_analysis_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="grattan_survey_analysis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="grattan_survey_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="grattan_survey_analysis_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+<link rel="stylesheet" href=".formatting/grattan-style.css">
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#valid-sample" id="toc-valid-sample" class="nav-link" data-scroll-target="#valid-sample">Valid sample</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Making it count: Improving primary school maths</h1>
+<p class="subtitle lead">Analysis of Grattan Institute’s survey of primary school teachers</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nick Parkinson </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 1, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="data" class="level1">
+<h1>Data</h1>
+<p>We first import the data straight from Qualtrics following the instructions <a href="https://api.qualtrics.com/instructions/ZG9jOjg3NjYzNQ-finding-your-qualtrics-i-ds">here</a>. We also export a dated version of the survey, for file management.</p>
+<p><a href="#tbl-data-extract">Table&nbsp;1</a> shows an extract from the data looks like.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-data-extract" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;1: Extract of survey data</caption>
+<colgroup>
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 3%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 5%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Q2</th>
+<th style="text-align: left;">Q3</th>
+<th style="text-align: left;">Q4</th>
+<th style="text-align: left;">Q5</th>
+<th style="text-align: left;">Q8</th>
+<th style="text-align: left;">Q9_1</th>
+<th style="text-align: left;">Q9_2</th>
+<th style="text-align: left;">Q9_3</th>
+<th style="text-align: left;">Q9_4</th>
+<th style="text-align: left;">Q9_5</th>
+<th style="text-align: left;">Q9_6</th>
+<th style="text-align: left;">Q9_7</th>
+<th style="text-align: left;">Q10</th>
+<th style="text-align: left;">Q11</th>
+<th style="text-align: right;">Q12</th>
+<th style="text-align: left;">Q13</th>
+<th style="text-align: left;">Q14</th>
+<th style="text-align: left;">Q16</th>
+<th style="text-align: left;">Q17</th>
+<th style="text-align: left;">Q18</th>
+<th style="text-align: left;">Q19</th>
+<th style="text-align: left;">Q20</th>
+<th style="text-align: left;">Q21</th>
+<th style="text-align: left;">Q22</th>
+<th style="text-align: left;">Q24</th>
+<th style="text-align: left;">Q25</th>
+<th style="text-align: left;">Q26</th>
+<th style="text-align: left;">Q27_1</th>
+<th style="text-align: left;">Q27_2</th>
+<th style="text-align: left;">Q27_3</th>
+<th style="text-align: left;">Q27_4</th>
+<th style="text-align: left;">Q27_5</th>
+<th style="text-align: left;">Q27_6</th>
+<th style="text-align: left;">Q27_7</th>
+<th style="text-align: left;">Q28_1</th>
+<th style="text-align: left;">Q28_2</th>
+<th style="text-align: left;">Q28_3</th>
+<th style="text-align: left;">Q28_4</th>
+<th style="text-align: left;">Q30_1</th>
+<th style="text-align: left;">Q30_2</th>
+<th style="text-align: left;">Q30_3</th>
+<th style="text-align: left;">Q30_4</th>
+<th style="text-align: left;">Q30_5</th>
+<th style="text-align: left;">Q30_6</th>
+<th style="text-align: left;">Q31</th>
+<th style="text-align: left;">Q33</th>
+<th style="text-align: left;">Q34</th>
+<th style="text-align: left;">Q35</th>
+<th style="text-align: left;">Q36</th>
+<th style="text-align: left;">Q38_1</th>
+<th style="text-align: left;">Q38_2</th>
+<th style="text-align: left;">Q38_3</th>
+<th style="text-align: left;">Q38_4</th>
+<th style="text-align: left;">Q38_5</th>
+<th style="text-align: left;">Q38_6</th>
+<th style="text-align: left;">Q38_7</th>
+<th style="text-align: left;">Q38_8</th>
+<th style="text-align: left;">Q40_1</th>
+<th style="text-align: left;">Q40_2</th>
+<th style="text-align: left;">Q40_3</th>
+<th style="text-align: left;">Q40_4</th>
+<th style="text-align: left;">Q40</th>
+<th style="text-align: right;">Q42_1</th>
+<th style="text-align: right;">Q42_2</th>
+<th style="text-align: left;">Q43_1_external_pl</th>
+<th style="text-align: left;">Q43_2_external_pl</th>
+<th style="text-align: left;">Q43_3_external_pl</th>
+<th style="text-align: left;">Q43_4_external_pl</th>
+<th style="text-align: left;">Q43_1_internal_pl</th>
+<th style="text-align: left;">Q43_2_internal_pl</th>
+<th style="text-align: left;">Q43_3_internal_pl</th>
+<th style="text-align: left;">Q43_4_internal_pl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 2</td>
+<td style="text-align: left;">Year 3</td>
+<td style="text-align: left;">Year 4</td>
+<td style="text-align: left;">Year 5</td>
+<td style="text-align: left;">Year 6</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2012</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">NSW</td>
+<td style="text-align: left;">A fairly even mix of advantaged and disadvantaged students</td>
+<td style="text-align: left;">Metropolitan</td>
+<td style="text-align: left;">601 to 700 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">3.5 hours (210 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">No teacher</td>
+<td style="text-align: left;">No teacher</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Keeping the woke social crap out of the classroom</td>
+<td style="text-align: left;">Force teachers to step up teaching of maths</td>
+<td style="text-align: left;">Most schools in nsw waste enormous amounts of time on woke indigenous and social issues rather than the three R’s</td>
+<td style="text-align: left;">No.&nbsp;The teachers union would crucify me. Too many teachers would rat on me to them</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Combined primary and secondary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1991</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Catholic</td>
+<td style="text-align: left;">ACT</td>
+<td style="text-align: left;">Mostly advantaged</td>
+<td style="text-align: left;">Metropolitan</td>
+<td style="text-align: left;">401 to 500 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">4 hours (240 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">The constant change….</td>
+<td style="text-align: left;">Consistency- of planning, resources and topics across the nation…</td>
+<td style="text-align: left;">We need each classroom well resourced and consistent…</td>
+<td style="text-align: left;">0417 668855</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Never</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Foundation</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 2</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Catholic</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: left;">Mostly advantaged</td>
+<td style="text-align: left;">Rural</td>
+<td style="text-align: left;">101 to 200 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">9 hours (530 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">All teachers</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">re</td>
+<td style="text-align: left;">ds</td>
+<td style="text-align: left;">s</td>
+<td style="text-align: left;">d</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Once a year or less</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2001</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">NSW</td>
+<td style="text-align: left;">A fairly even mix of advantaged and disadvantaged students</td>
+<td style="text-align: left;">Metropolitan</td>
+<td style="text-align: left;">301 to 400 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Student behaviour problems and finding time in between all the extra-curricular activities.</td>
+<td style="text-align: left;">Society supporting teachers with their children’s poor behaviour. Enforce NESA’s mandated hours for subjects; so many schools and teachers ignore it.</td>
+<td style="text-align: left;">Thank you!</td>
+<td style="text-align: left;">0422313521</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">2-4 times a year</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 6</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: left;">A fairly even mix of advantaged and disadvantaged students</td>
+<td style="text-align: left;">Regional</td>
+<td style="text-align: left;">51 to 100 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">4 hours (240 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">Better teachers</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Once a year or less</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="valid-sample" class="level1">
+<h1>Valid sample</h1>
+<p>We filter out:</p>
+<ul>
+<li><p>Anyone whose responses are <a href="https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/">flagged by Qualtrics as suspicious</a> (i.e.&nbsp;Q_RecaptchaScore is below 0.5). This is typically because of the speed at which they respond, or ‘straight lining’ (i.e.&nbsp;clicking the same radio buttons in a single column).</p></li>
+<li><p>Anyone who did not complete more than one substantive (i.e.&nbsp;non-demographic) question.</p></li>
+</ul>
+<p>Through this process, we lose <code>{r} initial_sample - total_sample</code>. This leaves us with <code>{r} total_sample</code> valid responses.</p>
+<p>We also check for duplicates, using <a href="https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/">Qualtrics duplicate flag</a>. This pulls out respondents who try reattempt the survey from the same IP address. We can see if they are duplicates by looking through their answers manually in <span class="citation" data-cites="tab-check-for-duplicates">@tab-check-for-duplicates</span>.</p>
+<div class="cell" data-caption="Extract of data from possible duplicates">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 2%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 19%">
+<col style="width: 3%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 0%">
+<col style="width: 0%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">ResponseId</th>
+<th style="text-align: left;">IPAddress</th>
+<th style="text-align: right;">Q_RecaptchaScore</th>
+<th style="text-align: left;">Q_BallotBoxStuffing</th>
+<th style="text-align: left;">Q2</th>
+<th style="text-align: left;">Q3</th>
+<th style="text-align: left;">Q4</th>
+<th style="text-align: left;">Q4_3_TEXT</th>
+<th style="text-align: left;">Q5</th>
+<th style="text-align: left;">Q5_6_TEXT</th>
+<th style="text-align: left;">Q6_1</th>
+<th style="text-align: left;">Q6_2</th>
+<th style="text-align: left;">Q6_3</th>
+<th style="text-align: left;">Q6_4</th>
+<th style="text-align: left;">Q6_5</th>
+<th style="text-align: left;">Q6_6</th>
+<th style="text-align: left;">Q6_6_TEXT</th>
+<th style="text-align: left;">Q7_1</th>
+<th style="text-align: left;">Q7_2</th>
+<th style="text-align: left;">Q7_3</th>
+<th style="text-align: left;">Q7_4</th>
+<th style="text-align: left;">Q7_5</th>
+<th style="text-align: left;">Q7_6</th>
+<th style="text-align: left;">Q7_7</th>
+<th style="text-align: left;">Q7_8</th>
+<th style="text-align: left;">Q7_9</th>
+<th style="text-align: left;">Q7_10</th>
+<th style="text-align: left;">Q7_11</th>
+<th style="text-align: left;">Q7_12</th>
+<th style="text-align: left;">Q7_12_TEXT</th>
+<th style="text-align: left;">Q8</th>
+<th style="text-align: left;">Q9_1</th>
+<th style="text-align: left;">Q9_2</th>
+<th style="text-align: left;">Q9_3</th>
+<th style="text-align: left;">Q9_4</th>
+<th style="text-align: left;">Q9_5</th>
+<th style="text-align: left;">Q9_6</th>
+<th style="text-align: left;">Q9_7</th>
+<th style="text-align: left;">Q10</th>
+<th style="text-align: left;">Q11</th>
+<th style="text-align: right;">Q12</th>
+<th style="text-align: left;">Q13</th>
+<th style="text-align: left;">Q14</th>
+<th style="text-align: left;">Q16</th>
+<th style="text-align: left;">Q17</th>
+<th style="text-align: left;">Q18</th>
+<th style="text-align: left;">Q19</th>
+<th style="text-align: left;">Q20</th>
+<th style="text-align: left;">Q21</th>
+<th style="text-align: left;">Q22</th>
+<th style="text-align: left;">Q24</th>
+<th style="text-align: left;">Q24_4_TEXT</th>
+<th style="text-align: left;">Q25</th>
+<th style="text-align: left;">Q26</th>
+<th style="text-align: left;">Q27_1</th>
+<th style="text-align: left;">Q27_2</th>
+<th style="text-align: left;">Q27_3</th>
+<th style="text-align: left;">Q27_4</th>
+<th style="text-align: left;">Q27_5</th>
+<th style="text-align: left;">Q27_6</th>
+<th style="text-align: left;">Q27_7</th>
+<th style="text-align: left;">Q28_1</th>
+<th style="text-align: left;">Q28_2</th>
+<th style="text-align: left;">Q28_3</th>
+<th style="text-align: left;">Q28_4</th>
+<th style="text-align: left;">Q30_1</th>
+<th style="text-align: left;">Q30_2</th>
+<th style="text-align: left;">Q30_3</th>
+<th style="text-align: left;">Q30_4</th>
+<th style="text-align: left;">Q30_5</th>
+<th style="text-align: left;">Q30_6</th>
+<th style="text-align: left;">Q31</th>
+<th style="text-align: left;">Q33</th>
+<th style="text-align: left;">Q34</th>
+<th style="text-align: left;">Q35</th>
+<th style="text-align: left;">Q36</th>
+<th style="text-align: left;">Q38_1</th>
+<th style="text-align: left;">Q38_2</th>
+<th style="text-align: left;">Q38_3</th>
+<th style="text-align: left;">Q38_4</th>
+<th style="text-align: left;">Q38_5</th>
+<th style="text-align: left;">Q38_6</th>
+<th style="text-align: left;">Q38_7</th>
+<th style="text-align: left;">Q38_8</th>
+<th style="text-align: left;">Q40_1</th>
+<th style="text-align: left;">Q40_2</th>
+<th style="text-align: left;">Q40_3</th>
+<th style="text-align: left;">Q40_4</th>
+<th style="text-align: left;">Q40</th>
+<th style="text-align: right;">Q42_1</th>
+<th style="text-align: right;">Q42_2</th>
+<th style="text-align: left;">Q43_1_external_pl</th>
+<th style="text-align: left;">Q43_2_external_pl</th>
+<th style="text-align: left;">Q43_3_external_pl</th>
+<th style="text-align: left;">Q43_4_external_pl</th>
+<th style="text-align: left;">Q43_1_internal_pl</th>
+<th style="text-align: left;">Q43_2_internal_pl</th>
+<th style="text-align: left;">Q43_3_internal_pl</th>
+<th style="text-align: left;">Q43_4_internal_pl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">R_4O0vfpSiWcsbTza</td>
+<td style="text-align: left;">1.157.150.234</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Deputy principal</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Mathematics</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 2</td>
+<td style="text-align: left;">Year 3</td>
+<td style="text-align: left;">Year 4</td>
+<td style="text-align: left;">Year 5</td>
+<td style="text-align: left;">Year 6</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2012</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">NSW</td>
+<td style="text-align: left;">A fairly even mix of advantaged and disadvantaged students</td>
+<td style="text-align: left;">Metropolitan</td>
+<td style="text-align: left;">601 to 700 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">3.5 hours (210 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">No teacher</td>
+<td style="text-align: left;">No teacher</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Keeping the woke social crap out of the classroom</td>
+<td style="text-align: left;">Force teachers to step up teaching of maths</td>
+<td style="text-align: left;">Most schools in nsw waste enormous amounts of time on woke indigenous and social issues rather than the three R’s</td>
+<td style="text-align: left;">No.&nbsp;The teachers union would crucify me. Too many teachers would rat on me to them</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R_4zZmVpSrSmCTYLz</td>
+<td style="text-align: left;">121.45.250.79</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: left;">Mostly disadvantaged</td>
+<td style="text-align: left;">Regional</td>
+<td style="text-align: left;">51 to 100 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">5 hours (300 minutes)</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">Most teachers</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Ensuring assessment to then know what to teach. Times table automatic response e would make students</td>
+<td style="text-align: left;">Automatic response , interrelationships activities</td>
+<td style="text-align: left;">Ongoing PD- agreed assessment and teaching the point if need</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R_4dJDQmSbbh1tEzL</td>
+<td style="text-align: left;">120.21.153.156</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Team leader</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 5</td>
+<td style="text-align: left;">Year 6</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1981</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: left;">A fairly even mix of advantaged and disadvantaged students</td>
+<td style="text-align: left;">Regional</td>
+<td style="text-align: left;">501 to 600 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">5 hours (300 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Teacher qualifications eg teacher of 3/4 area teaching students that 1/2 + 1/2 = 1/4 because you add the bottom numbers (denominators)</td>
+<td style="text-align: left;">Better teacher training</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Never</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R_4dCs03Un1fJol9v</td>
+<td style="text-align: left;">120.148.134.51</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Instructional leader</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Science</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1971</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: left;">A fairly even mix of advantaged and disadvantaged students</td>
+<td style="text-align: left;">Metropolitan</td>
+<td style="text-align: left;">401 to 500 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2 hours (120 minutes)</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Neither agree nor disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">No teacher</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">No teacher</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Strongly disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">Paucity of teachers with training/ talent/ motivation inmates</td>
+<td style="text-align: left;">Pathway for science/ math grads to enter teaching from other professions. Use of the Aust academy of Science’s excellent program https://resolve.edu.au/about-resolve/about-program#:~:text=reSolve%20is%20the%20Academy’s%20mathematics,from%20Foundation%20to%20Year%2010.</td>
+<td style="text-align: left;">During the pandemic I taught beginning primary students. I was astonished how anti-intuitive some of the materials were; for instance, number tables went from 1-10, 11-20 etc instead of 0-9, 10-19 etc, in which patterns are obvious.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R_4bB3HkfSZMAhOfL</td>
+<td style="text-align: left;">165.225.226.100</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Primary</td>
+<td style="text-align: left;">Female</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Year 3</td>
+<td style="text-align: left;">Year 4</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2010</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Government</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: left;">Mostly disadvantaged</td>
+<td style="text-align: left;">Rural</td>
+<td style="text-align: left;">101 to 200 students</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">7.5 hours (450 minutes)</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">About half of teachers</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Some teachers</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">lack of consensus (across and within schools) on the most effective ‘mental model’ or evidence-based approach to teaching maths (i,e G.Booker, Di Siemon, etc). Lack of knowledge/action to adequately build student’s self-concept and self-efficacy in maths as a subject.</td>
+<td style="text-align: left;">evidence-based, free resources that target teacher’s point of need to teach maths concepts (e.g.&nbsp;explicit teaching in numeracy) and resources that link to a conceptual continuum of maths development so teachers are able to target their teaching more effectively to the need’s of their students.</td>
+<td style="text-align: left;">I believe that there is a strong link (for both teachers and students) between one’s attitude/self-concept of mathematical ability and engagement with teaching/learning maths. It is critical that teacher’s model a positive, can-do attitude when teaching maths, so students have exposure to adult role-models that will positively affect student attitudes and encourage authentic engagement with maths from a young age. This is especially critical for female teachers to model for female students.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Strongly agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">Agree</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">Disagree</td>
+<td style="text-align: left;">2-4 times a year</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We now check the number of valid responses over time.</p>
+<div class="cell" data-caption="Number of responses over time">
+<div class="cell-output-display">
+<div id="fig-responses-over-time" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="grattan_survey_analysis_files/figure-html/fig-responses-over-time-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: <strong>?(caption)</strong></figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,127 @@
+---
+title: "Making it count: Improving primary school maths"
+subtitle: "Analysis of Grattan Institute's survey of primary school teachers" 
+date: "July 2024"
+author: "Nick Parkinson"
+format: 
+  html:
+    css: .formatting/grattan-style.css
+    theme: lumen
+    highlight: pygments
+    toc: true
+    toc_depth: 2
+    number_sections: yes
+    df_print: kable
+execute:
+  echo: false
+  warning: false
+---
+
+```{r}
+#| label: libraries
+#| include: false
+
+library(tidyverse)
+library(grattantheme)
+library(qualtRics)
+library(knitr)
+```
+
+# Data
+
+We first import the data straight from Qualtrics following the instructions [here](https://api.qualtrics.com/instructions/ZG9jOjg3NjYzNQ-finding-your-qualtrics-i-ds). We also export a dated version of the survey, for file management.
+
+```{r}
+#| label: import
+#| include: false
+
+# To connect to the Qualtrics API, uncomment the following line of code the first time you run this  script, and then restart R.
+
+# qualtrics_api_credentials(api_key = "yKIwTusJkJAY9esZ4GQkqZKURN7Pq1RxI6vkvD4Q", base_url = "melbourneuni.au1.qualtrics.com", install = TRUE)
+
+surveys <- all_surveys() 
+
+survey_id <- surveys |> 
+  filter(str_detect(name, "primary school mathematics")) |> 
+  pull(id)
+
+# Change the id below based on the id of the primary numeracy survey in your list of surveys.
+raw_survey_data <- fetch_survey(surveyID = survey_id, 
+                         verbose = FALSE, 
+                         include_display_order = FALSE,
+                         start_date = as.Date("2024-07-04"))
+
+# Save the Qualtrics survey, just in case
+currentDate <- Sys.Date()
+
+filename <- paste("data/survey",currentDate,".csv", set = "")
+
+write.csv(raw_survey_data, file = filename)
+```
+
+@tbl-data-extract shows an extract from the data looks like.
+
+```{r}
+#| label: tbl-data-extract
+#| tbl-cap: Extract of survey data
+
+raw_survey_data |> 
+  select(matches("Q\\d+") & !contains(c("DO","TEXT", "Q6", "Q7"))) |> 
+  head(5) |> 
+  kable()
+```
+
+# Valid sample
+
+We filter out:
+
+-   Anyone whose responses are [flagged by Qualtrics as suspicious](https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/) (i.e. Q_RecaptchaScore is below 0.5). This is typically because of the speed at which they respond, or 'straight lining' (i.e. clicking the same radio buttons in a single column).
+
+-   Anyone who did not complete more than one substantive (i.e. non-demographic) question.
+
+```{r}
+#| label: clean_survey
+
+initial_sample <- nrow(raw_survey_data)
+
+clean_survey <- raw_survey_data |> 
+  filter(Q_RecaptchaScore >= 0.5) # filter out bots
+
+substantive_questions <- names(clean_survey)[which(names(clean_survey) == "Q24"):ncol(clean_survey) - 1]
+
+# Check if all values in each row from Q24 onwards are NA
+responses_to_keep <- rowSums(is.na(clean_survey[substantive_questions])) < length(substantive_questions)
+
+clean_survey <- clean_survey[responses_to_keep, ]
+
+total_sample <- nrow(clean_survey)
+```
+
+Through this process, we lose `{r} initial_sample - total_sample`. This leaves us with `{r} total_sample` valid responses.
+
+We also check for duplicates, using [Qualtrics duplicate flag](https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/). This pulls out respondents who try reattempt the survey from the same IP address. We can see if they are duplicates by looking through their answers manually in @tab-check-for-duplicates.
+
+```{r}
+#| label: tab-check-for-duplicates
+#| caption: Extract of data from possible duplicates
+
+clean_survey |> 
+  filter(Q_BallotBoxStuffing) |> 
+  select(ResponseId, IPAddress, matches("Q")) |> 
+  kable()
+```
+
+We now check the number of valid responses over time.
+
+```{r}
+#| label: fig-responses-over-time
+#| caption: Number of responses over time
+clean_survey |> 
+  rowid_to_column() |> 
+  ggplot(aes(x = RecordedDate, y = rowid)) +
+  geom_line() +
+  theme_grattan() +
+  scale_y_continuous_grattan() +
+  labs(x = "Date")
+
+```
