@@ -4,3 +4,5 @@
 data/
 atlas/
 grattan_survey_analysis_files/
+/.quarto/
+/_site/
