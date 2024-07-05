@@ -1,12 +1,17 @@
 <style>
 
-  body {
+body {
     font-family: "Helvetica", light;
   }
 
 h1, h2, h3, h4 {
   font-family: "Helvetica";
   font-size: 15;
+}
+
+.caption {
+  font-weight: bold;
+  caption-side: top;
 }
 
 .title {
@@ -24,4 +29,5 @@ h1, h2 {
 a, a:hover {
   color: #e59b7f;
 }
+
 </style>
