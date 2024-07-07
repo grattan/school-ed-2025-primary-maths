@@ -1,0 +1,411 @@
+---
+title: "Making it count: Improving primary school maths"
+subtitle: "Analysis of Grattan Institute's survey of primary school teachers" 
+date: "7 July 2024"
+author: "Nick Parkinson"
+format: 
+  html:
+    css: .formatting/grattan-style.css
+    theme: lumen
+    highlight: pygments
+    toc: true
+    toc_depth: 2
+    number_sections: yes
+    df_print: kable
+    fig-cap-location: top
+execute:
+  echo: false
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: libraries
+#| include: false
+
+library(tidyverse)
+library(grattantheme)
+library(qualtRics)
+library(knitr)
+library(knitr)
+library(kableExtra)
+library(sjlabelled)
+library(readxl)
+library(janitor)
+library(scales)
+library(strayr)
+
+# Additional configuration
+options(knitr.kable.NA = '')
+```
+
+# Import data
+
+We first import the data straight from Qualtrics following the instructions [here](https://api.qualtrics.com/instructions/ZG9jOjg3NjYzNQ-finding-your-qualtrics-i-ds). We also export a dated version of the survey, for file management.
+
+```{r}
+#| label: import
+#| include: false
+
+# To connect to the Qualtrics API, uncomment the following line of code the first time you run this  script, and then restart R.
+
+# qualtrics_api_credentials(api_key = "yKIwTusJkJAY9esZ4GQkqZKURN7Pq1RxI6vkvD4Q", base_url = "melbourneuni.au1.qualtrics.com", install = TRUE)
+
+surveys <- all_surveys()
+
+survey_id <- surveys |>
+  filter(str_detect(name, "primary school mathematics")) |>
+  pull(id)
+
+# Change the id below based on the id of the primary numeracy survey in your list of surveys.
+raw_survey_data <- fetch_survey(
+  surveyID = survey_id,
+  verbose = FALSE,
+  include_display_order = FALSE,
+  start_date = as.Date("2024-07-04")
+)
+
+# Save the Qualtrics survey, just in case
+currentDate <- Sys.Date()
+
+filename <- paste("data/survey", currentDate, ".csv", set = "")
+
+# write.csv(raw_survey_data, file = filename)
+
+# Check what data looks like
+raw_survey_data |>
+  select(matches("Q\\d+") & !contains(c("DO", "TEXT", "Q6", "Q7"))) |>
+  head(5) |>
+  kable() |>
+  row_spec(0:5, extra_css = "height: 10px")
+```
+
+# Filter to valid sample
+
+We filter out:
+
+-   Anyone whose responses are [flagged by Qualtrics as suspicious](https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/) (i.e. Q_RecaptchaScore is below 0.5). This is typically because of the speed at which they respond, or 'straight lining' (i.e. clicking the same radio buttons in a single column).
+
+-   Anyone who did not complete more than one substantive (i.e. non-demographic) question.
+
+```{r}
+#| label: clean_survey
+
+initial_sample <- nrow(raw_survey_data)
+
+clean_survey <- raw_survey_data |>
+  filter(Q_RecaptchaScore >= 0.5) # filter out bots
+
+substantive_questions <- names(clean_survey)[which(names(clean_survey) == "Q24"):ncol(clean_survey) - 1]
+
+# Check if all values in each row from Q24 onwards are NA
+responses_to_keep <- rowSums(is.na(clean_survey[substantive_questions])) < length(substantive_questions)
+
+clean_survey <- clean_survey[responses_to_keep, ]
+
+total_sample <- nrow(clean_survey)
+```
+
+Through this process, we lose `r initial_sample - total_sample` responses. This leaves us with `r total_sample` valid responses.
+
+We also check for duplicates, using [Qualtrics duplicate flag](https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/). This pulls out respondents who try reattempt the survey from the same IP address. We can see if they are duplicates by looking through their answers manually.
+
+```{r}
+#| label: tab-check-for-duplicates
+#| caption: Extract of data from possible duplicates
+
+possible_duplicates <- clean_survey |>
+  filter(Q_BallotBoxStuffing) |>
+  select(ResponseId, IPAddress, matches("Q")) |>
+  kable()
+```
+
+We now check the number of valid responses over time, in @fig-responses-over-time.
+
+```{r}
+#| label: fig-responses-over-time
+#| fig-cap: "Number of responses over time"
+clean_survey |>
+  rowid_to_column() |>
+  ggplot(aes(x = RecordedDate, y = rowid)) +
+  geom_line() +
+  theme_grattan() +
+  scale_x_datetime(
+    date_labels = "%d-%b",
+    date_breaks = "day"
+  ) +
+  scale_y_continuous_grattan() +
+  labs(x = NULL)
+```
+
+# Demographics
+
+We create tables to determine the representativeness of the sample. We compare these again the latest available data [here](https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/staff-numbers#:~:text=Key%20Facts,schools%2018.2%25%20in%20independent%20schools.) and [here](https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/school-numbers).
+
+## Teacher characteristics
+
+```{r}
+# label: tab-demographic-counts
+
+# create custom function
+demographic_counts <- function(column) {
+  col_name <- sym(column)
+
+  question_name <- get_label(clean_survey[[column]])
+
+  clean_survey |> 
+    count(!!col_name) |> 
+    drop_na() %>%
+    mutate(
+      response = as.character(pull(., !!col_name)),
+      prop = (n / sum(n)),
+      demographic = str_extract(question_name, boundary("word")) |>
+             str_to_sentence() |> str_replace_all("_", " ")) |> 
+    select(demographic, response, n, prop)
+}
+
+# Read in ACARA staff data
+acara_staff_data <- read_xlsx(path = "data/acara_staff_data.xlsx") |> 
+  clean_names() |> 
+  mutate(staff_count = parse_number(staff_count)) |> 
+  filter(calendar_year == 2023)
+
+# Sex
+dem_sex <- demographic_counts("Q4") |>
+  left_join(
+    (acara_staff_data |>
+      filter(
+        state_territory == "Australia",
+        school_sector == "All",
+        school_level == "Primary",
+        staff_function == "Teaching staff"
+      ) |>
+      group_by(sex_gender) |>
+      summarise(n = sum(staff_count)) |>
+      filter(sex_gender != "All") |>
+      mutate(prop = (n / sum(n)))),
+    by = join_by(response == sex_gender))
+
+dem_sex |> 
+  mutate(across(starts_with("prop"), percent, 1)) |> 
+  select(-demographic) |> 
+  kable(col.names = c("Response", "N", "%", "N", "%"), 
+        align = c("lrrrr"), 
+        digits = 0, 
+        format.args = list(big.mark = ',')) |> 
+    add_header_above(c("Characteristic" = 1, "Grattan survey" = 2, "Population data" = 2))
+
+# Role
+
+# Years of experience
+
+```
+
+## School characteristics
+
+```{r}
+# Read in ACARA school profile dataset
+# Source: https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fdataandreporting.blob.core.windows.net%2Fanrdataportal%2FData-Access-Program%2FSchool%2520Profile%25202023.xlsx&wdOrigin=BROWSELINK
+
+acara_school_data <- read_excel("data/acara_school_profile.xlsx", sheet = 2) |> 
+  clean_names()
+
+# School type
+school_type_school_profile <- acara_school_data |> 
+  group_by(school_type) |> 
+  summarise(n = sum(teaching_staff, na.rm = T)) |> 
+  filter(school_type %in% c("Primary", "Combined", "Special")) |> 
+  mutate(prop = n/sum(n))
+
+school_type_staff_data <- acara_staff_data |> 
+  filter(state_territory == "Australia", 
+         school_sector == "All", 
+         sex_gender == "All",
+         staff_function == "Teaching staff") |> 
+  group_by(school_level) |> 
+  summarise(n = sum(staff_count)) |> 
+  mutate(prop = n/sum(n))
+
+combined_in_primary <- 
+  (school_type_school_profile |> 
+  filter(school_type == "Combined") |> 
+  pull(n)) - (school_type_staff_data$n[2] - school_type_school_profile$n[2] - school_type_school_profile$n[4]/2) # Assume that half of all teachers in special schools work with primary aged kids
+
+# Determine how many of the combined and special staff work in primaries
+school_type_australia <- 
+  school_type_school_profile |> 
+  mutate(n = case_when(
+    school_type == "Combined" ~ combined_in_primary,
+    school_type == "Special" ~ n/2, 
+    .default = n)) |> 
+  filter(school_type %in% c("Primary", "Combined", "Special"))
+
+school_type_survey <- clean_survey |> 
+  mutate(school_type =  case_when(
+    Q16 == "Yes" ~ "Special",
+    Q3 == "Primary" ~ "Primary", 
+    Q3 == "Combined primary and secondary" ~ "Combined"
+  )) |> 
+  count(school_type) |> 
+  drop_na() |> 
+  mutate(prop = n/sum(n))
+
+school_type <- left_join(school_type_survey, 
+                         school_type_australia, 
+                         by = join_by(school_type == school_type)) |> 
+  arrange(-n.x) |> 
+  rename(response = school_type)
+
+rm(school_type_australia, school_type_school_profile, school_type_staff_data, school_type_survey)
+
+# School sector
+school_sector <- left_join(
+demographic_counts("Q18"),
+  (acara_staff_data |> 
+  filter(state_territory == "Australia", 
+         school_level == "Primary",
+         staff_function == "Teaching staff",
+         sex_gender == "All") |> 
+  group_by(school_sector) |> 
+  summarise(n = sum(staff_count)) |> 
+  filter(school_sector != c("All", "All non-government")) |> 
+  mutate(prop = n/sum(n))),
+by = join_by(response == school_sector)) |> 
+  select(-demographic)
+
+# State and territory 
+state_and_territory <- 
+  left_join(
+  (demographic_counts("Q19") |> 
+  mutate(response = clean_state(response, to = "state_name"))),
+  (acara_staff_data |>
+    filter(
+      school_sector == "All",
+      school_level == "Primary",
+      staff_function == "Teaching staff",
+      sex_gender == "All"
+    ) |>
+    group_by(state_territory) |>
+    summarise(n = sum(staff_count)) |>
+    filter(state_territory != "Australia") |>
+    mutate(prop = n / sum(n))),
+  by = join_by(response == state_territory)
+) |> 
+  select(-demographic)
+
+# Advantage
+ses <-  
+  left_join(
+    demographic_counts("Q20"),
+  (acara_school_data |> 
+  mutate(ses = case_when(
+    icsea_percentile <= 33.33 ~ "Mostly disadvantaged",
+    between(icsea_percentile, 33.33, 66.66) ~ "A fairly even mix of advantaged and disadvantaged students",
+    icsea_percentile >= 66.66 ~ "Mostly advantaged"
+  )) |> 
+  group_by(ses) |> 
+  summarise(n = sum(teaching_staff, na.rm = T)) |> 
+  drop_na() |> # Some NAs for schools without ICSEA values
+  mutate(prop = n/sum(n))),
+  by = join_by(response == ses)) |> 
+  select(-demographic)
+
+# Location
+location <- 
+  left_join(
+    demographic_counts("Q21"),
+  (
+  acara_school_data |> 
+  mutate(simplified_geography = case_when(
+    geolocation == "Major Cities" ~ "Metropolitan",
+    geolocation == "Inner Regional" ~ "Regional", 
+    geolocation == "Outer Regional" ~ "Rural",
+    geolocation == "Remote" ~ "Remote", 
+    geolocation == "Very Remote" ~ "Remote"
+  )) |> 
+  group_by(simplified_geography) |> 
+  summarise(n = sum(teaching_staff, na.rm = T)) |> 
+  mutate(prop = n/sum(n))),
+  by = join_by(response == simplified_geography)) |> 
+  select(-demographic)
+
+# School size
+school_size_survey <- 
+  clean_survey |> 
+  count(Q22) |> 
+  drop_na() |> 
+  mutate(prop = n/sum(n))
+
+school_size_australia <- 
+  acara_school_data |> 
+  # What to do about special and combined?
+  filter(school_type == "Primary") |> 
+  mutate(size = case_when(
+     is.na(total_enrolments) ~ NA_character_, 
+    total_enrolments <= 50 ~ "Up to 50 students",
+    total_enrolments > 50 & total_enrolments <= 100 ~ "51 to 100 students",
+    total_enrolments > 100 & total_enrolments <= 200 ~ "101 to 200 students",
+    total_enrolments > 200 & total_enrolments <= 300 ~ "201 to 300 students",
+    total_enrolments > 300 & total_enrolments <= 400 ~ "301 to 400 students",
+    total_enrolments > 400 & total_enrolments <= 500 ~ "401 to 500 students",
+    total_enrolments > 500 & total_enrolments <= 600 ~ "501 to 600 students",
+    total_enrolments > 600 & total_enrolments <= 700 ~ "601 to 700 students",
+    total_enrolments > 700 & total_enrolments <= 800 ~ "701 to 800 students",
+    total_enrolments > 800 & total_enrolments <= 900 ~ "801 to 900 students",
+    total_enrolments > 900 & total_enrolments <= 1000 ~ "901 to 1000 students",
+    total_enrolments > 1000 ~ "More than 1,000 students"
+  )) %>%
+  group_by(size) |> 
+  summarise(n = sum(teaching_staff, na.rm = T)) |> 
+  drop_na() |> 
+  mutate(prop = n/sum(n))
+
+school_size <- 
+  left_join(
+  school_size_survey, 
+  school_size_australia, 
+  by = join_by(Q22 == size)
+) |>  
+  mutate(Q22 = factor(Q22, levels = c(
+    "Up to 50 students",
+    "51 to 100 students",
+    "101 to 200 students",
+    "201 to 300 students",
+    "301 to 400 students",
+    "401 to 500 students",
+    "501 to 600 students",
+    "601 to 700 students",
+    "701 to 800 students",
+    "801 to 900 students",
+    "901 to 1000 students",
+    "More than 1,000 students"
+  ))) |> 
+  arrange(Q22) |> 
+  rename(response = Q22)
+
+# Print table
+
+rbind(school_type,
+      school_sector,
+      state_and_territory,
+      ses,
+      location,
+      school_size) |> 
+  mutate(across(starts_with("prop"), percent, 1)) |> 
+  kable(col.names = c("Response", "N", "%", "N", "%"), 
+        align = c("lrrrr"), digits = 0, 
+        format.args = list(big.mark = ',')) |> 
+  add_header_above(c("Characteristic" = 1, "Grattan survey" = 2, "Population data" = 2)) |> 
+  pack_rows("Stage of schooling", 1, 3, color = grattan_orange) |> 
+  pack_rows("Sector", 4, 6, color = grattan_orange) |> 
+  pack_rows("Jursidiction", 7, 14, color = grattan_orange) |> 
+  pack_rows("Level of advantage or disadvantage", 15, 17, color = grattan_orange) |> 
+  pack_rows("Remoteness", 18, 21, color = grattan_orange) |> 
+  pack_rows("School size", 22, 33, color = grattan_orange)
+
+  
+```
+
+\
+\

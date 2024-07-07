@@ -1,0 +1,7 @@
+.Rproj.user
+.DS_Store
+
+atlas/
+grattan_survey_analysis_files/
+/.quarto/
+/_site/
