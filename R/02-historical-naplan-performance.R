@@ -60,15 +60,22 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 # Note: Figure 1.1 here could be a guide: https://grattan.edu.au/wp-content/uploads/2024/03/Spreading-success-Why-Australia-should-trial-multi-school-organisations.pdf
 # Note: You could adapt lines 77 to 110 in my code here: https://github.com/grattan/school-ed-2024-improving_schools/blob/main/R/03-chronic_underperformers.R
 
+
 #Filter the naplan numeracy results for year level and year
 
 library(ggplot2)
 library(scales)
 
-
+names(naplan_numeracy_eyl)
 
 filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
     group_by(YEAR_LEVEL)
+
+
+
+#Chart data with x = year, y = naplan EYL, line colour = year level
+
+
 
 
 # 5. Create a function to chart the NAPLAN scores in the past decade (2012-22) for each jurisdiction
