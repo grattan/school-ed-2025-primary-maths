@@ -19,7 +19,3 @@ website:
         text: Open text
       - href: blank-page.qmd
         text: References
-
-format:
-  html:
-    css: .formatting/grattan_style.css
