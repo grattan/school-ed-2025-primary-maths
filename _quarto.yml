@@ -1,9 +1,0 @@
-project:
-  type: website
-
-website:
-  title: "Making it count"
-  navbar:
-    left:
-      - href: grattan_survey_analysis.qmd
-        text: Home
