@@ -75,8 +75,21 @@ filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
 
 #Chart data with x = year, y = naplan EYL, line colour = year level
 
+base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
+  group_by(YEAR_LEVEL, CALENDAR_YEAR) %>%
+    ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) +
+    geom_line() +
+    geom_point(size = 1) +
+    theme_grattan(chart_type = "normal") +
+    labs(
+        x = "Year",
+        y = "Numeracy effective years of learning",
+        colour = "Year level",
+        title = "Numeracy achievement is stagnating over time",
+        subtitle = "Effective years of learning in numeracy at each year level"
+        )
 
-
+base_chart
 
 # 5. Create a function to chart the NAPLAN scores in the past decade (2012-22) for each jurisdiction
 # Note: This chapter provides an introduction to functional programming. https://r4ds.had.co.nz/functions.html.
