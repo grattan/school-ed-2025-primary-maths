@@ -1,7 +1,7 @@
 ---
 title: "Making it count: Improving primary school maths"
 subtitle: "Analysis of Grattan Institute's survey of primary school teachers" 
-date: "July 2024"
+date: "7 July 2024"
 author: "Nick Parkinson"
 format: 
   html:
