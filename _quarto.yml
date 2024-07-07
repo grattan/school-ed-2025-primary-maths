@@ -1,9 +1,25 @@
 project:
-  type: website
+  type: default
+  output-dir: docs
 
 website:
   title: "Making it count"
   navbar:
+    logo: GrattanLogo_left.png
     left:
       - href: grattan_survey_analysis.qmd
-        text: Home
+        text: Demographics
+      - href: blank-page.qmd
+        text: Teacher attitudes
+      - href: blank-page.qmd
+        text: School practices
+      - href: blank-page.qmd
+        text: Leaders' views
+      - href: blank-page.qmd
+        text: Open text
+      - href: blank-page.qmd
+        text: References
+
+format:
+  html:
+    css: .formatting/grattan_style.css
