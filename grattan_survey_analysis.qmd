@@ -215,6 +215,7 @@ acara_school_data <- read_excel("data/acara_school_profile.xlsx", sheet = 2) |>
 school_type_school_profile <- acara_school_data |> 
   group_by(school_type) |> 
   summarise(n = sum(teaching_staff, na.rm = T)) |> 
+  filter(school_type %in% c("Primary", "Combined", "Special")) |> 
   mutate(prop = n/sum(n))
 
 school_type_staff_data <- acara_staff_data |> 
