@@ -1,11 +1,13 @@
 project:
-  type: default
+  type: website
   output-dir: docs
 
 website:
   title: "Making it count"
   navbar:
     logo: GrattanLogo_left.png
+    background: '#FFFFFF'
+    foreground: '#EF7900'
     left:
       - href: grattan_survey_analysis.qmd
         text: Demographics
@@ -19,3 +21,6 @@ website:
         text: Open text
       - href: blank-page.qmd
         text: References
+
+
+
