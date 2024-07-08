@@ -119,42 +119,39 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
 
-+-----------------+------------------------------------------------------+
-| Codes           | Field of Education                                   |
-+=================+======================================================+
-| 70101           | Teacher Education: Early Childhood                   |
-+-----------------+------------------------------------------------------+
-| 70103           | Teacher Education: Primary                           |
-+-----------------+------------------------------------------------------+
-| 70109           | Teacher Education: Vocational Education and Training |
-+-----------------+------------------------------------------------------+
-| 70199           | Teacher Education, n.e.c.                            |
-|                 |                                                      |
-|                 | -   special needs                                    |
-+-----------------+------------------------------------------------------+
-| 70115           | English as a Second Language Teaching                |
-+-----------------+------------------------------------------------------+
-| 90503           | Children's Services                                  |
-|                 |                                                      |
-|                 | (Human Welfare Studies and Services)                 |
-+-----------------+------------------------------------------------------+
-| 91703           | Religious Studies                                    |
-|                 |                                                      |
-|                 | (Philosophy and Religious Studies)                   |
-+-----------------+------------------------------------------------------+
-| 92101           | Sport and Recreation Activities                      |
-|                 |                                                      |
-|                 | (Sport and Recreation)                               |
-+-----------------+------------------------------------------------------+
-| 100101          | Music                                                |
-|                 |                                                      |
-|                 | (Performing Arts)                                    |
-+-----------------+------------------------------------------------------+
-| 80101           | Accounting                                           |
-+-----------------+------------------------------------------------------+
-
-Questions about the data:
-
++----------------+------------------------------------------------------+
+| Codes          | Field of Education                                   |
++================+======================================================+
+| 70101          | Teacher Education: Early Childhood                   |
++----------------+------------------------------------------------------+
+| 70103          | Teacher Education: Primary                           |
++----------------+------------------------------------------------------+
+| 70109          | Teacher Education: Vocational Education and Training |
++----------------+------------------------------------------------------+
+| 70199          | Teacher Education, n.e.c.                            |
+|                |                                                      |
+|                | -   special needs                                    |
++----------------+------------------------------------------------------+
+| 70115          | English as a Second Language Teaching                |
++----------------+------------------------------------------------------+
+| 90503          | Children's Services                                  |
+|                |                                                      |
+|                | (Human Welfare Studies and Services)                 |
++----------------+------------------------------------------------------+
+| 91703          | Religious Studies                                    |
+|                |                                                      |
+|                | (Philosophy and Religious Studies)                   |
++----------------+------------------------------------------------------+
+| 92101          | Sport and Recreation Activities                      |
+|                |                                                      |
+|                | (Sport and Recreation)                               |
++----------------+------------------------------------------------------+
+| 100101         | Music                                                |
+|                |                                                      |
+|                | (Performing Arts)                                    |
++----------------+------------------------------------------------------+
+| 80101          | Accounting                                           |
++----------------+------------------------------------------------------+
 
 ```{r}
 # How many school leavers enrol in primary school teaching courses
@@ -212,9 +209,7 @@ https://www.acer.org/files/PISA_screen.pdf
 
 " In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of PISA 2003. "
 
-https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm#:~:text=The%20R%20package%20intsvy%20allows,other%20formats%20directly%20into%20R.
-
-
+https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm#:\~:text=The%20R%20package%20intsvy%20allows,other%20formats%20directly%20into%20R.
 
 ```{r}
 
@@ -257,7 +252,6 @@ overall_mean_math_pv
 
 ```
 
-
 ```{r}
 # fact checking to see if survey gives similar results to intsvy package
 
@@ -299,9 +293,7 @@ overall_school_mean #using intsvy package method
 
 ```
 
-There is a discrepancy between the two different methods.
-https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm  `instvy`
-
+There is a discrepancy between the two different methods. https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm `instvy`
 
 ```{r}
 options(survey.lonely.psu = "adjust")
@@ -337,10 +329,7 @@ overall_mean_math_pv
 
 ```
 
-http://software-tecnico-libre.es/en/article-by-topic/all_sections/all-topics/all-articles/pisa-data-analytics-plausible-values
-"When we perform any calculations involving the plausible values, the procedure is always the same, we compute separately with each of the five values and, finally, we perform the mean of the five results, either regression coefficients, means, correlation coefficients, or any other estimator."
---> we assume survey package is handling the weights in the set up
---> so in some instances STIDSTD (e.g.) could have multiple observations within it, which is why we need to do the double mean
+http://software-tecnico-libre.es/en/article-by-topic/all_sections/all-topics/all-articles/pisa-data-analytics-plausible-values "When we perform any calculations involving the plausible values, the procedure is always the same, we compute separately with each of the five values and, finally, we perform the mean of the five results, either regression coefficients, means, correlation coefficients, or any other estimator." --\> we assume survey package is handling the weights in the set up --\> so in some instances STIDSTD (e.g.) could have multiple observations within it, which is why we need to do the double mean
 
 ```{r}
 library(survey)
@@ -389,9 +378,101 @@ teachers_below_profstand <- table(teacher_means$below_prof_avg)
 teachers_below_profstand
 ```
 
-
 ```{r}
 # look at teacher_means and create possible row at the bottom w/ percentage above/below average
 
 ```
 
+## Y06 LSAY
+
+```{r}
+LSAY2006 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01137_v10.1_unrestricted.dta")
+```
+
+```{r}
+# 2006 COHORT - exploring those who studied primary school teaching
+STUDYING_TEACHERS_2006 <- LSAY2006 %>%
+  # selecting variables for current area of study
+  select(STIDSTD, LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088) %>%
+  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
+  mutate(across(c(LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088),
+                ~ case_when(
+                   as.character(.) == '70103' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_, # Retain NA
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # Create new column where any 1 in the row = TRUE, no 1 = FALSE
+  mutate(unique_teachers = if_any(c(LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088), ~ . == 1)) %>%
+  # Keep TRUE values
+  filter(unique_teachers)
+
+STUDYING_TEACHERS_2006
+```
+
+```{r}
+# Looking at people who were at the time working as PS Teachers
+
+LEGIT_TEACHERS_2006 <- LSAY2006 %>%
+  # Selecting variables for kind of work
+  select(STIDSTD, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
+  # Mutate across the observation 
+  mutate(across(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
+                ~ case_when(
+                   as.character(.) == '2412' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_,
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # column for TRUE = legit teachers, FALSE = not teachers
+  mutate(legit_teachers = if_any(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  # Filter for TRUE condition
+  filter(legit_teachers)
+
+LEGIT_TEACHERS_2006
+```
+
+```{r}
+# Taking a look at what the legit teachers studied
+teacher_jobs <- LSAY2006[LSAY2006$STIDSTD %in% LEGIT_TEACHERS_2006$STIDSTD, ]
+
+# selecting student ID and area of study across the years
+selected_columns <- c('STIDSTD', 'LBC087', 'LCC087', 'LDC087', 'LEC087', 'LFC087', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
+teacher_jobs <- teacher_jobs[, selected_columns]
+```
+
++-----------------------+----------------------------------------------+
+| Code                  | Field                                        |
++=======================+==============================================+
+| 100705                | Written Communication                        |
++-----------------------+----------------------------------------------+
+| 100103                | Drama and Theatre Studies                    |
++-----------------------+----------------------------------------------+
+| 100101                | Music                                        |
++-----------------------+----------------------------------------------+
+| 80399                 | Business and Management, n.e.c.              |
++-----------------------+----------------------------------------------+
+| 70103                 | Teacher Education: Primary                   |
++-----------------------+----------------------------------------------+
+| 70101                 | Teacher Education: Early Childhood           |
++-----------------------+----------------------------------------------+
+| 70105                 | Teacher Education: Secondary                 |
++-----------------------+----------------------------------------------+
+| 70199                 | Teacher Education, n.e.c.                    |
++-----------------------+----------------------------------------------+
+| 91701                 | Philosophy                                   |
++-----------------------+----------------------------------------------+
+| 60901                 | Optometry                                    |
++-----------------------+----------------------------------------------+
+| 61399                 | Public Health, n.e.c.                        |
++-----------------------+----------------------------------------------+
+| 60101                 | General Medicine                             |
++-----------------------+----------------------------------------------+
+| 91703                 | Religious Studies                            |
++-----------------------+----------------------------------------------+
+| 80101                 | Accounting                                   |
++-----------------------+----------------------------------------------+
+| 81101                 | Banking and Finance                          |
++-----------------------+----------------------------------------------+
+| 91523                 | Literature                                   |
++-----------------------+----------------------------------------------+
+| 90513                 | Counselling                                  |
++-----------------------+----------------------------------------------+
