@@ -76,13 +76,12 @@ filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
 #Chart data with x = year, y = naplan EYL, line colour = year level
 
 base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%  #Filter out data on sub groups by demographic characteristics and states
-
-    ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) #plot using year level as the grouping for the lines and colour each distinctly
-    + geom_line() #plot a line chart
-    + geom_point(size = 1) #and plot a data points, small size
-    + grattan_y_continuous() #TBC Adjust the scale to show off numbers
-    + theme_grattan(chart_type = "normal") #adopt grattan chart design and themes
-    + labs(
+    ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) +  #plot using year level as the grouping for the lines and colour each distinctly
+    geom_line() +  #plot a line chart
+    geom_point(size = 1) + #and plot a data points, small size
+    grattan_y_continuous(limits = c(2, 10), breaks = c(0, 3, 5, 7, 9)) + #TBC Adjust the scale to show chart from 0 to 9, and check marks at 3, 5, 7 and 9
+    theme_grattan(chart_type = "normal") + #adopt grattan chart design and themes
+    labs(
         x = "Year",
         y = "Numeracy effective years of learning",
         colour = "Year level",
