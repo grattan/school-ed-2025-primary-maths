@@ -119,6 +119,70 @@ grattan_save_pptx(base_chart, "atlas/Historical_NAPLAN_Numeracy_EYL.pptx", "full
 # Note: You might find it helpful to look at my code here (https://github.com/grattan/school-ed-2022-teaching-assistants-analysis/blob/main/teacher-assistant-analysis.R) which has a function that charts teaching assistants for each jurisdiction, and here (https://github.com/grattan/school-ed-2023-naplan-analyser/blob/master/NAPLAN_analyser/app.R) which creates an app that spits out the 2023 NAPLAN data for each state and territory.
 
 
+all_jurns <- tibble(
+    STATE = unique(naplan_numeracy_eyl$STATE)
+    )
+all_jurns
+all_jurns_labels <- mutate(all_jurns, jurn_label = case_when(
+      STATE == "ACT" ~ "ACT",
+      STATE == "AUS" ~ "Australia",
+      STATE == "NSW" ~ "NSW",
+      STATE == "NT" ~ "the Northern Territory",
+      STATE == "QLD" ~ "Queensland",
+      STATE == "SA" ~ "South Australia",
+      STATE == "TAS" ~ "Tasmania",
+      STATE == "VIC" ~ "Victoria",
+      STATE == "WA" ~ "Western Australia",
+        ), jurn_adj = case_when(
+          STATE == "ACT" ~ "ACT",
+          STATE == "AUS" ~ "Australian",
+          STATE == "NSW" ~ "NSW",
+          STATE == "NT" ~ "Northern Territory",
+          STATE == "QLD" ~ "Queensland",
+          STATE == "SA" ~ "South Australian",
+          STATE == "TAS" ~ "Tasmanian",
+          STATE == "VIC" ~ "Victorian",
+          STATE == "WA" ~ "Western Australian",
+        ))
+all_jurns_labels
+
+
+chart_jurn_hist_naplan_num <- function(jurn) {
+    jurn_chart <- filter(naplan_numeracy_eyl, STATE == jurn, SUBGROUP == "All") %>%  #Filter out data on sub groups by demographic characteristics and states
+      ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) +  #plot using year level as the grouping for the lines and colour each distinctly
+      geom_line() +  #plot a line chart
+      geom_point(size = 1) + #and plot a data points, small size
+      grattan_y_continuous(limits = c(1, 10), breaks = c(0, 3, 5, 7, 9)) + #TBC Adjust the scale to show chart from 0 to 9, and check marks at 3, 5, 7 and 9
+      grattan_x_continuous(limits = c(2007.5, 2022.5), breaks = c(2008, 2012, 2016, 2020, 2022)) + #Adjust x-axis to start at 2008 and end at 2022
+      theme_grattan(chart_type = "normal") + #adopt grattan chart design and themes
+      labs(
+        x = "Year",
+        y = "Numeracy effective years of learning",
+        colour = "Year level",
+        title = glue("NAPLAN suggests {all_jurn_labels$jurn_adj} numeracy achievement is stagnating over time"),
+        subtitle = glue("Effective years of learning in numeracy at each year level in {all_jurns_labels$STATE}")
+      ) + #Label the chart
+      geom_text(data = label_lines, aes(label = chart_label), size = 4, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
+      annotate(geom = "rect", xmin = 2019.05, xmax = 2020.95, ymin = -Inf, ymax = Inf,
+               fill = "white", col = NA) +
+      annotate("label",
+               x = 2020,
+               y = 5.5,
+               label = "NAPLAN cancelled due to COVID-19",
+               label.padding = unit(0.9, "lines"),
+               label.size = 0,
+               angle = 90,
+               hjust = 0.5,
+               vjust = 0.5,
+               size = 4,  # Adjust text size
+               color = "grey"  # Change text color
+      ) #Add a label for the lack of 2020 data
+
+      jurn_chart
+    }
+
+chart_jurn_hist_naplan_num(VIC)
+
 # 6. Check the trend over time in each jurisdiction.
 # Note: Run a linear regression to test if year predicts score. See if the average annual trend is at least 0.25 EYL, using the formulae on page 128 and 129 here. https://www.nap.edu.au/docs/default-source/default-document-library/naplan-2022-technical-report.pdf
 # Note: You could incorporate this into the function above, and make the result a callout on the chart.
