@@ -159,7 +159,7 @@ chart_jurn_hist_naplan_num <- function(jurn) {
         x = "Year",
         y = "Numeracy effective years of learning",
         colour = "Year level",
-        title = glue("NAPLAN suggests {all_jurn_labels$jurn_adj} numeracy achievement is stagnating over time"),
+        title = glue("NAPLAN suggests {all_jurns_labels$jurn_adj} numeracy achievement is stagnating over time"),
         subtitle = glue("Effective years of learning in numeracy at each year level in {all_jurns_labels$STATE}")
       ) + #Label the chart
       geom_text(data = label_lines, aes(label = chart_label), size = 4, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
@@ -181,7 +181,7 @@ chart_jurn_hist_naplan_num <- function(jurn) {
       jurn_chart
     }
 
-chart_jurn_hist_naplan_num(VIC)
+chart_jurn_hist_naplan_num("VIC")
 
 # 6. Check the trend over time in each jurisdiction.
 # Note: Run a linear regression to test if year predicts score. See if the average annual trend is at least 0.25 EYL, using the formulae on page 128 and 129 here. https://www.nap.edu.au/docs/default-source/default-document-library/naplan-2022-technical-report.pdf
