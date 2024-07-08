@@ -147,6 +147,39 @@ all_jurns_labels <- mutate(all_jurns, jurn_label = case_when(
         ))
 all_jurns_labels
 
+jurn_label <- function(jurn) {
+  jurn_label = case_when(
+    jurn == "ACT" ~ "ACT",
+    jurn == "AUS" ~ "Australia",
+    jurn == "NSW" ~ "NSW",
+    jurn == "NT" ~ "the Northern Territory",
+    jurn == "QLD" ~ "Queensland",
+    jurn == "SA" ~ "South Australia",
+    jurn == "TAS" ~ "Tasmania",
+    jurn == "VIC" ~ "Victoria",
+    jurn == "WA" ~ "Western Australia"
+      )
+  jurn_label
+}
+
+jurn_label("VIC")
+
+jurn_adj <- function(jurn) {
+  jurn_adj = case_when(
+    jurn == "ACT" ~ "ACT",
+    jurn == "AUS" ~ "Australian",
+    jurn == "NSW" ~ "NSW",
+    jurn == "NT" ~ "Northern Territory",
+    jurn == "QLD" ~ "Queensland",
+    jurn == "SA" ~ "South Australian",
+    jurn == "TAS" ~ "Tasmanian",
+    jurn == "VIC" ~ "Victorian",
+    jurn == "WA" ~ "Western Australian"
+  )
+  jurn_adj
+}
+
+jurn_adj("Vic")
 
 chart_jurn_hist_naplan_num <- function(jurn) {
     jurn_chart <- filter(naplan_numeracy_eyl, STATE == jurn, SUBGROUP == "All") %>%  #Filter out data on sub groups by demographic characteristics and states
@@ -160,8 +193,8 @@ chart_jurn_hist_naplan_num <- function(jurn) {
         x = "Year",
         y = "Numeracy effective years of learning",
         colour = "Year level",
-        title = glue("NAPLAN suggests {jurn} numeracy achievement is stagnating over time"),
-        subtitle = glue("Effective years of learning in numeracy at each year level in {jurn}")
+        title = glue("NAPLAN suggests {jurn_adj(jurn)} numeracy achievement is stagnating over time"),
+        subtitle = glue("Effective years of learning in numeracy at each year level in {jurn_label(jurn)}")
       ) + #Label the chart
       geom_text(data = label_lines, aes(label = chart_label), size = 4, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
       annotate(geom = "rect", xmin = 2019.05, xmax = 2020.95, ymin = -Inf, ymax = Inf,
@@ -182,7 +215,45 @@ chart_jurn_hist_naplan_num <- function(jurn) {
       jurn_chart
     }
 
-chart_jurn_hist_naplan_num("VIC")
+#Save ACT
+ACT_chart <- chart_jurn_hist_naplan_num("ACT")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_ACT.png", ACT_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(ACT_chart, "atlas/Historical_NAPLAN_numeracy_EYL_ACT.pptx", "fullslide")
+
+#Save NSW
+NSW_chart <- chart_jurn_hist_naplan_num("NSW")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_NSW.png", NSW_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(NSW_chart, "atlas/Historical_NAPLAN_numeracy_EYL_NSW.pptx", "fullslide")
+
+#Save QLD
+QLD_chart <- chart_jurn_hist_naplan_num("QLD")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_QLD.png", QLD_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(QLD_chart, "atlas/Historical_NAPLAN_numeracy_EYL_QLD.pptx", "fullslide")
+
+#Save NT
+NT_chart <- chart_jurn_hist_naplan_num("NT")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_NT.png", NT_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(NT_chart, "atlas/Historical_NAPLAN_numeracy_EYL_NT.pptx", "fullslide")
+
+#Save SA
+SA_chart <- chart_jurn_hist_naplan_num("SA")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_SA.png", SA_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(SA_chart, "atlas/Historical_NAPLAN_numeracy_EYL_SA.pptx", "fullslide")
+
+#Save VIC
+VIC_chart <- chart_jurn_hist_naplan_num("VIC")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_VIC.png", VIC_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(VIC_chart, "atlas/Historical_NAPLAN_numeracy_EYL_VIC.pptx", "fullslide")
+
+#Save TAS
+TAS_chart <- chart_jurn_hist_naplan_num("TAS")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_TAS.png", TAS_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(TAS_chart, "atlas/Historical_NAPLAN_numeracy_EYL_TAS.pptx", "fullslide")
+
+#Save WA
+WA_chart <- chart_jurn_hist_naplan_num("WA")
+grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_WA.png", WA_chart, "fullslide", save_data = TRUE)
+grattan_save_pptx(WA_chart, "atlas/Historical_NAPLAN_numeracy_EYL_WA.pptx", "fullslide")
 
 # 6. Check the trend over time in each jurisdiction.
 # Note: Run a linear regression to test if year predicts score. See if the average annual trend is at least 0.25 EYL, using the formulae on page 128 and 129 here. https://www.nap.edu.au/docs/default-source/default-document-library/naplan-2022-technical-report.pdf
