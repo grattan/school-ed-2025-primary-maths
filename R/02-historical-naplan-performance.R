@@ -83,7 +83,7 @@ base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
     geom_line() +  #plot a line chart
     geom_point(size = 1) + #and plot a data points, small size
     grattan_y_continuous(limits = c(1, 10), breaks = c(0, 3, 5, 7, 9)) + #TBC Adjust the scale to show chart from 0 to 9, and check marks at 3, 5, 7 and 9
-    grattan_x_continuous(limits = c(2008, 2023), breaks = c(2008, 2012, 2016, 2020, 2022)) + #Adjust x-axis to start at 2008 and end at 2022
+    grattan_x_continuous(limits = c(2007.5, 2022.5), breaks = c(2008, 2012, 2016, 2020, 2022)) + #Adjust x-axis to start at 2008 and end at 2022
     theme_grattan(chart_type = "normal") + #adopt grattan chart design and themes
     labs(
         x = "Year",
@@ -93,16 +93,18 @@ base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
         subtitle = "Effective years of learning in numeracy at each year level"
         ) + #Label the chart
     geom_text(data = label_lines, aes(label = chart_label), size = 4, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
+    annotate(geom = "rect", xmin = 2019.05, xmax = 2020.95, ymin = -Inf, ymax = Inf,
+           fill = "white", col = NA) +
     annotate("label",
            x = 2020,
-           y = 1,
+           y = 5.5,
            label = "NAPLAN cancelled due to COVID-19",
            label.padding = unit(0.9, "lines"),
            label.size = 0,
            angle = 90,
-           hjust = 0,
+           hjust = 0.5,
            vjust = 0.5,
-           size = 3.5,  # Adjust text size
+           size = 4,  # Adjust text size
            color = "grey"  # Change text color
     ) #Add a label for the lack of 2020 data
 
