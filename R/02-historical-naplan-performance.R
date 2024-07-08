@@ -92,9 +92,23 @@ base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
         title = "Numeracy achievement is stagnating over time",
         subtitle = "Effective years of learning in numeracy at each year level"
         ) + #Label the chart
-    geom_text(data = label_lines, aes(label = chart_label)) #Label the chart lines, reduce the text size by (relatively) half
+    geom_text(data = label_lines, aes(label = chart_label), size = 4, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
+    annotate("label",
+           x = 2020,
+           y = 1,
+           label = "NAPLAN cancelled due to COVID-19",
+           label.padding = unit(0.9, "lines"),
+           label.size = 0,
+           angle = 90,
+           hjust = 0,
+           vjust = 0.5,
+           size = 3.5,  # Adjust text size
+           color = "grey"  # Change text color
+    ) #Add a label for the lack of 2020 data
 
 base_chart
+
+grattan_save("atlas/Historical_NAPLAN_Numeracy_EYL.png", base_chart, "fullslide", save_data = TRUE)
 
 # 5. Create a function to chart the NAPLAN scores in the past decade (2012-22) for each jurisdiction
 # Note: This chapter provides an introduction to functional programming. https://r4ds.had.co.nz/functions.html.
