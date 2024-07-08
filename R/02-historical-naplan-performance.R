@@ -75,19 +75,20 @@ filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
 
 #Chart data with x = year, y = naplan EYL, line colour = year level
 
-base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
-  group_by(YEAR_LEVEL, CALENDAR_YEAR) %>%
-    ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) +
-    geom_line() +
-    geom_point(size = 1) +
-    theme_grattan(chart_type = "normal") +
-    labs(
+base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%  #Filter out data on sub groups by demographic characteristics and states
+
+    ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) #plot using year level as the grouping for the lines and colour each distinctly
+    + geom_line() #plot a line chart
+    + geom_point(size = 1) #and plot a data points, small size
+    + grattan_y_continuous() #TBC Adjust the scale to show off numbers
+    + theme_grattan(chart_type = "normal") #adopt grattan chart design and themes
+    + labs(
         x = "Year",
         y = "Numeracy effective years of learning",
         colour = "Year level",
         title = "Numeracy achievement is stagnating over time",
         subtitle = "Effective years of learning in numeracy at each year level"
-        )
+        )  #label the chart
 
 base_chart
 
