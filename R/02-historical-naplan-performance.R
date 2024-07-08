@@ -215,6 +215,8 @@ chart_jurn_hist_naplan_num <- function(jurn) {
       jurn_chart
     }
 
+#Could write a function to create and save charts for each jurn. Would need to work out how to use a variable to create a file path, probably using the glue() function. Can't really be bothered right now.
+
 #Save ACT
 ACT_chart <- chart_jurn_hist_naplan_num("ACT")
 grattan_save("atlas/Historical_NAPLAN_numeracy_EYL_ACT.png", ACT_chart, "fullslide", save_data = TRUE)
