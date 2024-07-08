@@ -61,17 +61,20 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 # Note: You could adapt lines 77 to 110 in my code here: https://github.com/grattan/school-ed-2024-improving_schools/blob/main/R/03-chronic_underperformers.R
 
 
-#Filter the naplan numeracy results for year level and year
-
 library(ggplot2)
 library(scales)
 
 names(naplan_numeracy_eyl)
 
-filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
-    group_by(YEAR_LEVEL)
+#Create data sets for chart line labels
 
-
+label_lines <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All", CALENDAR_YEAR == 2022) %>% #Filter out data on sub groups by demographic characteristics and states, and then keep only 2022 data - 1 dot per line, last on RHS
+    mutate(chart_label = case_when(
+      YEAR_LEVEL == 3 ~ "Year 3",
+      YEAR_LEVEL == 5 ~ "Year 5",
+      YEAR_LEVEL == 7 ~ "Year 7",
+      YEAR_LEVEL == 9 ~ "Year 9"
+    ))
 
 #Chart data with x = year, y = naplan EYL, line colour = year level
 
@@ -79,7 +82,8 @@ base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
     ggplot(aes(x = CALENDAR_YEAR, y = numeracy_eyl, colour = YEAR_LEVEL, group = YEAR_LEVEL)) +  #plot using year level as the grouping for the lines and colour each distinctly
     geom_line() +  #plot a line chart
     geom_point(size = 1) + #and plot a data points, small size
-    grattan_y_continuous(limits = c(2, 10), breaks = c(0, 3, 5, 7, 9)) + #TBC Adjust the scale to show chart from 0 to 9, and check marks at 3, 5, 7 and 9
+    grattan_y_continuous(limits = c(1, 10), breaks = c(0, 3, 5, 7, 9)) + #TBC Adjust the scale to show chart from 0 to 9, and check marks at 3, 5, 7 and 9
+    grattan_x_continuous(limits = c(2008, 2023), breaks = c(2008, 2012, 2016, 2020, 2022)) + #Adjust x-axis to start at 2008 and end at 2022
     theme_grattan(chart_type = "normal") + #adopt grattan chart design and themes
     labs(
         x = "Year",
@@ -87,7 +91,8 @@ base_chart <- filter(naplan_numeracy_eyl, STATE == "AUS", SUBGROUP == "All") %>%
         colour = "Year level",
         title = "Numeracy achievement is stagnating over time",
         subtitle = "Effective years of learning in numeracy at each year level"
-        )  #label the chart
+        ) + #Label the chart
+    geom_text(data = label_lines, aes(label = chart_label)) #Label the chart lines, reduce the text size by (relatively) half
 
 base_chart
 
