@@ -63,6 +63,7 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 
 library(ggplot2)
 library(scales)
+library(glue)
 
 names(naplan_numeracy_eyl)
 
@@ -159,8 +160,8 @@ chart_jurn_hist_naplan_num <- function(jurn) {
         x = "Year",
         y = "Numeracy effective years of learning",
         colour = "Year level",
-        title = glue("NAPLAN suggests {all_jurns_labels$jurn_adj} numeracy achievement is stagnating over time"),
-        subtitle = glue("Effective years of learning in numeracy at each year level in {all_jurns_labels$STATE}")
+        title = glue("NAPLAN suggests {jurn} numeracy achievement is stagnating over time"),
+        subtitle = glue("Effective years of learning in numeracy at each year level in {jurn}")
       ) + #Label the chart
       geom_text(data = label_lines, aes(label = chart_label), size = 4, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
       annotate(geom = "rect", xmin = 2019.05, xmax = 2020.95, ymin = -Inf, ymax = Inf,
