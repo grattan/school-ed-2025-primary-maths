@@ -230,7 +230,7 @@ school_type_staff_data <- acara_staff_data |>
 combined_in_primary <- 
   (school_type_school_profile |> 
   filter(school_type == "Combined") |> 
-  pull(n)) - (school_type_staff_data$n[2] - school_type_school_profile$n[2] - school_type_school_profile$n[4]/2) # Assume that half of all teachers in special schools work with primary aged kids
+  pull(n)) - (school_type_staff_data$n[2] - school_type_school_profile$n[2] - school_type_school_profile$n[3]/2) # Assume that half of all teachers in special schools work with primary aged kids
 
 # Determine how many of the combined and special staff work in primaries
 school_type_australia <- 
