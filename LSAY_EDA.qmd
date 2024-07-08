@@ -476,3 +476,77 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 +-----------------------+----------------------------------------------+
 | 90513                 | Counselling                                  |
 +-----------------------+----------------------------------------------+
+
+
+```{r}
+studying_teachers <- unique(STUDYING_TEACHERS_2006$STIDSTD)
+# filter the LSAY2003 data for those IDs and high school leaving variables.
+studying_teachers_y12 <- LSAY2006 %>% 
+  filter(STIDSTD %in% studying_teachers) %>% 
+  select(STIDSTD, LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) %>%
+   mutate(Studying_Teacher = rowSums(select(., LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) == 1, na.rm = TRUE) > 0)
+```
+
+# PISA PVs
+
+-   Determine the percentage of primary teachers in the sample below the National proficient standard
+
+-   Determine the average achievement of primary teachers in the sample (in PISA points)
+
+```{r}
+
+teacher_ids <- LEGIT_TEACHERS_2006$STIDSTD
+teacher_data_2006 <- LSAY2006[LSAY2006$STIDSTD %in% teacher_ids, ]
+
+
+options(survey.lonely.psu = "adjust")
+
+# school-level stratification and student-level sampling
+teacher_design_y06 <- svydesign(
+  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
+  strata = ~STATE + SECTOR,  # stratification variables as per tech report
+  weights = ~W_FSTUWT,  # weights column in the data frame
+  data = teacher_data_2006, # teacher data frame
+  nest = TRUE  
+)
+```
+
+
+```{r}
+library(survey)
+
+# mean math scores for each teacher across each pv first
+mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y06, svymean)
+
+# creating a data frame with ID and mean for each PV for each ID
+teacher_means_y06 <- data.frame(
+  STIDSTD = mean_pv1_by_teacher$STIDSTD,
+  mean_pv1 = mean_pv1_by_teacher$PV1MATH,
+  mean_pv2 = mean_pv2_by_teacher$PV2MATH,
+  mean_pv3 = mean_pv3_by_teacher$PV3MATH,
+  mean_pv4 = mean_pv4_by_teacher$PV4MATH,
+  mean_pv5 = mean_pv5_by_teacher$PV5MATH
+)
+
+# second average across the row for each teacher
+teacher_means_y06$mean_score = rowMeans(teacher_means_y06[, -1])
+
+proficient_standard <- 482 # level 3 proficient standard - **double check if this has changed**
+
+# how many teachers are below proficient standard (482)
+teacher_means_y06$below_prof_avg = teacher_means_y06$mean_score < proficient_standard
+
+
+```
+
+```{r}
+# TRUE being below the 482 proficient standard (level 3)
+teachers_below_profstand_y06 <- table(teacher_means_y06$below_prof_avg)
+teachers_below_profstand_y06
+```
+
+
