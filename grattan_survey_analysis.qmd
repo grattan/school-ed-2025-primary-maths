@@ -51,7 +51,9 @@ We first import the data straight from Qualtrics following the instructions [her
 
 # To connect to the Qualtrics API, uncomment the following line of code the first time you run this  script, and then restart R.
 
-qualtrics_api_credentials(api_key = "yKIwTusJkJAY9esZ4GQkqZKURN7Pq1RxI6vkvD4Q", base_url = "melbourneuni.au1.qualtrics.com", install = TRUE)
+qualtrics_api_credentials(api_key = "yKIwTusJkJAY9esZ4GQkqZKURN7Pq1RxI6vkvD4Q", base_url = "melbourneuni.au1.qualtrics.com", install = TRUE, overwrite = TRUE)
+
+readRenviron("~/.Renviron")
 
 surveys <- all_surveys()
 
