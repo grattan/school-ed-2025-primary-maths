@@ -1,8 +1,7 @@
 name: deploy website.R
 
 on:
-  schedule:
-    - cron: "0 */2 * * *"
+  push
 
 jobs:
   import-data:
