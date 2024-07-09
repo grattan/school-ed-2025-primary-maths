@@ -2,7 +2,7 @@ name: deploy website.R
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: '* */2 * * *'
 
 jobs:
   update-website:
