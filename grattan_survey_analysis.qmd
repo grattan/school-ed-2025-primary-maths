@@ -368,7 +368,7 @@ ses <-
 # Location
 location <- 
   left_join(
-    demographic_counts("Q21"),
+    demographic_counts("Q21") |> arrange(-n),
   (
   acara_school_data |> 
   mutate(simplified_geography = case_when(
