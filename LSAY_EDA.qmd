@@ -26,6 +26,9 @@ LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.
 How many primary school teachers are in the data set?
 
 ASCED code looking for 070103 (Teacher Education: Primary) Looking at field of study: Main area of study/training in this course.
+
+There were **29** people studying primary school teaching at some point in the Y03 data.
+
 ```{r}
 #0 and 1 if 70103
 #sum rows function
@@ -49,12 +52,12 @@ UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
 UNIQUE_STUDYING_TEACHERS
 
 
- kable_table <- kbl(UNIQUE_STUDYING_TEACHERS, caption = "Number of Teachers in the Y03 Data.") %>%
+ UNIQUE_STUDYING_TEACHERS_Y03 <- kbl(UNIQUE_STUDYING_TEACHERS, caption = "Count of Primary School Education Students in Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
 
-kable_table
+UNIQUE_STUDYING_TEACHERS_Y03
 
 ```
 
@@ -84,7 +87,7 @@ Student 10049 went into another field of study four years after: Human Movement 
 ```{r}
 # SEEING THE AMOUNT PEOPLE WHO WERE PRIMARY SCHOOL TEACHERS AT ANY POINT
 
-UNIQUE_LEGIT_TEACHERS <- LSAY2003 %>%
+UNIQUE_TEACHERS_Y03 <- LSAY2003 %>%
   # SELECTING VARIABLES FOR WHAT TYPE OF WORK DO YOU DO
   select(STIDSTD, LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029) %>%
   # CHARACTER TYPE ACROSS
@@ -99,7 +102,12 @@ UNIQUE_LEGIT_TEACHERS <- LSAY2003 %>%
   mutate(legit_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
   filter(legit_teachers) #FILTER FOR TRUE CONDITION
 
-UNIQUE_LEGIT_TEACHERS
+UNIQUE_TEACHERS_Y03
+
+ UNIQUE_TEACHERS_Y03 <- kbl(UNIQUE_TEACHERS_Y03, caption = "Number of Teachers in the Y03 Data.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1200px", height = "400px")
 
 ```
 
@@ -149,6 +157,31 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 | 80101          | Accounting                                           |
 +----------------+------------------------------------------------------+
 
+```{r}
+fields <- data.frame(
+  Codes = c(70101, 70103, 70109, 70199, 70115, 90503, 91703, 92101, 100101, 80101),
+  `Field_of_Education` = c(
+    "Teacher Education: Early Childhood",
+    "Teacher Education: Primary",
+    "Teacher Education: Vocational Education and Training",
+    "Teacher Education, n.e.c.",
+    "English as a Second Language Teaching",
+    "Children's Services", 
+    "Religious Studies", 
+    "Sport and Recreation Activities",
+    "Music", "Accounting"
+  )
+)
+
+ fields <- kbl(fields, caption = "Area of Study for Teachers in Y03.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+fields
+
+```
+
+
 # Understanding how many school leavers enrol in primary school teaching courses
 ```{r}
 #taking the IDs of individuals who had enrolled in primary school teaching at some point
@@ -162,8 +195,6 @@ studying_teachers_y12 <- LSAY2003 %>%
 ```
 
 Only two of those studying primary school teaching in 2003 LSAY were school leavers. However both seemed to have return back to school to complete.
-
-What year level were these two when they left (cross-check to determine if its one year)
 
 2999 & 10049 (leavers)
 
@@ -184,7 +215,11 @@ school_leavers_year <- LSAY2003 %>%
 school_leavers_year
 ```
 
-2999 LEFT IN 2003, 10049 LEFT IN 2004. \* 2999 left in 2003 then went back to complete year 12 in 2005 \* 10049 left in 2004 and then went back to complete year 12 in 2005.
+**2999 LEFT IN 2003, 10049 LEFT IN 2004.**
+
+* 2999 left in 2003 then went back to complete year 12 in 2005 
+
+* 10049 left in 2004 and then went back to complete year 12 in 2005.
 
 # PISA PVs
 
