@@ -76,13 +76,11 @@ kbl(closer_look, caption = "Closer look at students who left teaching.") %>%
 closer_look
 ```
 
-Student 2659 went into another field of study four years after: Business management (80301)
-Student 10049 went into another field of study four years after: Human Movement (69903)
+Student 2659 went into another field of study four years after: Business management (80301) Student 10049 went into another field of study four years after: Human Movement (69903)
 
 ## How many people were working as a primary school teacher at any point of responding to the questions?
-"What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029). 
-* ANSZCO code = 2412 for primary school teachers.
 
+"What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029). \* ANSZCO code = 2412 for primary school teachers.
 
 ```{r}
 # SEEING THE AMOUNT PEOPLE WHO WERE PRIMARY SCHOOL TEACHERS AT ANY POINT
@@ -104,7 +102,7 @@ UNIQUE_TEACHERS_Y03 <- LSAY2003 %>%
 
 UNIQUE_TEACHERS_Y03
 
- UNIQUE_TEACHERS_Y03 <- kbl(UNIQUE_TEACHERS_Y03, caption = "Number of Teachers in the Y03 Data.") %>%
+ UNIQUE_TEACHERS_Y03_table <- kbl(UNIQUE_TEACHERS_Y03, caption = "Number of Teachers in the Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
@@ -115,7 +113,7 @@ What did these people study?
 
 ```{r}
 # Selecting IDs which correlate to teachers 
-teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% UNIQUE_LEGIT_TEACHERS$STIDSTD, ]
+teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% UNIQUE_TEACHERS_Y03$STIDSTD, ]
 
 # Using those IDs and selecting area of study to see their area of study
 selected_columns <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
@@ -123,39 +121,39 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
 
-+----------------+------------------------------------------------------+
-| Codes          | Field of Education                                   |
-+================+======================================================+
-| 70101          | Teacher Education: Early Childhood                   |
-+----------------+------------------------------------------------------+
-| 70103          | Teacher Education: Primary                           |
-+----------------+------------------------------------------------------+
-| 70109          | Teacher Education: Vocational Education and Training |
-+----------------+------------------------------------------------------+
-| 70199          | Teacher Education, n.e.c.                            |
-|                |                                                      |
-|                | -   special needs                                    |
-+----------------+------------------------------------------------------+
-| 70115          | English as a Second Language Teaching                |
-+----------------+------------------------------------------------------+
-| 90503          | Children's Services                                  |
-|                |                                                      |
-|                | (Human Welfare Studies and Services)                 |
-+----------------+------------------------------------------------------+
-| 91703          | Religious Studies                                    |
-|                |                                                      |
-|                | (Philosophy and Religious Studies)                   |
-+----------------+------------------------------------------------------+
-| 92101          | Sport and Recreation Activities                      |
-|                |                                                      |
-|                | (Sport and Recreation)                               |
-+----------------+------------------------------------------------------+
-| 100101         | Music                                                |
-|                |                                                      |
-|                | (Performing Arts)                                    |
-+----------------+------------------------------------------------------+
-| 80101          | Accounting                                           |
-+----------------+------------------------------------------------------+
++------------+------------------------------------------------------+
+| Codes      | Field of Education                                   |
++============+======================================================+
+| 70101      | Teacher Education: Early Childhood                   |
++------------+------------------------------------------------------+
+| 70103      | Teacher Education: Primary                           |
++------------+------------------------------------------------------+
+| 70109      | Teacher Education: Vocational Education and Training |
++------------+------------------------------------------------------+
+| 70199      | Teacher Education, n.e.c.                            |
+|            |                                                      |
+|            | -   special needs                                    |
++------------+------------------------------------------------------+
+| 70115      | English as a Second Language Teaching                |
++------------+------------------------------------------------------+
+| 90503      | Children's Services                                  |
+|            |                                                      |
+|            | (Human Welfare Studies and Services)                 |
++------------+------------------------------------------------------+
+| 91703      | Religious Studies                                    |
+|            |                                                      |
+|            | (Philosophy and Religious Studies)                   |
++------------+------------------------------------------------------+
+| 92101      | Sport and Recreation Activities                      |
+|            |                                                      |
+|            | (Sport and Recreation)                               |
++------------+------------------------------------------------------+
+| 100101     | Music                                                |
+|            |                                                      |
+|            | (Performing Arts)                                    |
++------------+------------------------------------------------------+
+| 80101      | Accounting                                           |
++------------+------------------------------------------------------+
 
 ```{r}
 fields <- data.frame(
@@ -181,8 +179,8 @@ fields
 
 ```
 
-
 # Understanding how many school leavers enrol in primary school teaching courses
+
 ```{r}
 #taking the IDs of individuals who had enrolled in primary school teaching at some point
 studying_teachers <- unique(UNIQUE_STUDYING_TEACHERS$STIDSTD)
@@ -217,9 +215,9 @@ school_leavers_year
 
 **2999 LEFT IN 2003, 10049 LEFT IN 2004.**
 
-* 2999 left in 2003 then went back to complete year 12 in 2005 
+-   2999 left in 2003 then went back to complete year 12 in 2005
 
-* 10049 left in 2004 and then went back to complete year 12 in 2005.
+-   10049 left in 2004 and then went back to complete year 12 in 2005.
 
 # PISA PVs
 
@@ -229,49 +227,56 @@ school_leavers_year
 
 ```{r}
 # understanding PVs (exploratory understanding)
+# using intsvy package to calculate average scores for each state
 library(intsvy)
-pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) #1:5 will have to be amended to 10 post 2015
-# calculate average mathematics score by state PV1MATH - PV5MATH
+pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) %>%
+  mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"))
+
+ pisa_state <- kbl(pisa_state, caption = "Average Math Performance Across States") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+pisa_state
 ```
 
-1 = ACT, 2 = NSW, 3 = VIC, 4 = QLD, 5 = SA, 6 = WA, 7 = TAS, 8 = NT
-
-https://www.acer.org/files/PISA_screen.pdf
-
-" In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of PISA 2003. "
-
-https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm#:\~:text=The%20R%20package%20intsvy%20allows,other%20formats%20directly%20into%20R.
+"In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of [PISA 2003."](https://www.acer.org/files/PISA_screen.pdf)
 
 ```{r}
-
+# Using Survey Package to calculate the average math scores for teachers
 
 # include only PS teachers
-teacher_ids <- UNIQUE_LEGIT_TEACHERS$STIDSTD
+teacher_ids <- UNIQUE_TEACHERS_Y03$STIDSTD
 teacher_data <- LSAY2003[LSAY2003$STIDSTD %in% teacher_ids, ]
 
-# survey options to handle strata with only one PSU
 options(survey.lonely.psu = "adjust")
 
-# create survey design object: stratification by schoolid? each obs independent
-teacher_design <- svydesign(ids = ~1, strata = ~SCHOOLID, weights = ~W_FSTUWT, data = teacher_data)
+# school-level stratification and student-level sampling
+teacher_design_03 <- svydesign(
+  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
+  strata = ~STATEID + SECTOR,  # stratification variables as per tech report
+  weights = ~W_FSTUWT,  # weights column in the data frame
+  data = teacher_data, # teacher data frame
+  nest = TRUE  
+)
 
-# calc mean math scores for each PV
-mean_pv1 <- svymean(~PV1MATH, teacher_design)
-mean_pv2 <- svymean(~PV2MATH, teacher_design)
-mean_pv3 <- svymean(~PV3MATH, teacher_design)
-mean_pv4 <- svymean(~PV4MATH, teacher_design)
-mean_pv5 <- svymean(~PV5MATH, teacher_design)
+# mean math scores for each plausible value
+mean_pv1 <- svymean(~PV1MATH, teacher_design_03)
+mean_pv2 <- svymean(~PV2MATH, teacher_design_03)
+mean_pv3 <- svymean(~PV3MATH, teacher_design_03)
+mean_pv4 <- svymean(~PV4MATH, teacher_design_03)
+mean_pv5 <- svymean(~PV5MATH, teacher_design_03)
 
-# extracting means
+# taking only the means
 mean_pv1_val <- coef(mean_pv1)
 mean_pv2_val <- coef(mean_pv2)
 mean_pv3_val <- coef(mean_pv3)
 mean_pv4_val <- coef(mean_pv4)
 mean_pv5_val <- coef(mean_pv5)
 
-# overall mean score
+# finding the overall mean score by averaging all the means of PVs
 overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
 
+# average math score for teachers
 overall_mean_math_pv
 
 #histograms
@@ -283,8 +288,8 @@ overall_mean_math_pv
 
 ```
 
-```{r}
-# fact checking to see if survey gives similar results to intsvy package
+```{r eval=FALSE, echo=FALSE}
+# this chunk is just checking to see if survey package gives similar results to intsvy package
 
 # survey options to handle strata with only one PSU
 options(survey.lonely.psu = "adjust")
@@ -324,56 +329,22 @@ overall_school_mean #using intsvy package method
 
 ```
 
-There is a discrepancy between the two different methods. https://www.oecd.org/pisa/data/httpoecdorgpisadatabase-instructions.htm `instvy`
+There is a discrepancy between the two different methods.
 
-```{r}
-options(survey.lonely.psu = "adjust")
-
-# school-level stratification and student-level sampling
-teacher_design <- svydesign(
-  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
-  strata = ~STATEID + SECTOR,  # stratification variables as per tech report
-  weights = ~W_FSTUWT,  # weights column in the data frame
-  data = teacher_data, # teacher data frame
-  nest = TRUE  
-)
-
-# mean math scores for each plausible value
-mean_pv1 <- svymean(~PV1MATH, teacher_design)
-mean_pv2 <- svymean(~PV2MATH, teacher_design)
-mean_pv3 <- svymean(~PV3MATH, teacher_design)
-mean_pv4 <- svymean(~PV4MATH, teacher_design)
-mean_pv5 <- svymean(~PV5MATH, teacher_design)
-
-# taking only the means
-mean_pv1_val <- coef(mean_pv1)
-mean_pv2_val <- coef(mean_pv2)
-mean_pv3_val <- coef(mean_pv3)
-mean_pv4_val <- coef(mean_pv4)
-mean_pv5_val <- coef(mean_pv5)
-
-# finding the overall mean score by averaging all the means of PVs
-overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
-
-# average math score for teachers
-overall_mean_math_pv
-
-```
-
-http://software-tecnico-libre.es/en/article-by-topic/all_sections/all-topics/all-articles/pisa-data-analytics-plausible-values "When we perform any calculations involving the plausible values, the procedure is always the same, we compute separately with each of the five values and, finally, we perform the mean of the five results, either regression coefficients, means, correlation coefficients, or any other estimator." --\> we assume survey package is handling the weights in the set up --\> so in some instances STIDSTD (e.g.) could have multiple observations within it, which is why we need to do the double mean
+Seems as though the level 3 proficiency levels for mathematics literacy is 482 in later years as well. \* [2018](https://nces.ed.gov/surveys/pisa/pisa2018/pdf/MathProfLevelDescriptionV2.pdf) \* [2022](https://nces.ed.gov/surveys/pisa/pisa2022/docs/DescriptionsOf2022ProficiencyLevels-TableI31.pdf)
 
 ```{r}
 library(survey)
 
 # mean math scores for each teacher across each pv first
-mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design, svymean)
-mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design, svymean)
-mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design, svymean)
-mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design, svymean)
-mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design, svymean)
+mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design_03, svymean)
+mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design_03, svymean)
+mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design_03, svymean)
+mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design_03, svymean)
+mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design_03, svymean)
 
 # creating a data frame with ID and mean for each PV for each ID
-teacher_means <- data.frame(
+teacher_means_03 <- data.frame(
   STIDSTD = mean_pv1_by_teacher$STIDSTD,
   mean_pv1 = mean_pv1_by_teacher$PV1MATH,
   mean_pv2 = mean_pv2_by_teacher$PV2MATH,
@@ -383,29 +354,29 @@ teacher_means <- data.frame(
 )
 
 # second average across the row for each teacher
-teacher_means$mean_score = rowMeans(teacher_means[, -1])
+teacher_means_03$mean_score = rowMeans(teacher_means_03[, -1])
 
 threshold <- 549.5463 # average for teacher performance
 proficient_standard <- 482 # level 3 proficient standard
 
 # how many teachers are below teacher avg
-teacher_means$below_avg_teacher = teacher_means$mean_score < threshold 
+teacher_means_03$below_avg_teacher = teacher_means_03$mean_score < threshold 
 
 # how many teachers are below proficient standard (482)
-teacher_means$below_prof_avg = teacher_means$mean_score < proficient_standard
+teacher_means_03$below_prof_avg = teacher_means_03$mean_score < proficient_standard
 
 
 ```
 
 ```{r}
 # seeing how many are below average -- true = below average (549.5463)
-teachers_below_avg <- table(teacher_means$below_prof_avg)
+teachers_below_avg <- table(teacher_means_03$below_prof_avg)
 teachers_below_avg
 ```
 
 ```{r}
 # seeing how many are below proficient standard -- true = below proficient standard (482)
-teachers_below_profstand <- table(teacher_means$below_prof_avg)
+teachers_below_profstand <- table(teacher_means_03$below_prof_avg)
 teachers_below_profstand
 ```
 
@@ -470,43 +441,58 @@ selected_columns <- c('STIDSTD', 'LBC087', 'LCC087', 'LDC087', 'LEC087', 'LFC087
 teacher_jobs <- teacher_jobs[, selected_columns]
 ```
 
-+----------------------+---------------------------------------------+
-| Code                 | Field                                       |
-+======================+=============================================+
-| 100705               | Written Communication                       |
-+----------------------+---------------------------------------------+
-| 100103               | Drama and Theatre Studies                   |
-+----------------------+---------------------------------------------+
-| 100101               | Music                                       |
-+----------------------+---------------------------------------------+
-| 80399                | Business and Management, n.e.c.             |
-+----------------------+---------------------------------------------+
-| 70103                | Teacher Education: Primary                  |
-+----------------------+---------------------------------------------+
-| 70101                | Teacher Education: Early Childhood          |
-+----------------------+---------------------------------------------+
-| 70105                | Teacher Education: Secondary                |
-+----------------------+---------------------------------------------+
-| 70199                | Teacher Education, n.e.c.                   |
-+----------------------+---------------------------------------------+
-| 91701                | Philosophy                                  |
-+----------------------+---------------------------------------------+
-| 60901                | Optometry                                   |
-+----------------------+---------------------------------------------+
-| 61399                | Public Health, n.e.c.                       |
-+----------------------+---------------------------------------------+
-| 60101                | General Medicine                            |
-+----------------------+---------------------------------------------+
-| 91703                | Religious Studies                           |
-+----------------------+---------------------------------------------+
-| 80101                | Accounting                                  |
-+----------------------+---------------------------------------------+
-| 81101                | Banking and Finance                         |
-+----------------------+---------------------------------------------+
-| 91523                | Literature                                  |
-+----------------------+---------------------------------------------+
-| 90513                | Counselling                                 |
-+----------------------+---------------------------------------------+
+| Code   | Field                              |
+|--------|------------------------------------|
+| 100705 | Written Communication              |
+| 100103 | Drama and Theatre Studies          |
+| 100101 | Music                              |
+| 80399  | Business and Management, n.e.c.    |
+| 70103  | Teacher Education: Primary         |
+| 70101  | Teacher Education: Early Childhood |
+| 70105  | Teacher Education: Secondary       |
+| 70199  | Teacher Education, n.e.c.          |
+| 91701  | Philosophy                         |
+| 60901  | Optometry                          |
+| 61399  | Public Health, n.e.c.              |
+| 60101  | General Medicine                   |
+| 91703  | Religious Studies                  |
+| 80101  | Accounting                         |
+| 81101  | Banking and Finance                |
+| 91523  | Literature                         |
+| 90513  | Counselling                        |
+
+```{r}
+aos_2006 <- data.frame(
+  Code = c(100705, 100103, 100101, 80399, 70103, 70101, 70105, 70199, 91701, 60901, 61399, 60101, 91703, 80101, 81101, 91523, 90513),
+  Field = c(
+    "Written Communication",
+    "Drama and Theatre Studies",
+    "Music",
+    "Business and Management, n.e.c.",
+    "Teacher Education: Primary",
+    "Teacher Education: Early Childhood",
+    "Teacher Education: Secondary",
+    "Teacher Education, n.e.c.",
+    "Philosophy",
+    "Optometry",
+    "Public Health, n.e.c.",
+    "General Medicine",
+    "Religious Studies",
+    "Accounting",
+    "Banking and Finance",
+    "Literature",
+    "Counselling"
+  )
+)
+aos_2006 <- kable(aos_2006, caption = "Field of Education Codes 2006", align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", bold = TRUE, color = "white") %>%
+  column_spec(1, bold = TRUE)
+
+aos_2006
+
+
+```
 
 ```{r}
 studying_teachers <- unique(STUDYING_TEACHERS_2006$STIDSTD)
@@ -569,13 +555,31 @@ proficient_standard <- 482 # level 3 proficient standard - **double check if thi
 # how many teachers are below proficient standard (482)
 teacher_means_y06$below_prof_avg = teacher_means_y06$mean_score < proficient_standard
 
+teacher_means_y06_table <- kable(teacher_means_y06, caption = "Proficiency Status of Teachers in 2006", align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", color = "black") %>%
+  scroll_box(width = "1000px", height = "300px")
+
+teacher_means_y06_table
 
 ```
 
 ```{r}
 # TRUE being below the 482 proficient standard (level 3)
+
 teachers_below_profstand_y06 <- table(teacher_means_y06$below_prof_avg)
+names(teachers_below_profstand_y06) <- c("Above Proficiency", "Below Proficiency")
 teachers_below_profstand_y06
+
+# formatting
+teachers_below_profstand_y06_df <- as.data.frame(teachers_below_profstand_y06)
+
+proficiency_y06_table <- kable(teachers_below_profstand_y06_df, caption = "Proficiency Status of Teachers in 2006", col.names = c("Proficiency Status", "Count"), align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", color = "black") %>%
+  column_spec(column = c(1,2), color = "black")
+
+proficiency_y06_table
 ```
 
 # LSAY 2009
@@ -638,35 +642,99 @@ teacher_jobs_2009 <- teacher_jobs_2009[, selected_columns]
 
 What did they study?
 
-+--------------------+-------------------------------------------------+
-| Code               | Field                                           |
-+====================+=================================================+
-| 90701              | Psychology                                      |
-+--------------------+-------------------------------------------------+
-| 70199              | Teacher Education, n.e.c.                       |
-+--------------------+-------------------------------------------------+
-| 79999              | Education, n.e.c.                               |
-+--------------------+-------------------------------------------------+
-| 90503              | Children's Services                             |
-+--------------------+-------------------------------------------------+
-| 60501              | Pharmacy                                        |
-+--------------------+-------------------------------------------------+
-| 70103              | Teacher Education: Primary                      |
-+--------------------+-------------------------------------------------+
-| 70105              | Teacher Education: Secondary                    |
-+--------------------+-------------------------------------------------+
-| 61799              | Rehabilitation Therapies, n.e.c.                |
-+--------------------+-------------------------------------------------+
+| Code  | Field                            |
+|-------|----------------------------------|
+| 90701 | Psychology                       |
+| 70199 | Teacher Education, n.e.c.        |
+| 79999 | Education, n.e.c.                |
+| 90503 | Children's Services              |
+| 60501 | Pharmacy                         |
+| 70103 | Teacher Education: Primary       |
+| 70105 | Teacher Education: Secondary     |
+| 61799 | Rehabilitation Therapies, n.e.c. |
 
-** revisit -- have to do proficiency standard **
+\*\* revisit -- have to do proficiency standard \*\*
 
+## Plausible values for 2009
+
+```{r}
+
+teacher_ids <- LEGIT_TEACHERS_2009$STIDSTD
+teacher_data_2009 <- LSAY2009[LSAY2009$STIDSTD %in% teacher_ids, ]
+
+
+options(survey.lonely.psu = "adjust")
+
+# school-level stratification and student-level sampling
+teacher_design_y09 <- svydesign(
+  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
+  strata = ~STATE + SECTOR,  # stratification variables as per tech report
+  weights = ~W_FSTUWT,  # weights column in the data frame
+  data = teacher_data_2009, # teacher data frame
+  nest = TRUE  
+)
+```
+
+```{r}
+library(survey)
+
+# mean math scores for each teacher across each pv first
+mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y09, svymean)
+
+# creating a data frame with ID and mean for each PV for each ID
+teacher_means_y09 <- data.frame(
+  STIDSTD = mean_pv1_by_teacher$STIDSTD,
+  mean_pv1 = mean_pv1_by_teacher$PV1MATH,
+  mean_pv2 = mean_pv2_by_teacher$PV2MATH,
+  mean_pv3 = mean_pv3_by_teacher$PV3MATH,
+  mean_pv4 = mean_pv4_by_teacher$PV4MATH,
+  mean_pv5 = mean_pv5_by_teacher$PV5MATH
+)
+
+# second average across the row for each teacher
+teacher_means_y09$mean_score = rowMeans(teacher_means_y09[, -1])
+
+proficient_standard <- 482 # level 3 proficient standard - **double check if this has changed**
+
+# how many teachers are below proficient standard (482)
+teacher_means_y09$below_prof_avg = teacher_means_y09$mean_score < proficient_standard
+
+teacher_means_y09_table <- kable(teacher_means_y09, caption = "Proficiency Status of Teachers in 2009", align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", color = "black") %>%
+  scroll_box(width = "1000px", height = "300px")
+
+teacher_means_y09_table
+
+```
+
+```{r}
+# TRUE being below the 482 proficient standard (level 3)
+
+teachers_below_profstand_y09 <- table(teacher_means_y09$below_prof_avg)
+names(teachers_below_profstand_y09) <- c("Above Proficiency", "Below Proficiency")
+teachers_below_profstand_y09
+
+# formatting
+teachers_below_profstand_y09_df <- as.data.frame(teachers_below_profstand_y09)
+
+proficiency_y09 <- kable(teachers_below_profstand_y09_df, caption = "Proficiency Status of Teachers in 2009", col.names = c("Proficiency Status", "Count"), align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", color = "black") %>%
+  column_spec(column = c(1,2), color = "black")
+
+proficiency_y09
+```
 
 # LSAY 2015
 
 ```{r}
 LSAY2015 <- read_dta("data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta")
 ```
-
 
 ```{r}
 # 2009 COHORT - exploring those who studied primary school teaching
@@ -717,4 +785,3 @@ teacher_jobs_2015 <- LSAY2015[LSAY2015$LSAYID %in% LEGIT_TEACHERS_2015$LSAYID, ]
 selected_columns <- c('LSAYID', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088')
 teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
 ```
-
