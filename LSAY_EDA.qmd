@@ -434,11 +434,11 @@ LEGIT_TEACHERS_2006
 
 ```{r}
 # Taking a look at what the legit teachers studied
-teacher_jobs <- LSAY2006[LSAY2006$STIDSTD %in% LEGIT_TEACHERS_2006$STIDSTD, ]
+teacher_jobs_06 <- LSAY2006[LSAY2006$STIDSTD %in% LEGIT_TEACHERS_2006$STIDSTD, ]
 
 # selecting student ID and area of study across the years
 selected_columns <- c('STIDSTD', 'LBC087', 'LCC087', 'LDC087', 'LEC087', 'LFC087', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
-teacher_jobs <- teacher_jobs[, selected_columns]
+teacher_jobs_06 <- teacher_jobs_06[, selected_columns]
 ```
 
 | Code   | Field                              |
@@ -495,10 +495,10 @@ aos_2006
 ```
 
 ```{r}
-studying_teachers <- unique(STUDYING_TEACHERS_2006$STIDSTD)
+studying_teachers_06 <- unique(STUDYING_TEACHERS_2006$STIDSTD)
 # filter the LSAY2003 data for those IDs and high school leaving variables.
-studying_teachers_y12 <- LSAY2006 %>% 
-  filter(STIDSTD %in% studying_teachers) %>% 
+school_leavers_06 <- LSAY2006 %>% 
+  filter(STIDSTD %in% studying_teachers_06) %>% 
   select(STIDSTD, LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) %>%
    mutate(Studying_Teacher = rowSums(select(., LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) == 1, na.rm = TRUE) > 0)
 ```
