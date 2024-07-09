@@ -1,6 +1,10 @@
 ---
 title: "LSAY_EDA"
-format: html
+format: 
+  html: 
+    toc: true
+    toc_float: true
+    toc_depth: 3
 editor: visual
 ---
 
@@ -10,18 +14,18 @@ library(tidyverse)
 library(dplyr)
 library(survey)
 library(intsvy)
+library(kableExtra)
 
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 
 
 ```
 
-ASCED code looking for 070103 (Teacher Education: Primary) Looking at field of study: Main area of study/training in this course.
-
 ## Y03
 
 How many primary school teachers are in the data set?
 
+ASCED code looking for 070103 (Teacher Education: Primary) Looking at field of study: Main area of study/training in this course.
 ```{r}
 #0 and 1 if 70103
 #sum rows function
@@ -38,50 +42,44 @@ UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
                    TRUE ~ 0  # All else as 0
                  ))) %>%
   # Create new column where any 1 in the row = TRUE, no 1 = FALSE
-  mutate(unique_teachers = if_any(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088), ~ . == 1)) %>%
+  mutate(TEACHERS = if_any(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088), ~ . == 1)) %>%
   # Keep TRUE values
-  filter(unique_teachers)
+  filter(TEACHERS)
 
 UNIQUE_STUDYING_TEACHERS
 
+
+ kable_table <- kbl(UNIQUE_STUDYING_TEACHERS, caption = "Number of Teachers in the Y03 Data.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1200px", height = "400px")
+
+kable_table
 
 ```
 
 ```{r}
 # taking a deeper look at  student id 2659 and 9362
-# looking at variable LHC087
+# looking at variable LHC087 as that's where both observations returned 0.
 closer_look <- LSAY2003 %>% 
   filter(STIDSTD %in% c(2659, 10049)) %>% 
-  select(STIDSTD, LDCZ087, LHC087)
+  select(STIDSTD, LDCZ087, LHC087) %>%
+  mutate(NEW_COURSE = c("Business Management", "Human Movement"))
+
+kbl(closer_look, caption = "Closer look at students who left teaching.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "945px", height = "200px")
 closer_look
 ```
 
-Student 2659 went into another field of study four years after: Business management Student 10049 went into another field of study four years after too??: Human Movement
+Student 2659 went into another field of study four years after: Business management (80301)
+Student 10049 went into another field of study four years after: Human Movement (69903)
 
--   How many are working as primary school teachers
--   Look for legit teachers
+## How many people were working as a primary school teacher at any point of responding to the questions?
+"What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029). 
+* ANSZCO code = 2412 for primary school teachers.
 
-```{r}
-
-UNIQUE_LEGIT_TEACHERS <- LSAY2003 %>%
-  # Selecting variables for kind of work
-  select(STIDSTD, LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029) %>%
-  # Mutate across the observation 
-  mutate(across(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029),
-                ~ case_when(
-                   as.character(.) == '2412' ~ 1,  # PSE as 1
-                   is.na(.) ~ NA_integer_,
-                   TRUE ~ 0  # All else as 0
-                 ))) %>%
-  # column for TRUE = legit teachers, FALSE = not teachers
-  mutate(legit_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
-  # Filter for TRUE condition
-  filter(legit_teachers)
-
-UNIQUE_LEGIT_TEACHERS
-
- 
-```
 
 ```{r}
 # SEEING THE AMOUNT PEOPLE WHO WERE PRIMARY SCHOOL TEACHERS AT ANY POINT
@@ -94,10 +92,10 @@ UNIQUE_LEGIT_TEACHERS <- LSAY2003 %>%
   # MUTATE ACROSS THE OBSERVATION 0 = NOT TEACHER, 1 = TEACHER, NA = NA. 
   mutate(across(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ case_when(
     . == '2412' ~ 1, #TEACHER AS 1
-    is.na(.) ~ NA_integer_,
+    is.na(.) ~ NA_integer_, # RETAIN NA
     TRUE ~ 0 # NON-TEACHER AS 0
   ))) %>%
-  # CREATE NEW COLUMN WHERE ANY 1 IN THE ROW = TRUE, NO 1 = FALSE
+  # CREATE NEW COLUMN WHERE ANY 1 IN THE ROW = TRUE (TEACHER), NO 1 = FALSE
   mutate(legit_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
   filter(legit_teachers) #FILTER FOR TRUE CONDITION
 
@@ -108,14 +106,12 @@ UNIQUE_LEGIT_TEACHERS
 What did these people study?
 
 ```{r}
-# Taking a look at what the legit teachers studied
+# Selecting IDs which correlate to teachers 
 teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% UNIQUE_LEGIT_TEACHERS$STIDSTD, ]
 
-# selecting student ID and area of study across the years
+# Using those IDs and selecting area of study to see their area of study
 selected_columns <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
 teacher_jobs <- teacher_jobs[, selected_columns]
-
-
 
 ```
 
@@ -153,8 +149,8 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 | 80101          | Accounting                                           |
 +----------------+------------------------------------------------------+
 
+# Understanding how many school leavers enrol in primary school teaching courses
 ```{r}
-# How many school leavers enrol in primary school teaching courses
 #taking the IDs of individuals who had enrolled in primary school teaching at some point
 studying_teachers <- unique(UNIQUE_STUDYING_TEACHERS$STIDSTD)
 # filter the LSAY2003 data for those IDs and high school leaving variables.
