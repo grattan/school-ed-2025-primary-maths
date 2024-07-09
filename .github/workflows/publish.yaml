@@ -1,4 +1,4 @@
-name: deploy website.R
+name: deploy-website
 
 on:
   schedule:
