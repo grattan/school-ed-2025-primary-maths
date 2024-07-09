@@ -89,7 +89,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#y06-lsay" id="toc-y06-lsay" class="nav-link" data-scroll-target="#y06-lsay">Y06 LSAY</a></li>
   </ul></li>
   <li><a href="#pisa-pvs-1" id="toc-pisa-pvs-1" class="nav-link" data-scroll-target="#pisa-pvs-1">PISA PVs</a></li>
-  <li><a href="#lsay-2009" id="toc-lsay-2009" class="nav-link" data-scroll-target="#lsay-2009">LSAY 2009</a></li>
+  <li><a href="#lsay-2009" id="toc-lsay-2009" class="nav-link" data-scroll-target="#lsay-2009">LSAY 2009</a>
+  <ul class="collapse">
+  <li><a href="#plausible-values-for-2009" id="toc-plausible-values-for-2009" class="nav-link" data-scroll-target="#plausible-values-for-2009">Plausible values for 2009</a></li>
+  </ul></li>
   <li><a href="#lsay-2015" id="toc-lsay-2015" class="nav-link" data-scroll-target="#lsay-2015">LSAY 2015</a></li>
   </ul>
 </nav>
@@ -768,7 +771,7 @@ The following object is masked from 'package:dplyr':
 </div>
 <table class="table">
 <colgroup>
-<col style="width: 23%">
+<col style="width: 18%">
 <col style="width: 76%">
 </colgroup>
 <thead>
@@ -1080,7 +1083,7 @@ The following object is masked from 'package:dplyr':
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">survey.lonely.psu =</span> <span class="st">"adjust"</span>)</span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># school-level stratification and student-level sampling</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>teacher_design <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>teacher_design_03 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
 <span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ids =</span> <span class="sc">~</span>SCHOOLID <span class="sc">+</span> STIDSTD,  <span class="co"># two-stage sampling: schools then students</span></span>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">strata =</span> <span class="sc">~</span>STATEID <span class="sc">+</span> SECTOR,  <span class="co"># stratification variables as per tech report</span></span>
 <span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="sc">~</span>W_FSTUWT,  <span class="co"># weights column in the data frame</span></span>
@@ -1089,11 +1092,11 @@ The following object is masked from 'package:dplyr':
 <span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="co"># mean math scores for each plausible value</span></span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>mean_pv1 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV1MATH, teacher_design)</span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>mean_pv2 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV2MATH, teacher_design)</span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>mean_pv3 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV3MATH, teacher_design)</span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>mean_pv4 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV4MATH, teacher_design)</span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>mean_pv5 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV5MATH, teacher_design)</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>mean_pv1 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV1MATH, teacher_design_03)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>mean_pv2 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV2MATH, teacher_design_03)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>mean_pv3 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV3MATH, teacher_design_03)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>mean_pv4 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV4MATH, teacher_design_03)</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>mean_pv5 <span class="ot">&lt;-</span> <span class="fu">svymean</span>(<span class="sc">~</span>PV5MATH, teacher_design_03)</span>
 <span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="co"># taking only the means</span></span>
 <span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>mean_pv1_val <span class="ot">&lt;-</span> <span class="fu">coef</span>(mean_pv1)</span>
@@ -1123,14 +1126,14 @@ The following object is masked from 'package:dplyr':
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mean math scores for each teacher across each pv first</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>mean_pv1_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV1MATH, <span class="sc">~</span>STIDSTD, teacher_design, svymean)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>mean_pv2_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV2MATH, <span class="sc">~</span>STIDSTD, teacher_design, svymean)</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>mean_pv3_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV3MATH, <span class="sc">~</span>STIDSTD, teacher_design, svymean)</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>mean_pv4_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV4MATH, <span class="sc">~</span>STIDSTD, teacher_design, svymean)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>mean_pv5_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV5MATH, <span class="sc">~</span>STIDSTD, teacher_design, svymean)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>mean_pv1_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV1MATH, <span class="sc">~</span>STIDSTD, teacher_design_03, svymean)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>mean_pv2_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV2MATH, <span class="sc">~</span>STIDSTD, teacher_design_03, svymean)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>mean_pv3_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV3MATH, <span class="sc">~</span>STIDSTD, teacher_design_03, svymean)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>mean_pv4_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV4MATH, <span class="sc">~</span>STIDSTD, teacher_design_03, svymean)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>mean_pv5_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV5MATH, <span class="sc">~</span>STIDSTD, teacher_design_03, svymean)</span>
 <span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a data frame with ID and mean for each PV for each ID</span></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>teacher_means <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>teacher_means_03 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">STIDSTD =</span> mean_pv1_by_teacher<span class="sc">$</span>STIDSTD,</span>
 <span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv1 =</span> mean_pv1_by_teacher<span class="sc">$</span>PV1MATH,</span>
 <span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv2 =</span> mean_pv2_by_teacher<span class="sc">$</span>PV2MATH,</span>
@@ -1140,20 +1143,20 @@ The following object is masked from 'package:dplyr':
 <span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="co"># second average across the row for each teacher</span></span>
-<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>teacher_means<span class="sc">$</span>mean_score <span class="ot">=</span> <span class="fu">rowMeans</span>(teacher_means[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>teacher_means_03<span class="sc">$</span>mean_score <span class="ot">=</span> <span class="fu">rowMeans</span>(teacher_means_03[, <span class="sc">-</span><span class="dv">1</span>])</span>
 <span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> <span class="fl">549.5463</span> <span class="co"># average for teacher performance</span></span>
 <span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>proficient_standard <span class="ot">&lt;-</span> <span class="dv">482</span> <span class="co"># level 3 proficient standard</span></span>
 <span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a><span class="co"># how many teachers are below teacher avg</span></span>
-<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>teacher_means<span class="sc">$</span>below_avg_teacher <span class="ot">=</span> teacher_means<span class="sc">$</span>mean_score <span class="sc">&lt;</span> threshold </span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>teacher_means_03<span class="sc">$</span>below_avg_teacher <span class="ot">=</span> teacher_means_03<span class="sc">$</span>mean_score <span class="sc">&lt;</span> threshold </span>
 <span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a><span class="co"># how many teachers are below proficient standard (482)</span></span>
-<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>teacher_means<span class="sc">$</span>below_prof_avg <span class="ot">=</span> teacher_means<span class="sc">$</span>mean_score <span class="sc">&lt;</span> proficient_standard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>teacher_means_03<span class="sc">$</span>below_prof_avg <span class="ot">=</span> teacher_means_03<span class="sc">$</span>mean_score <span class="sc">&lt;</span> proficient_standard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># seeing how many are below average -- true = below average (549.5463)</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>teachers_below_avg <span class="ot">&lt;-</span> <span class="fu">table</span>(teacher_means<span class="sc">$</span>below_prof_avg)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>teachers_below_avg <span class="ot">&lt;-</span> <span class="fu">table</span>(teacher_means_03<span class="sc">$</span>below_prof_avg)</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>teachers_below_avg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1163,7 +1166,7 @@ FALSE  TRUE
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># seeing how many are below proficient standard -- true = below proficient standard (482)</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand <span class="ot">&lt;-</span> <span class="fu">table</span>(teacher_means<span class="sc">$</span>below_prof_avg)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand <span class="ot">&lt;-</span> <span class="fu">table</span>(teacher_means_03<span class="sc">$</span>below_prof_avg)</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1254,17 +1257,13 @@ FALSE  TRUE
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Taking a look at what the legit teachers studied</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>teacher_jobs <span class="ot">&lt;-</span> LSAY2006[LSAY2006<span class="sc">$</span>STIDSTD <span class="sc">%in%</span> LEGIT_TEACHERS_2006<span class="sc">$</span>STIDSTD, ]</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>teacher_jobs_06 <span class="ot">&lt;-</span> LSAY2006[LSAY2006<span class="sc">$</span>STIDSTD <span class="sc">%in%</span> LEGIT_TEACHERS_2006<span class="sc">$</span>STIDSTD, ]</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># selecting student ID and area of study across the years</span></span>
 <span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>selected_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'STIDSTD'</span>, <span class="st">'LBC087'</span>, <span class="st">'LCC087'</span>, <span class="st">'LDC087'</span>, <span class="st">'LEC087'</span>, <span class="st">'LFC087'</span>, <span class="st">'LGC088'</span>, <span class="st">'LHC088'</span>, <span class="st">'LIC088'</span>, <span class="st">'LJC088'</span>, <span class="st">'LKC088'</span>)</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>teacher_jobs <span class="ot">&lt;-</span> teacher_jobs[, selected_columns]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>teacher_jobs_06 <span class="ot">&lt;-</span> teacher_jobs_06[, selected_columns]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="table">
-<colgroup>
-<col style="width: 31%">
-<col style="width: 63%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Code</th>
@@ -1460,10 +1459,10 @@ FALSE  TRUE
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>studying_teachers <span class="ot">&lt;-</span> <span class="fu">unique</span>(STUDYING_TEACHERS_2006<span class="sc">$</span>STIDSTD)</span>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>studying_teachers_06 <span class="ot">&lt;-</span> <span class="fu">unique</span>(STUDYING_TEACHERS_2006<span class="sc">$</span>STIDSTD)</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># filter the LSAY2003 data for those IDs and high school leaving variables.</span></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>studying_teachers_y12 <span class="ot">&lt;-</span> LSAY2006 <span class="sc">%&gt;%</span> </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(STIDSTD <span class="sc">%in%</span> studying_teachers) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>school_leavers_06 <span class="ot">&lt;-</span> LSAY2006 <span class="sc">%&gt;%</span> </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(STIDSTD <span class="sc">%in%</span> studying_teachers_06) <span class="sc">%&gt;%</span> </span>
 <span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(STIDSTD, LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) <span class="sc">%&gt;%</span></span>
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">Studying_Teacher =</span> <span class="fu">rowSums</span>(<span class="fu">select</span>(., LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) <span class="sc">==</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">&gt;</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1495,20 +1494,20 @@ FALSE  TRUE
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mean math scores for each teacher across each pv first</span></span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>mean_pv1_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV1MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>mean_pv2_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV2MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>mean_pv3_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV3MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>mean_pv4_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV4MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>mean_pv5_by_teacher <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV5MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>mean_pv1_by_teacher_06 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV1MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>mean_pv2_by_teacher_06 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV2MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>mean_pv3_by_teacher_06 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV3MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>mean_pv4_by_teacher_06 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV4MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>mean_pv5_by_teacher_06 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV5MATH, <span class="sc">~</span>STIDSTD, teacher_design_y06, svymean)</span>
 <span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a data frame with ID and mean for each PV for each ID</span></span>
 <span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>teacher_means_y06 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">STIDSTD =</span> mean_pv1_by_teacher<span class="sc">$</span>STIDSTD,</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv1 =</span> mean_pv1_by_teacher<span class="sc">$</span>PV1MATH,</span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv2 =</span> mean_pv2_by_teacher<span class="sc">$</span>PV2MATH,</span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv3 =</span> mean_pv3_by_teacher<span class="sc">$</span>PV3MATH,</span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv4 =</span> mean_pv4_by_teacher<span class="sc">$</span>PV4MATH,</span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv5 =</span> mean_pv5_by_teacher<span class="sc">$</span>PV5MATH</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">STIDSTD =</span> mean_pv1_by_teacher_06<span class="sc">$</span>STIDSTD,</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv1 =</span> mean_pv1_by_teacher_06<span class="sc">$</span>PV1MATH,</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv2 =</span> mean_pv2_by_teacher_06<span class="sc">$</span>PV2MATH,</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv3 =</span> mean_pv3_by_teacher_06<span class="sc">$</span>PV3MATH,</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv4 =</span> mean_pv4_by_teacher_06<span class="sc">$</span>PV4MATH,</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv5 =</span> mean_pv5_by_teacher_06<span class="sc">$</span>PV5MATH</span>
 <span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="co"># second average across the row for each teacher</span></span>
@@ -1521,24 +1520,26 @@ FALSE  TRUE
 <span id="cb49-27"><a href="#cb49-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-28"><a href="#cb49-28" aria-hidden="true" tabindex="-1"></a>teacher_means_y06_table <span class="ot">&lt;-</span> <span class="fu">kable</span>(teacher_means_y06, <span class="at">caption =</span> <span class="st">"Proficiency Status of Teachers in 2006"</span>, <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb49-29"><a href="#cb49-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">"orange"</span>, <span class="at">color =</span> <span class="st">"black"</span>) </span>
-<span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-32"><a href="#cb49-32" aria-hidden="true" tabindex="-1"></a>teacher_means_y06_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">"orange"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"1000px"</span>, <span class="at">height =</span> <span class="st">"300px"</span>)</span>
+<span id="cb49-32"><a href="#cb49-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-33"><a href="#cb49-33" aria-hidden="true" tabindex="-1"></a>teacher_means_y06_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:1000px; ">
 <div class="table-responsive">
 <table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
 <caption>Proficiency Status of Teachers in 2006</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">STIDSTD</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">mean_pv1</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">mean_pv2</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">mean_pv3</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">mean_pv4</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">mean_pv5</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">mean_score</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">below_prof_avg</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">STIDSTD</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv1</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv2</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv3</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv4</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv5</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_score</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">below_prof_avg</th>
 </tr>
 </thead>
 <tbody>
@@ -2705,7 +2706,7 @@ FALSE  TRUE
 </tbody>
 </table>
 </div>
-
+</div>
 
 </div>
 </div>
@@ -2723,12 +2724,12 @@ FALSE  TRUE
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># formatting</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand_y06_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(teachers_below_profstand_y06)</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>proficiency_y06 <span class="ot">&lt;-</span> <span class="fu">kable</span>(teachers_below_profstand_y06_df, <span class="at">caption =</span> <span class="st">"Proficiency Status of Teachers in 2006"</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Proficiency Status"</span>, <span class="st">"Count"</span>), <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>proficiency_y06_table <span class="ot">&lt;-</span> <span class="fu">kable</span>(teachers_below_profstand_y06_df, <span class="at">caption =</span> <span class="st">"Proficiency Status of Teachers in 2006"</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Proficiency Status"</span>, <span class="st">"Count"</span>), <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">"orange"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="at">column =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">color =</span> <span class="st">"black"</span>)</span>
 <span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>proficiency_y06</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>proficiency_y06_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <div class="table-responsive">
@@ -2847,10 +2848,6 @@ FALSE  TRUE
 </div>
 <p>What did they study?</p>
 <table class="table">
-<colgroup>
-<col style="width: 29%">
-<col style="width: 69%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Code</th>
@@ -2893,30 +2890,1368 @@ FALSE  TRUE
 </tbody>
 </table>
 <p>** revisit – have to do proficiency standard **</p>
+<section id="plausible-values-for-2009" class="level2">
+<h2 class="anchored" data-anchor-id="plausible-values-for-2009">Plausible values for 2009</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>teacher_ids <span class="ot">&lt;-</span> LEGIT_TEACHERS_2009<span class="sc">$</span>STIDSTD</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>teacher_data_2009 <span class="ot">&lt;-</span> LSAY2009[LSAY2009<span class="sc">$</span>STIDSTD <span class="sc">%in%</span> teacher_ids, ]</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">survey.lonely.psu =</span> <span class="st">"adjust"</span>)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co"># school-level stratification and student-level sampling</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>teacher_design_y09 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ids =</span> <span class="sc">~</span>SCHOOLID <span class="sc">+</span> STIDSTD,  <span class="co"># two-stage sampling: schools then students</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">strata =</span> <span class="sc">~</span>STATE <span class="sc">+</span> SECTOR,  <span class="co"># stratification variables as per tech report</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="sc">~</span>W_FSTUWT,  <span class="co"># weights column in the data frame</span></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> teacher_data_2009, <span class="co"># teacher data frame</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">nest =</span> <span class="cn">TRUE</span>  </span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mean math scores for each teacher across each pv first</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>mean_pv1_by_teacher_y09 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV1MATH, <span class="sc">~</span>STIDSTD, teacher_design_y09, svymean)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>mean_pv2_by_teacher_y09 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV2MATH, <span class="sc">~</span>STIDSTD, teacher_design_y09, svymean)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>mean_pv3_by_teacher_y09 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV3MATH, <span class="sc">~</span>STIDSTD, teacher_design_y09, svymean)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>mean_pv4_by_teacher_y09 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV4MATH, <span class="sc">~</span>STIDSTD, teacher_design_y09, svymean)</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>mean_pv5_by_teacher_y09 <span class="ot">&lt;-</span> <span class="fu">svyby</span>(<span class="sc">~</span>PV5MATH, <span class="sc">~</span>STIDSTD, teacher_design_y09, svymean)</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a data frame with ID and mean for each PV for each ID</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>teacher_means_y09 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">STIDSTD =</span> mean_pv1_by_teacher_y09<span class="sc">$</span>STIDSTD,</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv1 =</span> mean_pv1_by_teacher_y09<span class="sc">$</span>PV1MATH,</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv2 =</span> mean_pv2_by_teacher_y09<span class="sc">$</span>PV2MATH,</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv3 =</span> mean_pv3_by_teacher_y09<span class="sc">$</span>PV3MATH,</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv4 =</span> mean_pv4_by_teacher_y09<span class="sc">$</span>PV4MATH,</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_pv5 =</span> mean_pv5_by_teacher_y09<span class="sc">$</span>PV5MATH</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a><span class="co"># second average across the row for each teacher</span></span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>teacher_means_y09<span class="sc">$</span>mean_score <span class="ot">=</span> <span class="fu">rowMeans</span>(teacher_means_y09[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a>proficient_standard <span class="ot">&lt;-</span> <span class="dv">482</span> <span class="co"># level 3 proficient standard - **double check if this has changed**</span></span>
+<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-25"><a href="#cb60-25" aria-hidden="true" tabindex="-1"></a><span class="co"># how many teachers are below proficient standard (482)</span></span>
+<span id="cb60-26"><a href="#cb60-26" aria-hidden="true" tabindex="-1"></a>teacher_means_y09<span class="sc">$</span>below_prof_avg <span class="ot">=</span> teacher_means_y09<span class="sc">$</span>mean_score <span class="sc">&lt;</span> proficient_standard</span>
+<span id="cb60-27"><a href="#cb60-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-28"><a href="#cb60-28" aria-hidden="true" tabindex="-1"></a>teacher_means_y09_table <span class="ot">&lt;-</span> <span class="fu">kable</span>(teacher_means_y09, <span class="at">caption =</span> <span class="st">"Proficiency Status of Teachers in 2009"</span>, <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb60-29"><a href="#cb60-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb60-30"><a href="#cb60-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">"orange"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb60-31"><a href="#cb60-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"1000px"</span>, <span class="at">height =</span> <span class="st">"300px"</span>)</span>
+<span id="cb60-32"><a href="#cb60-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-33"><a href="#cb60-33" aria-hidden="true" tabindex="-1"></a>teacher_means_y09_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:1000px; ">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
+<caption>Proficiency Status of Teachers in 2009</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">STIDSTD</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv1</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv2</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv3</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv4</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_pv5</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">mean_score</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important; position: sticky; top: 0; background-color: #FFFFFF;">below_prof_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">00267</td>
+<td style="text-align: center;">598.39</td>
+<td style="text-align: center;">651.36</td>
+<td style="text-align: center;">616.30</td>
+<td style="text-align: center;">643.57</td>
+<td style="text-align: center;">569.57</td>
+<td style="text-align: center;">615.838</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">00276</td>
+<td style="text-align: center;">566.92</td>
+<td style="text-align: center;">555.23</td>
+<td style="text-align: center;">611.32</td>
+<td style="text-align: center;">529.53</td>
+<td style="text-align: center;">556.79</td>
+<td style="text-align: center;">563.958</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">00323</td>
+<td style="text-align: center;">509.28</td>
+<td style="text-align: center;">512.39</td>
+<td style="text-align: center;">412.69</td>
+<td style="text-align: center;">471.89</td>
+<td style="text-align: center;">489.02</td>
+<td style="text-align: center;">479.054</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">00360</td>
+<td style="text-align: center;">517.85</td>
+<td style="text-align: center;">485.91</td>
+<td style="text-align: center;">531.87</td>
+<td style="text-align: center;">499.93</td>
+<td style="text-align: center;">552.90</td>
+<td style="text-align: center;">517.692</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">00667</td>
+<td style="text-align: center;">556.01</td>
+<td style="text-align: center;">484.35</td>
+<td style="text-align: center;">475.78</td>
+<td style="text-align: center;">562.24</td>
+<td style="text-align: center;">546.67</td>
+<td style="text-align: center;">525.010</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">00734</td>
+<td style="text-align: center;">595.12</td>
+<td style="text-align: center;">641.85</td>
+<td style="text-align: center;">632.51</td>
+<td style="text-align: center;">576.42</td>
+<td style="text-align: center;">580.32</td>
+<td style="text-align: center;">605.244</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">00798</td>
+<td style="text-align: center;">504.60</td>
+<td style="text-align: center;">489.80</td>
+<td style="text-align: center;">510.84</td>
+<td style="text-align: center;">532.65</td>
+<td style="text-align: center;">482.01</td>
+<td style="text-align: center;">503.980</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">00921</td>
+<td style="text-align: center;">660.31</td>
+<td style="text-align: center;">647.07</td>
+<td style="text-align: center;">631.49</td>
+<td style="text-align: center;">668.88</td>
+<td style="text-align: center;">655.64</td>
+<td style="text-align: center;">652.678</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">00937</td>
+<td style="text-align: center;">543.47</td>
+<td style="text-align: center;">635.39</td>
+<td style="text-align: center;">611.24</td>
+<td style="text-align: center;">587.87</td>
+<td style="text-align: center;">576.97</td>
+<td style="text-align: center;">590.988</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">00965</td>
+<td style="text-align: center;">551.65</td>
+<td style="text-align: center;">486.22</td>
+<td style="text-align: center;">511.15</td>
+<td style="text-align: center;">509.59</td>
+<td style="text-align: center;">497.13</td>
+<td style="text-align: center;">511.148</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">01011</td>
+<td style="text-align: center;">627.60</td>
+<td style="text-align: center;">629.93</td>
+<td style="text-align: center;">711.72</td>
+<td style="text-align: center;">660.31</td>
+<td style="text-align: center;">703.15</td>
+<td style="text-align: center;">666.542</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">01021</td>
+<td style="text-align: center;">518.78</td>
+<td style="text-align: center;">534.36</td>
+<td style="text-align: center;">535.92</td>
+<td style="text-align: center;">506.32</td>
+<td style="text-align: center;">473.60</td>
+<td style="text-align: center;">513.796</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">01035</td>
+<td style="text-align: center;">502.27</td>
+<td style="text-align: center;">467.21</td>
+<td style="text-align: center;">541.21</td>
+<td style="text-align: center;">482.79</td>
+<td style="text-align: center;">436.84</td>
+<td style="text-align: center;">486.064</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">01052</td>
+<td style="text-align: center;">582.89</td>
+<td style="text-align: center;">561.86</td>
+<td style="text-align: center;">590.68</td>
+<td style="text-align: center;">517.46</td>
+<td style="text-align: center;">580.55</td>
+<td style="text-align: center;">566.688</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">01106</td>
+<td style="text-align: center;">595.66</td>
+<td style="text-align: center;">473.37</td>
+<td style="text-align: center;">602.67</td>
+<td style="text-align: center;">576.97</td>
+<td style="text-align: center;">548.15</td>
+<td style="text-align: center;">559.364</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">01119</td>
+<td style="text-align: center;">589.51</td>
+<td style="text-align: center;">556.01</td>
+<td style="text-align: center;">470.33</td>
+<td style="text-align: center;">523.30</td>
+<td style="text-align: center;">521.74</td>
+<td style="text-align: center;">532.178</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">01277</td>
+<td style="text-align: center;">528.05</td>
+<td style="text-align: center;">556.87</td>
+<td style="text-align: center;">582.58</td>
+<td style="text-align: center;">579.46</td>
+<td style="text-align: center;">526.49</td>
+<td style="text-align: center;">554.690</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">01386</td>
+<td style="text-align: center;">599.56</td>
+<td style="text-align: center;">539.58</td>
+<td style="text-align: center;">605.79</td>
+<td style="text-align: center;">586.31</td>
+<td style="text-align: center;">619.81</td>
+<td style="text-align: center;">590.210</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">01520</td>
+<td style="text-align: center;">556.01</td>
+<td style="text-align: center;">513.95</td>
+<td style="text-align: center;">558.35</td>
+<td style="text-align: center;">656.50</td>
+<td style="text-align: center;">542.77</td>
+<td style="text-align: center;">565.516</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">01568</td>
+<td style="text-align: center;">508.81</td>
+<td style="text-align: center;">580.47</td>
+<td style="text-align: center;">511.15</td>
+<td style="text-align: center;">553.21</td>
+<td style="text-align: center;">542.30</td>
+<td style="text-align: center;">539.188</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">01883</td>
+<td style="text-align: center;">533.03</td>
+<td style="text-align: center;">564.19</td>
+<td style="text-align: center;">547.83</td>
+<td style="text-align: center;">522.13</td>
+<td style="text-align: center;">516.68</td>
+<td style="text-align: center;">536.772</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">01971</td>
+<td style="text-align: center;">515.66</td>
+<td style="text-align: center;">534.36</td>
+<td style="text-align: center;">540.59</td>
+<td style="text-align: center;">575.64</td>
+<td style="text-align: center;">592.78</td>
+<td style="text-align: center;">551.806</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">02061</td>
+<td style="text-align: center;">513.25</td>
+<td style="text-align: center;">437.69</td>
+<td style="text-align: center;">517.14</td>
+<td style="text-align: center;">496.11</td>
+<td style="text-align: center;">485.99</td>
+<td style="text-align: center;">490.036</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">02095</td>
+<td style="text-align: center;">580.86</td>
+<td style="text-align: center;">653.30</td>
+<td style="text-align: center;">589.43</td>
+<td style="text-align: center;">599.56</td>
+<td style="text-align: center;">654.86</td>
+<td style="text-align: center;">615.602</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">02171</td>
+<td style="text-align: center;">468.77</td>
+<td style="text-align: center;">482.79</td>
+<td style="text-align: center;">488.25</td>
+<td style="text-align: center;">501.49</td>
+<td style="text-align: center;">457.87</td>
+<td style="text-align: center;">479.834</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">02199</td>
+<td style="text-align: center;">506.94</td>
+<td style="text-align: center;">541.21</td>
+<td style="text-align: center;">527.97</td>
+<td style="text-align: center;">513.95</td>
+<td style="text-align: center;">534.20</td>
+<td style="text-align: center;">524.854</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">02200</td>
+<td style="text-align: center;">554.46</td>
+<td style="text-align: center;">572.37</td>
+<td style="text-align: center;">503.82</td>
+<td style="text-align: center;">554.46</td>
+<td style="text-align: center;">558.35</td>
+<td style="text-align: center;">548.692</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">02209</td>
+<td style="text-align: center;">456.62</td>
+<td style="text-align: center;">486.22</td>
+<td style="text-align: center;">479.21</td>
+<td style="text-align: center;">491.67</td>
+<td style="text-align: center;">430.92</td>
+<td style="text-align: center;">468.928</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">02318</td>
+<td style="text-align: center;">470.33</td>
+<td style="text-align: center;">490.58</td>
+<td style="text-align: center;">515.51</td>
+<td style="text-align: center;">514.73</td>
+<td style="text-align: center;">562.24</td>
+<td style="text-align: center;">510.678</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">02398</td>
+<td style="text-align: center;">541.21</td>
+<td style="text-align: center;">560.69</td>
+<td style="text-align: center;">579.38</td>
+<td style="text-align: center;">597.30</td>
+<td style="text-align: center;">559.13</td>
+<td style="text-align: center;">567.542</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">02816</td>
+<td style="text-align: center;">431.77</td>
+<td style="text-align: center;">386.59</td>
+<td style="text-align: center;">511.22</td>
+<td style="text-align: center;">483.18</td>
+<td style="text-align: center;">464.49</td>
+<td style="text-align: center;">455.450</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">03098</td>
+<td style="text-align: center;">543.55</td>
+<td style="text-align: center;">530.31</td>
+<td style="text-align: center;">517.85</td>
+<td style="text-align: center;">497.59</td>
+<td style="text-align: center;">476.56</td>
+<td style="text-align: center;">513.172</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">03244</td>
+<td style="text-align: center;">549.78</td>
+<td style="text-align: center;">497.59</td>
+<td style="text-align: center;">498.37</td>
+<td style="text-align: center;">483.57</td>
+<td style="text-align: center;">484.35</td>
+<td style="text-align: center;">502.732</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">03807</td>
+<td style="text-align: center;">499.85</td>
+<td style="text-align: center;">481.94</td>
+<td style="text-align: center;">502.19</td>
+<td style="text-align: center;">444.55</td>
+<td style="text-align: center;">472.59</td>
+<td style="text-align: center;">480.224</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">03981</td>
+<td style="text-align: center;">469.55</td>
+<td style="text-align: center;">451.64</td>
+<td style="text-align: center;">462.54</td>
+<td style="text-align: center;">386.98</td>
+<td style="text-align: center;">560.69</td>
+<td style="text-align: center;">466.280</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04004</td>
+<td style="text-align: center;">570.74</td>
+<td style="text-align: center;">615.91</td>
+<td style="text-align: center;">536.46</td>
+<td style="text-align: center;">603.45</td>
+<td style="text-align: center;">493.62</td>
+<td style="text-align: center;">564.036</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04073</td>
+<td style="text-align: center;">607.73</td>
+<td style="text-align: center;">598.39</td>
+<td style="text-align: center;">575.80</td>
+<td style="text-align: center;">579.69</td>
+<td style="text-align: center;">588.26</td>
+<td style="text-align: center;">589.974</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04111</td>
+<td style="text-align: center;">426.32</td>
+<td style="text-align: center;">466.83</td>
+<td style="text-align: center;">489.41</td>
+<td style="text-align: center;">417.75</td>
+<td style="text-align: center;">446.57</td>
+<td style="text-align: center;">449.376</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04164</td>
+<td style="text-align: center;">653.69</td>
+<td style="text-align: center;">599.17</td>
+<td style="text-align: center;">629.55</td>
+<td style="text-align: center;">656.81</td>
+<td style="text-align: center;">659.14</td>
+<td style="text-align: center;">639.672</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04324</td>
+<td style="text-align: center;">428.35</td>
+<td style="text-align: center;">433.80</td>
+<td style="text-align: center;">472.74</td>
+<td style="text-align: center;">440.81</td>
+<td style="text-align: center;">469.63</td>
+<td style="text-align: center;">449.066</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04384</td>
+<td style="text-align: center;">629.93</td>
+<td style="text-align: center;">633.83</td>
+<td style="text-align: center;">640.06</td>
+<td style="text-align: center;">613.58</td>
+<td style="text-align: center;">698.48</td>
+<td style="text-align: center;">643.176</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04495</td>
+<td style="text-align: center;">580.16</td>
+<td style="text-align: center;">516.29</td>
+<td style="text-align: center;">538.10</td>
+<td style="text-align: center;">570.03</td>
+<td style="text-align: center;">519.40</td>
+<td style="text-align: center;">544.796</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04650</td>
+<td style="text-align: center;">554.07</td>
+<td style="text-align: center;">586.00</td>
+<td style="text-align: center;">550.17</td>
+<td style="text-align: center;">537.71</td>
+<td style="text-align: center;">564.97</td>
+<td style="text-align: center;">558.584</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04660</td>
+<td style="text-align: center;">563.02</td>
+<td style="text-align: center;">721.93</td>
+<td style="text-align: center;">581.72</td>
+<td style="text-align: center;">630.79</td>
+<td style="text-align: center;">563.80</td>
+<td style="text-align: center;">612.252</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04703</td>
+<td style="text-align: center;">455.92</td>
+<td style="text-align: center;">499.54</td>
+<td style="text-align: center;">490.19</td>
+<td style="text-align: center;">522.91</td>
+<td style="text-align: center;">514.34</td>
+<td style="text-align: center;">496.580</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04715</td>
+<td style="text-align: center;">547.83</td>
+<td style="text-align: center;">562.63</td>
+<td style="text-align: center;">569.64</td>
+<td style="text-align: center;">570.42</td>
+<td style="text-align: center;">543.16</td>
+<td style="text-align: center;">558.736</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04892</td>
+<td style="text-align: center;">720.76</td>
+<td style="text-align: center;">695.05</td>
+<td style="text-align: center;">648.32</td>
+<td style="text-align: center;">720.76</td>
+<td style="text-align: center;">635.08</td>
+<td style="text-align: center;">683.994</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">04936</td>
+<td style="text-align: center;">620.67</td>
+<td style="text-align: center;">554.46</td>
+<td style="text-align: center;">573.93</td>
+<td style="text-align: center;">623.78</td>
+<td style="text-align: center;">636.24</td>
+<td style="text-align: center;">601.816</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">04947</td>
+<td style="text-align: center;">515.90</td>
+<td style="text-align: center;">543.94</td>
+<td style="text-align: center;">537.71</td>
+<td style="text-align: center;">575.88</td>
+<td style="text-align: center;">517.46</td>
+<td style="text-align: center;">538.178</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">05094</td>
+<td style="text-align: center;">482.40</td>
+<td style="text-align: center;">480.07</td>
+<td style="text-align: center;">519.01</td>
+<td style="text-align: center;">495.65</td>
+<td style="text-align: center;">482.40</td>
+<td style="text-align: center;">491.906</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">05198</td>
+<td style="text-align: center;">516.44</td>
+<td style="text-align: center;">429.98</td>
+<td style="text-align: center;">456.47</td>
+<td style="text-align: center;">488.40</td>
+<td style="text-align: center;">503.98</td>
+<td style="text-align: center;">479.054</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">05246</td>
+<td style="text-align: center;">539.27</td>
+<td style="text-align: center;">575.88</td>
+<td style="text-align: center;">538.49</td>
+<td style="text-align: center;">548.61</td>
+<td style="text-align: center;">554.84</td>
+<td style="text-align: center;">551.418</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">05342</td>
+<td style="text-align: center;">684.46</td>
+<td style="text-align: center;">675.11</td>
+<td style="text-align: center;">664.99</td>
+<td style="text-align: center;">667.32</td>
+<td style="text-align: center;">672.00</td>
+<td style="text-align: center;">672.776</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">05352</td>
+<td style="text-align: center;">559.52</td>
+<td style="text-align: center;">593.01</td>
+<td style="text-align: center;">542.38</td>
+<td style="text-align: center;">526.02</td>
+<td style="text-align: center;">533.81</td>
+<td style="text-align: center;">550.948</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">05459</td>
+<td style="text-align: center;">588.65</td>
+<td style="text-align: center;">658.76</td>
+<td style="text-align: center;">542.69</td>
+<td style="text-align: center;">578.52</td>
+<td style="text-align: center;">576.97</td>
+<td style="text-align: center;">589.118</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">05865</td>
+<td style="text-align: center;">493.62</td>
+<td style="text-align: center;">504.53</td>
+<td style="text-align: center;">541.14</td>
+<td style="text-align: center;">491.28</td>
+<td style="text-align: center;">512.32</td>
+<td style="text-align: center;">508.578</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">06053</td>
+<td style="text-align: center;">535.92</td>
+<td style="text-align: center;">566.30</td>
+<td style="text-align: center;">489.96</td>
+<td style="text-align: center;">540.59</td>
+<td style="text-align: center;">599.79</td>
+<td style="text-align: center;">546.512</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">06177</td>
+<td style="text-align: center;">536.07</td>
+<td style="text-align: center;">518.94</td>
+<td style="text-align: center;">505.69</td>
+<td style="text-align: center;">527.50</td>
+<td style="text-align: center;">511.15</td>
+<td style="text-align: center;">519.870</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">06214</td>
+<td style="text-align: center;">602.75</td>
+<td style="text-align: center;">556.01</td>
+<td style="text-align: center;">588.73</td>
+<td style="text-align: center;">567.70</td>
+<td style="text-align: center;">566.92</td>
+<td style="text-align: center;">576.422</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">06362</td>
+<td style="text-align: center;">515.51</td>
+<td style="text-align: center;">480.46</td>
+<td style="text-align: center;">490.58</td>
+<td style="text-align: center;">478.90</td>
+<td style="text-align: center;">497.59</td>
+<td style="text-align: center;">492.608</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">06376</td>
+<td style="text-align: center;">539.66</td>
+<td style="text-align: center;">492.14</td>
+<td style="text-align: center;">570.03</td>
+<td style="text-align: center;">489.80</td>
+<td style="text-align: center;">534.20</td>
+<td style="text-align: center;">525.166</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">06537</td>
+<td style="text-align: center;">566.92</td>
+<td style="text-align: center;">585.61</td>
+<td style="text-align: center;">473.45</td>
+<td style="text-align: center;">513.17</td>
+<td style="text-align: center;">543.55</td>
+<td style="text-align: center;">536.540</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">06594</td>
+<td style="text-align: center;">576.27</td>
+<td style="text-align: center;">612.10</td>
+<td style="text-align: center;">566.14</td>
+<td style="text-align: center;">590.29</td>
+<td style="text-align: center;">593.40</td>
+<td style="text-align: center;">587.640</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">06639</td>
+<td style="text-align: center;">508.50</td>
+<td style="text-align: center;">528.75</td>
+<td style="text-align: center;">517.07</td>
+<td style="text-align: center;">447.74</td>
+<td style="text-align: center;">445.40</td>
+<td style="text-align: center;">489.492</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">06697</td>
+<td style="text-align: center;">618.72</td>
+<td style="text-align: center;">602.36</td>
+<td style="text-align: center;">568.09</td>
+<td style="text-align: center;">516.68</td>
+<td style="text-align: center;">630.40</td>
+<td style="text-align: center;">587.250</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">06969</td>
+<td style="text-align: center;">746.39</td>
+<td style="text-align: center;">737.04</td>
+<td style="text-align: center;">689.52</td>
+<td style="text-align: center;">673.94</td>
+<td style="text-align: center;">702.77</td>
+<td style="text-align: center;">709.932</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">07064</td>
+<td style="text-align: center;">583.28</td>
+<td style="text-align: center;">531.87</td>
+<td style="text-align: center;">573.15</td>
+<td style="text-align: center;">563.80</td>
+<td style="text-align: center;">525.63</td>
+<td style="text-align: center;">555.546</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">07270</td>
+<td style="text-align: center;">650.26</td>
+<td style="text-align: center;">632.35</td>
+<td style="text-align: center;">587.95</td>
+<td style="text-align: center;">651.04</td>
+<td style="text-align: center;">581.72</td>
+<td style="text-align: center;">620.664</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">07301</td>
+<td style="text-align: center;">548.22</td>
+<td style="text-align: center;">510.06</td>
+<td style="text-align: center;">581.72</td>
+<td style="text-align: center;">543.55</td>
+<td style="text-align: center;">538.88</td>
+<td style="text-align: center;">544.486</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">08131</td>
+<td style="text-align: center;">497.13</td>
+<td style="text-align: center;">509.59</td>
+<td style="text-align: center;">526.73</td>
+<td style="text-align: center;">560.22</td>
+<td style="text-align: center;">476.09</td>
+<td style="text-align: center;">513.952</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">08211</td>
+<td style="text-align: center;">596.44</td>
+<td style="text-align: center;">615.13</td>
+<td style="text-align: center;">574.63</td>
+<td style="text-align: center;">518.55</td>
+<td style="text-align: center;">513.87</td>
+<td style="text-align: center;">563.724</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">08235</td>
+<td style="text-align: center;">434.89</td>
+<td style="text-align: center;">522.13</td>
+<td style="text-align: center;">510.45</td>
+<td style="text-align: center;">481.62</td>
+<td style="text-align: center;">519.79</td>
+<td style="text-align: center;">493.776</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">08242</td>
+<td style="text-align: center;">576.66</td>
+<td style="text-align: center;">544.72</td>
+<td style="text-align: center;">523.69</td>
+<td style="text-align: center;">538.49</td>
+<td style="text-align: center;">530.70</td>
+<td style="text-align: center;">542.852</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">08284</td>
+<td style="text-align: center;">620.67</td>
+<td style="text-align: center;">671.30</td>
+<td style="text-align: center;">640.14</td>
+<td style="text-align: center;">612.10</td>
+<td style="text-align: center;">647.15</td>
+<td style="text-align: center;">638.272</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">08328</td>
+<td style="text-align: center;">530.23</td>
+<td style="text-align: center;">515.43</td>
+<td style="text-align: center;">538.80</td>
+<td style="text-align: center;">534.90</td>
+<td style="text-align: center;">556.71</td>
+<td style="text-align: center;">535.214</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">08604</td>
+<td style="text-align: center;">561.86</td>
+<td style="text-align: center;">562.63</td>
+<td style="text-align: center;">564.97</td>
+<td style="text-align: center;">624.17</td>
+<td style="text-align: center;">569.64</td>
+<td style="text-align: center;">576.654</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">08784</td>
+<td style="text-align: center;">601.19</td>
+<td style="text-align: center;">733.61</td>
+<td style="text-align: center;">769.44</td>
+<td style="text-align: center;">632.35</td>
+<td style="text-align: center;">692.33</td>
+<td style="text-align: center;">685.784</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">08842</td>
+<td style="text-align: center;">524.00</td>
+<td style="text-align: center;">529.45</td>
+<td style="text-align: center;">503.75</td>
+<td style="text-align: center;">506.08</td>
+<td style="text-align: center;">538.02</td>
+<td style="text-align: center;">520.260</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">08870</td>
+<td style="text-align: center;">500.86</td>
+<td style="text-align: center;">510.99</td>
+<td style="text-align: center;">533.58</td>
+<td style="text-align: center;">481.39</td>
+<td style="text-align: center;">468.15</td>
+<td style="text-align: center;">498.994</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">09083</td>
+<td style="text-align: center;">532.26</td>
+<td style="text-align: center;">550.17</td>
+<td style="text-align: center;">523.69</td>
+<td style="text-align: center;">608.59</td>
+<td style="text-align: center;">550.17</td>
+<td style="text-align: center;">552.976</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">09095</td>
+<td style="text-align: center;">659.61</td>
+<td style="text-align: center;">573.93</td>
+<td style="text-align: center;">491.36</td>
+<td style="text-align: center;">505.38</td>
+<td style="text-align: center;">542.77</td>
+<td style="text-align: center;">554.610</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">09383</td>
+<td style="text-align: center;">524.08</td>
+<td style="text-align: center;">537.32</td>
+<td style="text-align: center;">514.73</td>
+<td style="text-align: center;">520.18</td>
+<td style="text-align: center;">510.84</td>
+<td style="text-align: center;">521.430</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">09634</td>
+<td style="text-align: center;">646.29</td>
+<td style="text-align: center;">616.69</td>
+<td style="text-align: center;">612.80</td>
+<td style="text-align: center;">631.49</td>
+<td style="text-align: center;">611.24</td>
+<td style="text-align: center;">623.702</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">09862</td>
+<td style="text-align: center;">440.81</td>
+<td style="text-align: center;">465.73</td>
+<td style="text-align: center;">468.07</td>
+<td style="text-align: center;">501.57</td>
+<td style="text-align: center;">591.14</td>
+<td style="text-align: center;">493.464</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">09896</td>
+<td style="text-align: center;">516.44</td>
+<td style="text-align: center;">509.43</td>
+<td style="text-align: center;">502.42</td>
+<td style="text-align: center;">524.23</td>
+<td style="text-align: center;">503.98</td>
+<td style="text-align: center;">511.300</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">09941</td>
+<td style="text-align: center;">557.57</td>
+<td style="text-align: center;">490.58</td>
+<td style="text-align: center;">511.61</td>
+<td style="text-align: center;">543.55</td>
+<td style="text-align: center;">462.54</td>
+<td style="text-align: center;">513.170</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">09942</td>
+<td style="text-align: center;">526.80</td>
+<td style="text-align: center;">495.65</td>
+<td style="text-align: center;">531.48</td>
+<td style="text-align: center;">493.31</td>
+<td style="text-align: center;">498.76</td>
+<td style="text-align: center;">509.200</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10037</td>
+<td style="text-align: center;">599.63</td>
+<td style="text-align: center;">570.03</td>
+<td style="text-align: center;">576.27</td>
+<td style="text-align: center;">503.82</td>
+<td style="text-align: center;">524.08</td>
+<td style="text-align: center;">554.766</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">10189</td>
+<td style="text-align: center;">659.69</td>
+<td style="text-align: center;">681.50</td>
+<td style="text-align: center;">630.09</td>
+<td style="text-align: center;">663.58</td>
+<td style="text-align: center;">619.19</td>
+<td style="text-align: center;">650.810</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10195</td>
+<td style="text-align: center;">522.91</td>
+<td style="text-align: center;">593.79</td>
+<td style="text-align: center;">542.38</td>
+<td style="text-align: center;">546.28</td>
+<td style="text-align: center;">545.50</td>
+<td style="text-align: center;">550.172</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">10277</td>
+<td style="text-align: center;">581.72</td>
+<td style="text-align: center;">525.63</td>
+<td style="text-align: center;">570.81</td>
+<td style="text-align: center;">549.00</td>
+<td style="text-align: center;">512.39</td>
+<td style="text-align: center;">547.910</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10422</td>
+<td style="text-align: center;">589.82</td>
+<td style="text-align: center;">627.99</td>
+<td style="text-align: center;">589.04</td>
+<td style="text-align: center;">649.02</td>
+<td style="text-align: center;">553.99</td>
+<td style="text-align: center;">601.972</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">10901</td>
+<td style="text-align: center;">716.40</td>
+<td style="text-align: center;">607.35</td>
+<td style="text-align: center;">617.47</td>
+<td style="text-align: center;">604.23</td>
+<td style="text-align: center;">652.52</td>
+<td style="text-align: center;">639.594</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10933</td>
+<td style="text-align: center;">562.32</td>
+<td style="text-align: center;">535.84</td>
+<td style="text-align: center;">606.72</td>
+<td style="text-align: center;">603.61</td>
+<td style="text-align: center;">580.24</td>
+<td style="text-align: center;">577.746</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">11045</td>
+<td style="text-align: center;">566.53</td>
+<td style="text-align: center;">554.84</td>
+<td style="text-align: center;">547.83</td>
+<td style="text-align: center;">589.90</td>
+<td style="text-align: center;">593.79</td>
+<td style="text-align: center;">570.578</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">11352</td>
+<td style="text-align: center;">549.00</td>
+<td style="text-align: center;">583.28</td>
+<td style="text-align: center;">615.21</td>
+<td style="text-align: center;">613.65</td>
+<td style="text-align: center;">617.55</td>
+<td style="text-align: center;">595.738</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">11405</td>
+<td style="text-align: center;">567.23</td>
+<td style="text-align: center;">526.73</td>
+<td style="text-align: center;">581.25</td>
+<td style="text-align: center;">546.20</td>
+<td style="text-align: center;">540.75</td>
+<td style="text-align: center;">552.432</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">11408</td>
+<td style="text-align: center;">500.79</td>
+<td style="text-align: center;">520.26</td>
+<td style="text-align: center;">447.82</td>
+<td style="text-align: center;">538.95</td>
+<td style="text-align: center;">516.37</td>
+<td style="text-align: center;">504.838</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">11996</td>
+<td style="text-align: center;">526.57</td>
+<td style="text-align: center;">514.11</td>
+<td style="text-align: center;">525.01</td>
+<td style="text-align: center;">542.93</td>
+<td style="text-align: center;">492.30</td>
+<td style="text-align: center;">520.184</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12128</td>
+<td style="text-align: center;">652.60</td>
+<td style="text-align: center;">627.68</td>
+<td style="text-align: center;">692.33</td>
+<td style="text-align: center;">676.75</td>
+<td style="text-align: center;">661.17</td>
+<td style="text-align: center;">662.106</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">12299</td>
+<td style="text-align: center;">569.26</td>
+<td style="text-align: center;">577.04</td>
+<td style="text-align: center;">572.37</td>
+<td style="text-align: center;">570.81</td>
+<td style="text-align: center;">601.19</td>
+<td style="text-align: center;">578.134</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12336</td>
+<td style="text-align: center;">672.78</td>
+<td style="text-align: center;">628.38</td>
+<td style="text-align: center;">599.56</td>
+<td style="text-align: center;">654.86</td>
+<td style="text-align: center;">579.30</td>
+<td style="text-align: center;">626.976</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">12363</td>
+<td style="text-align: center;">434.89</td>
+<td style="text-align: center;">423.20</td>
+<td style="text-align: center;">453.58</td>
+<td style="text-align: center;">448.13</td>
+<td style="text-align: center;">461.37</td>
+<td style="text-align: center;">444.234</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12639</td>
+<td style="text-align: center;">484.66</td>
+<td style="text-align: center;">527.50</td>
+<td style="text-align: center;">489.34</td>
+<td style="text-align: center;">525.95</td>
+<td style="text-align: center;">537.63</td>
+<td style="text-align: center;">513.016</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">12688</td>
+<td style="text-align: center;">468.77</td>
+<td style="text-align: center;">462.54</td>
+<td style="text-align: center;">472.67</td>
+<td style="text-align: center;">482.01</td>
+<td style="text-align: center;">462.54</td>
+<td style="text-align: center;">469.706</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12718</td>
+<td style="text-align: center;">590.60</td>
+<td style="text-align: center;">567.23</td>
+<td style="text-align: center;">588.26</td>
+<td style="text-align: center;">532.96</td>
+<td style="text-align: center;">564.11</td>
+<td style="text-align: center;">568.632</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">12734</td>
+<td style="text-align: center;">619.11</td>
+<td style="text-align: center;">534.20</td>
+<td style="text-align: center;">543.55</td>
+<td style="text-align: center;">570.81</td>
+<td style="text-align: center;">515.51</td>
+<td style="text-align: center;">556.636</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12763</td>
+<td style="text-align: center;">526.02</td>
+<td style="text-align: center;">550.95</td>
+<td style="text-align: center;">455.14</td>
+<td style="text-align: center;">498.76</td>
+<td style="text-align: center;">489.41</td>
+<td style="text-align: center;">504.056</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">12988</td>
+<td style="text-align: center;">579.38</td>
+<td style="text-align: center;">615.99</td>
+<td style="text-align: center;">601.97</td>
+<td style="text-align: center;">581.72</td>
+<td style="text-align: center;">659.61</td>
+<td style="text-align: center;">607.734</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">13059</td>
+<td style="text-align: center;">490.89</td>
+<td style="text-align: center;">529.84</td>
+<td style="text-align: center;">549.31</td>
+<td style="text-align: center;">542.30</td>
+<td style="text-align: center;">553.21</td>
+<td style="text-align: center;">533.110</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">13187</td>
+<td style="text-align: center;">626.43</td>
+<td style="text-align: center;">591.38</td>
+<td style="text-align: center;">557.10</td>
+<td style="text-align: center;">553.21</td>
+<td style="text-align: center;">576.58</td>
+<td style="text-align: center;">580.940</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">13206</td>
+<td style="text-align: center;">472.59</td>
+<td style="text-align: center;">615.13</td>
+<td style="text-align: center;">470.25</td>
+<td style="text-align: center;">502.19</td>
+<td style="text-align: center;">518.55</td>
+<td style="text-align: center;">515.742</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">13209</td>
+<td style="text-align: center;">564.50</td>
+<td style="text-align: center;">559.83</td>
+<td style="text-align: center;">552.04</td>
+<td style="text-align: center;">509.20</td>
+<td style="text-align: center;">548.93</td>
+<td style="text-align: center;">546.900</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">13460</td>
+<td style="text-align: center;">649.88</td>
+<td style="text-align: center;">722.32</td>
+<td style="text-align: center;">705.18</td>
+<td style="text-align: center;">647.54</td>
+<td style="text-align: center;">730.88</td>
+<td style="text-align: center;">691.160</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">13725</td>
+<td style="text-align: center;">561.08</td>
+<td style="text-align: center;">555.62</td>
+<td style="text-align: center;">547.06</td>
+<td style="text-align: center;">546.28</td>
+<td style="text-align: center;">547.06</td>
+<td style="text-align: center;">551.420</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">13779</td>
+<td style="text-align: center;">489.34</td>
+<td style="text-align: center;">458.18</td>
+<td style="text-align: center;">428.58</td>
+<td style="text-align: center;">480.77</td>
+<td style="text-align: center;">462.85</td>
+<td style="text-align: center;">463.944</td>
+<td style="text-align: center;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">13857</td>
+<td style="text-align: center;">536.54</td>
+<td style="text-align: center;">623.00</td>
+<td style="text-align: center;">591.84</td>
+<td style="text-align: center;">582.50</td>
+<td style="text-align: center;">573.15</td>
+<td style="text-align: center;">581.406</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">13891</td>
+<td style="text-align: center;">489.80</td>
+<td style="text-align: center;">513.17</td>
+<td style="text-align: center;">520.18</td>
+<td style="text-align: center;">440.73</td>
+<td style="text-align: center;">526.41</td>
+<td style="text-align: center;">498.058</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">13918</td>
+<td style="text-align: center;">486.30</td>
+<td style="text-align: center;">516.68</td>
+<td style="text-align: center;">504.21</td>
+<td style="text-align: center;">532.26</td>
+<td style="text-align: center;">522.91</td>
+<td style="text-align: center;">512.472</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">14024</td>
+<td style="text-align: center;">616.07</td>
+<td style="text-align: center;">598.93</td>
+<td style="text-align: center;">663.58</td>
+<td style="text-align: center;">587.25</td>
+<td style="text-align: center;">585.69</td>
+<td style="text-align: center;">610.304</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">14247</td>
+<td style="text-align: center;">517.85</td>
+<td style="text-align: center;">472.67</td>
+<td style="text-align: center;">492.14</td>
+<td style="text-align: center;">457.87</td>
+<td style="text-align: center;">483.57</td>
+<td style="text-align: center;">484.820</td>
+<td style="text-align: center;">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TRUE being below the 482 proficient standard (level 3)</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand_y09 <span class="ot">&lt;-</span> <span class="fu">table</span>(teacher_means_y09<span class="sc">$</span>below_prof_avg)</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(teachers_below_profstand_y09) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Above Proficiency"</span>, <span class="st">"Below Proficiency"</span>)</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand_y09</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Above Proficiency Below Proficiency 
+              109                12 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># formatting</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>teachers_below_profstand_y09_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(teachers_below_profstand_y09)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>proficiency_y09 <span class="ot">&lt;-</span> <span class="fu">kable</span>(teachers_below_profstand_y09_df, <span class="at">caption =</span> <span class="st">"Proficiency Status of Teachers in 2009"</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Proficiency Status"</span>, <span class="st">"Count"</span>), <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">"orange"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="at">column =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">color =</span> <span class="st">"black"</span>)</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>proficiency_y09</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
+<caption>Proficiency Status of Teachers in 2009</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">Proficiency Status</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; color: black !important; background-color: orange !important;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center; color: black !important;">Above Proficiency</td>
+<td style="text-align: center; color: black !important;">109</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; color: black !important;">Below Proficiency</td>
+<td style="text-align: center; color: black !important;">12</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+</div>
+<p>There seems to be a large number of teachers still above the proficient standard in 2009. However the mean score was <a href="https://www.acer.org/files/PISA-2009-In-Brief.pdf">generally high for Australia</a></p>
+</section>
 </section>
 <section id="lsay-2015" class="level1">
 <h1>LSAY 2015</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>LSAY2015 <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>LSAY2015 <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2009 COHORT - exploring those who studied primary school teaching</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>STUDYING_TEACHERS_2015 <span class="ot">&lt;-</span> LSAY2015 <span class="sc">%&gt;%</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># selecting variables for current area of study</span></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LSAYID, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088) <span class="sc">%&gt;%</span></span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mutate across the observation to replace 0 = not '70103', 1 = is '70103'</span></span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(LCC088, LDC088, LEC088, LFC088, LGC088, LHC088),</span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">case_when</span>(</span>
-<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">as.character</span>(.) <span class="sc">==</span> <span class="st">'70103'</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># PSE as 1</span></span>
-<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">is.na</span>(.) <span class="sc">~</span> <span class="cn">NA_integer_</span>, <span class="co"># Retain NA</span></span>
-<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>                   <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># All else as 0</span></span>
-<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>                 ))) <span class="sc">%&gt;%</span></span>
-<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create new column where any 1 in the row = TRUE, no 1 = FALSE</span></span>
-<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unique_teachers =</span> <span class="fu">if_any</span>(<span class="fu">c</span>(LCC088, LDC088, LEC088, LFC088, LGC088, LHC088), <span class="sc">~</span> . <span class="sc">==</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep TRUE values</span></span>
-<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unique_teachers)</span>
-<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>STUDYING_TEACHERS_2015</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2009 COHORT - exploring those who studied primary school teaching</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>STUDYING_TEACHERS_2015 <span class="ot">&lt;-</span> LSAY2015 <span class="sc">%&gt;%</span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># selecting variables for current area of study</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LSAYID, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088) <span class="sc">%&gt;%</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mutate across the observation to replace 0 = not '70103', 1 = is '70103'</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(LCC088, LDC088, LEC088, LFC088, LGC088, LHC088),</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">case_when</span>(</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">as.character</span>(.) <span class="sc">==</span> <span class="st">'70103'</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># PSE as 1</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">is.na</span>(.) <span class="sc">~</span> <span class="cn">NA_integer_</span>, <span class="co"># Retain NA</span></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>                   <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># All else as 0</span></span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>                 ))) <span class="sc">%&gt;%</span></span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create new column where any 1 in the row = TRUE, no 1 = FALSE</span></span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unique_teachers =</span> <span class="fu">if_any</span>(<span class="fu">c</span>(LCC088, LDC088, LEC088, LFC088, LGC088, LHC088), <span class="sc">~</span> . <span class="sc">==</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep TRUE values</span></span>
+<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unique_teachers)</span>
+<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a>STUDYING_TEACHERS_2015</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 8
    LSAYID LCC088 LDC088 LEC088 LFC088 LGC088 LHC088 unique_teachers
@@ -2935,24 +4270,24 @@ FALSE  TRUE
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Looking at people who were at the time working as PS Teachers</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>LEGIT_TEACHERS_2015 <span class="ot">&lt;-</span> LSAY2015 <span class="sc">%&gt;%</span></span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Selecting variables for kind of work</span></span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LSAYID, LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022) <span class="sc">%&gt;%</span></span>
-<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mutate across the observation </span></span>
-<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022),</span>
-<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">case_when</span>(</span>
-<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">as.character</span>(.) <span class="sc">==</span> <span class="st">'2412'</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># PSE as 1</span></span>
-<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">is.na</span>(.) <span class="sc">~</span> <span class="cn">NA_integer_</span>,</span>
-<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>                   <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># All else as 0</span></span>
-<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>                 ))) <span class="sc">%&gt;%</span></span>
-<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># column for TRUE = legit teachers, FALSE = not teachers</span></span>
-<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">legit_teachers =</span> <span class="fu">if_any</span>(<span class="fu">c</span>(LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022), <span class="sc">~</span> . <span class="sc">==</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter for TRUE condition</span></span>
-<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(legit_teachers)</span>
-<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>LEGIT_TEACHERS_2015</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Looking at people who were at the time working as PS Teachers</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>LEGIT_TEACHERS_2015 <span class="ot">&lt;-</span> LSAY2015 <span class="sc">%&gt;%</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Selecting variables for kind of work</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LSAYID, LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022) <span class="sc">%&gt;%</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mutate across the observation </span></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022),</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">case_when</span>(</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">as.character</span>(.) <span class="sc">==</span> <span class="st">'2412'</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># PSE as 1</span></span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">is.na</span>(.) <span class="sc">~</span> <span class="cn">NA_integer_</span>,</span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>                   <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># All else as 0</span></span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>                 ))) <span class="sc">%&gt;%</span></span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># column for TRUE = legit teachers, FALSE = not teachers</span></span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">legit_teachers =</span> <span class="fu">if_any</span>(<span class="fu">c</span>(LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022), <span class="sc">~</span> . <span class="sc">==</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter for TRUE condition</span></span>
+<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(legit_teachers)</span>
+<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-18"><a href="#cb67-18" aria-hidden="true" tabindex="-1"></a>LEGIT_TEACHERS_2015</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 31 × 9
    LSAYID LBEM004 LCD022 LDD022 LED022 LFD025 LGD022 LHD022 legit_teachers
@@ -2971,12 +4306,12 @@ FALSE  TRUE
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Taking a look at what the legit teachers studied</span></span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>teacher_jobs_2015 <span class="ot">&lt;-</span> LSAY2015[LSAY2015<span class="sc">$</span>LSAYID <span class="sc">%in%</span> LEGIT_TEACHERS_2015<span class="sc">$</span>LSAYID, ]</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co"># selecting student ID and area of study across the years</span></span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>selected_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'LSAYID'</span>, <span class="st">'LCC088'</span>, <span class="st">'LDC088'</span>, <span class="st">'LEC088'</span>, <span class="st">'LFC088'</span>, <span class="st">'LGC088'</span>, <span class="st">'LHC088'</span>)</span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>teacher_jobs_2015 <span class="ot">&lt;-</span> teacher_jobs_2015[, selected_columns]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Taking a look at what the legit teachers studied</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>teacher_jobs_2015 <span class="ot">&lt;-</span> LSAY2015[LSAY2015<span class="sc">$</span>LSAYID <span class="sc">%in%</span> LEGIT_TEACHERS_2015<span class="sc">$</span>LSAYID, ]</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="co"># selecting student ID and area of study across the years</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>selected_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'LSAYID'</span>, <span class="st">'LCC088'</span>, <span class="st">'LDC088'</span>, <span class="st">'LEC088'</span>, <span class="st">'LFC088'</span>, <span class="st">'LGC088'</span>, <span class="st">'LHC088'</span>)</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>teacher_jobs_2015 <span class="ot">&lt;-</span> teacher_jobs_2015[, selected_columns]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 

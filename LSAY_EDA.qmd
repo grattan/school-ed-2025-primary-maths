@@ -8,7 +8,7 @@ format:
 editor: visual
 ---
 
-```{r}
+```{r warnings=FALSE, message=FALSE}
 library(haven)
 library(tidyverse)
 library(dplyr)
@@ -789,3 +789,12 @@ teacher_jobs_2015 <- LSAY2015[LSAY2015$LSAYID %in% LEGIT_TEACHERS_2015$LSAYID, ]
 selected_columns <- c('LSAYID', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088')
 teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
 ```
+
+
+# Plausible values for 2015
+
+
+
+# Key findings across the years
+
+
