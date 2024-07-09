@@ -531,20 +531,20 @@ teacher_design_y06 <- svydesign(
 library(survey)
 
 # mean math scores for each teacher across each pv first
-mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv1_by_teacher_06 <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv2_by_teacher_06 <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv3_by_teacher_06 <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv4_by_teacher_06 <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y06, svymean)
+mean_pv5_by_teacher_06 <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y06, svymean)
 
 # creating a data frame with ID and mean for each PV for each ID
 teacher_means_y06 <- data.frame(
-  STIDSTD = mean_pv1_by_teacher$STIDSTD,
-  mean_pv1 = mean_pv1_by_teacher$PV1MATH,
-  mean_pv2 = mean_pv2_by_teacher$PV2MATH,
-  mean_pv3 = mean_pv3_by_teacher$PV3MATH,
-  mean_pv4 = mean_pv4_by_teacher$PV4MATH,
-  mean_pv5 = mean_pv5_by_teacher$PV5MATH
+  STIDSTD = mean_pv1_by_teacher_06$STIDSTD,
+  mean_pv1 = mean_pv1_by_teacher_06$PV1MATH,
+  mean_pv2 = mean_pv2_by_teacher_06$PV2MATH,
+  mean_pv3 = mean_pv3_by_teacher_06$PV3MATH,
+  mean_pv4 = mean_pv4_by_teacher_06$PV4MATH,
+  mean_pv5 = mean_pv5_by_teacher_06$PV5MATH
 )
 
 # second average across the row for each teacher
@@ -679,20 +679,20 @@ teacher_design_y09 <- svydesign(
 library(survey)
 
 # mean math scores for each teacher across each pv first
-mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv1_by_teacher_y09 <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv2_by_teacher_y09 <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv3_by_teacher_y09 <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv4_by_teacher_y09 <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y09, svymean)
+mean_pv5_by_teacher_y09 <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y09, svymean)
 
 # creating a data frame with ID and mean for each PV for each ID
 teacher_means_y09 <- data.frame(
-  STIDSTD = mean_pv1_by_teacher$STIDSTD,
-  mean_pv1 = mean_pv1_by_teacher$PV1MATH,
-  mean_pv2 = mean_pv2_by_teacher$PV2MATH,
-  mean_pv3 = mean_pv3_by_teacher$PV3MATH,
-  mean_pv4 = mean_pv4_by_teacher$PV4MATH,
-  mean_pv5 = mean_pv5_by_teacher$PV5MATH
+  STIDSTD = mean_pv1_by_teacher_y09$STIDSTD,
+  mean_pv1 = mean_pv1_by_teacher_y09$PV1MATH,
+  mean_pv2 = mean_pv2_by_teacher_y09$PV2MATH,
+  mean_pv3 = mean_pv3_by_teacher_y09$PV3MATH,
+  mean_pv4 = mean_pv4_by_teacher_y09$PV4MATH,
+  mean_pv5 = mean_pv5_by_teacher_y09$PV5MATH
 )
 
 # second average across the row for each teacher
@@ -729,6 +729,10 @@ proficiency_y09 <- kable(teachers_below_profstand_y09_df, caption = "Proficiency
 
 proficiency_y09
 ```
+
+There seems to be a large number of teachers still above the proficient standard in 2009. However the mean score was [generally high for Australia](https://www.acer.org/files/PISA-2009-In-Brief.pdf)
+
+
 
 # LSAY 2015
 
