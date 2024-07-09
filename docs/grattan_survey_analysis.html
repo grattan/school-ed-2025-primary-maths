@@ -182,7 +182,7 @@ ul.task-list li input[type="checkbox"] {
 <li><p>Anyone whose responses are <a href="https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/">flagged by Qualtrics as suspicious</a> (i.e.&nbsp;Q_RecaptchaScore is below 0.5). This is typically because of the speed at which they respond, or ‘straight lining’ (i.e.&nbsp;clicking the same radio buttons in a single column).</p></li>
 <li><p>Anyone who did not complete more than one substantive (i.e.&nbsp;non-demographic) question.</p></li>
 </ul>
-<p>Through this process, we lose 7 responses. This leaves us with 419 valid responses.</p>
+<p>Through this process, we lose 12 responses. This leaves us with 537 valid responses.</p>
 <p>We also check for duplicates, using <a href="https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/">Qualtrics duplicate flag</a>. This pulls out respondents who try reattempt the survey from the same IP address. We can see if they are duplicates by looking through their answers manually.</p>
 <p>We now check the number of valid responses over time, in <a href="#fig-responses-over-time">Figure&nbsp;1</a>.</p>
 <div class="cell">
@@ -232,28 +232,210 @@ Population data
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Female</td>
-<td style="text-align: right;">354</td>
-<td style="text-align: right;">85%</td>
+<tr class="odd" data-grouplength="5">
+<td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Sex</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Female</td>
+<td style="text-align: right;">440</td>
+<td style="text-align: right;">82%</td>
 <td style="text-align: right;">129,560</td>
 <td style="text-align: right;">82%</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Male</td>
-<td style="text-align: right;">61</td>
-<td style="text-align: right;">15%</td>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Male</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">17%</td>
 <td style="text-align: right;">28,207</td>
 <td style="text-align: right;">18%</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Prefer not to say</td>
-<td style="text-align: right;">3</td>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Prefer not to say</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">1%</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 </tr>
-</tbody>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Something else</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">157,767</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr class="odd" data-grouplength="7">
+<td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Main teaching role</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Generalist teacher</td>
+<td style="text-align: right;">303</td>
+<td style="text-align: right;">56%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">No teaching load</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">20%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Specialist subject teacher</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">8%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Tutor</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">7%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Relief teacher</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">5%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Other</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">4%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd" data-grouplength="7">
+<td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Leadership responsibilities*</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Principal</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">12%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Deputy principal</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">10%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Instructional leader</td>
+<td style="text-align: right;">135</td>
+<td style="text-align: right;">24%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Team leader</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">12%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Pastoral or wellbeing leader</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">3%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Other leadership role</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">10%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">No leadership role</td>
+<td style="text-align: right;">171</td>
+<td style="text-align: right;">30%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd" data-grouplength="6">
+<td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Years of teaching experience</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">571</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">&lt;2 years</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">2-4 years</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">4%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">5-9 years</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">12%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">10-20 years</td>
+<td style="text-align: right;">162</td>
+<td style="text-align: right;">30%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">&gt;20 years</td>
+<td style="text-align: right;">282</td>
+<td style="text-align: right;">53%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody><tfoot>
+<tr class="even">
+<td style="padding: 0; border: 0"><sup>*</sup> Options add up to more than 537 because respondents could select multiple leadership responsibilities.</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tfoot>
+
 </table>
 
 
@@ -293,254 +475,296 @@ Population data
 </tr>
 </thead>
 <tbody>
-<tr class="odd" data-grouplength="3">
+<tr class="odd" data-grouplength="4">
 <td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Stage of schooling</strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Primary</td>
-<td style="text-align: right;">345</td>
+<td style="text-align: right;">444</td>
 <td style="text-align: right;">83%</td>
 <td style="text-align: right;">138,613</td>
 <td style="text-align: right;">58%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Combined</td>
-<td style="text-align: right;">52</td>
+<td style="text-align: right;">66</td>
 <td style="text-align: right;">12%</td>
 <td style="text-align: right;">76,931</td>
 <td style="text-align: right;">37%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Special</td>
-<td style="text-align: right;">19</td>
-<td style="text-align: right;">5%</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">4%</td>
 <td style="text-align: right;">6,080</td>
 <td style="text-align: right;">5%</td>
 </tr>
-<tr class="odd" data-grouplength="3">
-<td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Sector</strong></td>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">534</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">221,624</td>
+<td style="text-align: right;">100%</td>
 </tr>
-<tr class="even">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Government</td>
-<td style="text-align: right;">298</td>
-<td style="text-align: right;">71%</td>
-<td style="text-align: right;">109,372</td>
-<td style="text-align: right;">69%</td>
+<tr class="even" data-grouplength="4">
+<td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Sector</strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Catholic</td>
-<td style="text-align: right;">68</td>
-<td style="text-align: right;">16%</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">18%</td>
 <td style="text-align: right;">27,307</td>
 <td style="text-align: right;">17%</td>
 </tr>
 <tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Government</td>
+<td style="text-align: right;">375</td>
+<td style="text-align: right;">70%</td>
+<td style="text-align: right;">109,372</td>
+<td style="text-align: right;">69%</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Independent</td>
-<td style="text-align: right;">53</td>
-<td style="text-align: right;">13%</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">12%</td>
 <td style="text-align: right;">21,088</td>
 <td style="text-align: right;">13%</td>
 </tr>
-<tr class="odd" data-grouplength="8">
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">157,767</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr class="odd" data-grouplength="9">
 <td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Jursidiction</strong></td>
 </tr>
 <tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Australian Capital Territory</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">3%</td>
+<td style="text-align: right;">2,936</td>
+<td style="text-align: right;">2%</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">New South Wales</td>
-<td style="text-align: right;">57</td>
-<td style="text-align: right;">14%</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">16%</td>
 <td style="text-align: right;">46,753</td>
 <td style="text-align: right;">30%</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Victoria</td>
-<td style="text-align: right;">231</td>
-<td style="text-align: right;">55%</td>
-<td style="text-align: right;">43,059</td>
-<td style="text-align: right;">27%</td>
-</tr>
 <tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Northern Territory</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1%</td>
+<td style="text-align: right;">1,963</td>
+<td style="text-align: right;">1%</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Queensland</td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">11%</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">10%</td>
 <td style="text-align: right;">32,598</td>
 <td style="text-align: right;">21%</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Western Australia</td>
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">6%</td>
-<td style="text-align: right;">16,526</td>
-<td style="text-align: right;">10%</td>
-</tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">South Australia</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">6%</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">7%</td>
 <td style="text-align: right;">10,649</td>
 <td style="text-align: right;">7%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Tasmania</td>
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">15</td>
 <td style="text-align: right;">3%</td>
 <td style="text-align: right;">3,282</td>
 <td style="text-align: right;">2%</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Northern Territory</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">2%</td>
-<td style="text-align: right;">1,963</td>
-<td style="text-align: right;">1%</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Victoria</td>
+<td style="text-align: right;">286</td>
+<td style="text-align: right;">53%</td>
+<td style="text-align: right;">43,059</td>
+<td style="text-align: right;">27%</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Australian Capital Territory</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">4%</td>
-<td style="text-align: right;">2,936</td>
-<td style="text-align: right;">2%</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Western Australia</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">7%</td>
+<td style="text-align: right;">16,526</td>
+<td style="text-align: right;">10%</td>
 </tr>
-<tr class="even" data-grouplength="3">
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">157,767</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr class="odd" data-grouplength="4">
 <td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Level of advantage or disadvantage</strong></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Mostly advantaged</td>
-<td style="text-align: right;">149</td>
-<td style="text-align: right;">36%</td>
-<td style="text-align: right;">155,345</td>
-<td style="text-align: right;">45%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">A fairly even mix of advantaged and disadvantaged students</td>
-<td style="text-align: right;">174</td>
-<td style="text-align: right;">42%</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">43%</td>
 <td style="text-align: right;">108,716</td>
 <td style="text-align: right;">31%</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Mostly advantaged</td>
+<td style="text-align: right;">187</td>
+<td style="text-align: right;">35%</td>
+<td style="text-align: right;">155,345</td>
+<td style="text-align: right;">45%</td>
+</tr>
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Mostly disadvantaged</td>
-<td style="text-align: right;">96</td>
-<td style="text-align: right;">23%</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">22%</td>
 <td style="text-align: right;">81,996</td>
 <td style="text-align: right;">24%</td>
 </tr>
-<tr class="even" data-grouplength="4">
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">346,057</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr class="even" data-grouplength="5">
 <td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>Remoteness</strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Metropolitan</td>
-<td style="text-align: right;">242</td>
-<td style="text-align: right;">58%</td>
+<td style="text-align: right;">307</td>
+<td style="text-align: right;">57%</td>
 <td style="text-align: right;">247,899</td>
 <td style="text-align: right;">71%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Regional</td>
-<td style="text-align: right;">126</td>
+<td style="text-align: right;">163</td>
 <td style="text-align: right;">30%</td>
 <td style="text-align: right;">62,251</td>
 <td style="text-align: right;">18%</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Rural</td>
-<td style="text-align: right;">46</td>
-<td style="text-align: right;">11%</td>
-<td style="text-align: right;">29,475</td>
-<td style="text-align: right;">8%</td>
-</tr>
-<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Remote</td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;">1%</td>
 <td style="text-align: right;">7,786</td>
 <td style="text-align: right;">2%</td>
 </tr>
-<tr class="odd" data-grouplength="12">
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Rural</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">11%</td>
+<td style="text-align: right;">29,475</td>
+<td style="text-align: right;">8%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">537</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">347,411</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr class="even" data-grouplength="13">
 <td colspan="5" style="border-bottom: 1px solid; color: rgba(239, 121, 0, 255) !important"><strong>School size</strong></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Up to 50 students</td>
-<td style="text-align: right;">19</td>
-<td style="text-align: right;">5%</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">4%</td>
 <td style="text-align: right;">3,539</td>
 <td style="text-align: right;">3%</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">51 to 100 students</td>
-<td style="text-align: right;">17</td>
+<td style="text-align: right;">24</td>
 <td style="text-align: right;">4%</td>
 <td style="text-align: right;">4,021</td>
 <td style="text-align: right;">3%</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">101 to 200 students</td>
-<td style="text-align: right;">52</td>
-<td style="text-align: right;">12%</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">13%</td>
 <td style="text-align: right;">13,869</td>
 <td style="text-align: right;">10%</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">201 to 300 students</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">12%</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">13%</td>
 <td style="text-align: right;">18,855</td>
 <td style="text-align: right;">14%</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">301 to 400 students</td>
-<td style="text-align: right;">75</td>
-<td style="text-align: right;">18%</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">19%</td>
 <td style="text-align: right;">23,613</td>
 <td style="text-align: right;">17%</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">401 to 500 students</td>
-<td style="text-align: right;">75</td>
-<td style="text-align: right;">18%</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">17%</td>
 <td style="text-align: right;">21,307</td>
 <td style="text-align: right;">15%</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">501 to 600 students</td>
-<td style="text-align: right;">50</td>
+<td style="text-align: right;">65</td>
 <td style="text-align: right;">12%</td>
 <td style="text-align: right;">17,299</td>
 <td style="text-align: right;">12%</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">601 to 700 students</td>
-<td style="text-align: right;">23</td>
-<td style="text-align: right;">6%</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">5%</td>
 <td style="text-align: right;">13,726</td>
 <td style="text-align: right;">10%</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">701 to 800 students</td>
-<td style="text-align: right;">17</td>
-<td style="text-align: right;">4%</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">5%</td>
 <td style="text-align: right;">8,003</td>
 <td style="text-align: right;">6%</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">801 to 900 students</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">4%</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">3%</td>
 <td style="text-align: right;">4,640</td>
 <td style="text-align: right;">3%</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">901 to 1000 students</td>
 <td style="text-align: right;">8</td>
-<td style="text-align: right;">2%</td>
+<td style="text-align: right;">1%</td>
 <td style="text-align: right;">3,842</td>
 <td style="text-align: right;">3%</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">More than 1,000 students</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">4%</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">3%</td>
 <td style="text-align: right;">5,852</td>
 <td style="text-align: right;">4%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
+<td style="text-align: right;">534</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">138,566</td>
+<td style="text-align: right;">100%</td>
 </tr>
 </tbody>
 </table>

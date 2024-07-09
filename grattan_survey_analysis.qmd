@@ -35,6 +35,7 @@ library(readxl)
 library(janitor)
 library(scales)
 library(strayr)
+library(glue)
 
 # Additional configuration
 options(knitr.kable.NA = '')
@@ -63,7 +64,9 @@ raw_survey_data <- fetch_survey(
   surveyID = survey_id,
   verbose = FALSE,
   include_display_order = FALSE,
-  start_date = as.Date("2024-07-04")
+  start_date = as.Date("2024-07-04"),
+  breakout_sets = FALSE,
+  convert = FALSE
 )
 
 # Save the Qualtrics survey, just in case
@@ -172,7 +175,7 @@ acara_staff_data <- read_xlsx(path = "data/acara_staff_data.xlsx") |>
   filter(calendar_year == 2023)
 
 # Sex
-dem_sex <- demographic_counts("Q4") |>
+sex <- demographic_counts("Q4") |>
   left_join(
     (acara_staff_data |>
       filter(
@@ -185,20 +188,63 @@ dem_sex <- demographic_counts("Q4") |>
       summarise(n = sum(staff_count)) |>
       filter(sex_gender != "All") |>
       mutate(prop = (n / sum(n)))),
-    by = join_by(response == sex_gender))
+    by = join_by(response == sex_gender)) |> 
+  adorn_totals(fill = "Total") |> 
+  select(-demographic)
 
-dem_sex |> 
-  mutate(across(starts_with("prop"), percent, 1)) |> 
+
+# Leadership status
+leadership_roles <- 
+  clean_survey |> 
+  separate_rows(Q6, sep = ",") |> 
+  group_by(Q6) |> 
+  count() |>
+  ungroup() |> 
+  mutate(prop = n/sum(n)) |> 
+  replace_na(list(Q6 = "No leadership role")) |> 
+  mutate(Q6 = str_replace(Q6, "Other", "Other leadership role")) |> 
+  mutate(response = factor(Q6,
+                           levels = c("Principal", 
+                                      "Deputy principal", 
+                                      "Instructional leader", 
+                                      "Team leader", 
+                                      "Pastoral or wellbeing leader", 
+                                      "Other leadership role", 
+                                      "No leadership role")), 
+         .keep = "unused", 
+         .before = everything()) |> 
+  arrange(response) |> 
+  adorn_totals(fill = "Total")
+
+# Main role
+role <- demographic_counts("Q5") |> 
+  arrange(-n) |> 
   select(-demographic) |> 
-  kable(col.names = c("Response", "N", "%", "N", "%"), 
-        align = c("lrrrr"), 
-        digits = 0, 
-        format.args = list(big.mark = ',')) |> 
-    add_header_above(c("Characteristic" = 1, "Grattan survey" = 2, "Population data" = 2))
+  adorn_totals(fill = "Total")
 
-# Role
 
 # Years of experience
+years_of_experience <- demographic_counts("Q11") |> 
+  arrange(n) |> # May need to switch this code around, depending on response rate
+  select(-demographic) |> 
+  adorn_totals(fill = "Total")
+
+bind_rows(rename(sex, 
+                 c(n = n.x, 
+                   prop = prop.x)), 
+          role, 
+          leadership_roles, 
+          years_of_experience) |> 
+  mutate(across(starts_with("prop"), percent, 1)) |> 
+  kable(col.names = c("Response", "N", "%", "N", "%"), 
+        align = c("lrrrr"), digits = 0, 
+        format.args = list(big.mark = ',')) |> 
+  add_header_above(c("Characteristic" = 1, "Grattan survey" = 2, "Population data" = 2)) |> 
+  pack_rows("Sex", 1, 5, color = grattan_orange) |> 
+  pack_rows("Main teaching role", 6, 12, color = grattan_orange) |> 
+  pack_rows("Leadership responsibilities*", 13, 19, color = grattan_orange) |> 
+  pack_rows("Years of teaching experience", 20, 25, color = grattan_orange) |> 
+  add_footnote(glue("Options add up to more than ", total_sample, " because respondents could select multiple leadership responsibilities."), notation = "symbol")
 
 ```
 
@@ -255,7 +301,8 @@ school_type <- left_join(school_type_survey,
                          school_type_australia, 
                          by = join_by(school_type == school_type)) |> 
   arrange(-n.x) |> 
-  rename(response = school_type)
+  rename(response = school_type) |> 
+  adorn_totals(fill = "Total")
 
 rm(school_type_australia, school_type_school_profile, school_type_staff_data, school_type_survey)
 
@@ -272,7 +319,8 @@ demographic_counts("Q18"),
   filter(school_sector != c("All", "All non-government")) |> 
   mutate(prop = n/sum(n))),
 by = join_by(response == school_sector)) |> 
-  select(-demographic)
+  select(-demographic) |> 
+  adorn_totals(fill = "Total")
 
 # State and territory 
 state_and_territory <- 
@@ -292,7 +340,8 @@ state_and_territory <-
     mutate(prop = n / sum(n))),
   by = join_by(response == state_territory)
 ) |> 
-  select(-demographic)
+  select(-demographic) |> 
+  adorn_totals(fill = "Total")
 
 # Advantage
 ses <-  
@@ -309,7 +358,8 @@ ses <-
   drop_na() |> # Some NAs for schools without ICSEA values
   mutate(prop = n/sum(n))),
   by = join_by(response == ses)) |> 
-  select(-demographic)
+  select(-demographic) |> 
+  adorn_totals(fill = "Total")
 
 # Location
 location <- 
@@ -328,7 +378,8 @@ location <-
   summarise(n = sum(teaching_staff, na.rm = T)) |> 
   mutate(prop = n/sum(n))),
   by = join_by(response == simplified_geography)) |> 
-  select(-demographic)
+  select(-demographic) |> 
+  adorn_totals(fill = "Total")
 
 # School size
 school_size_survey <- 
@@ -382,7 +433,8 @@ school_size <-
     "More than 1,000 students"
   ))) |> 
   arrange(Q22) |> 
-  rename(response = Q22)
+  rename(response = Q22) |> 
+  adorn_totals(fill = "Total")
 
 # Print table
 
@@ -397,12 +449,12 @@ rbind(school_type,
         align = c("lrrrr"), digits = 0, 
         format.args = list(big.mark = ',')) |> 
   add_header_above(c("Characteristic" = 1, "Grattan survey" = 2, "Population data" = 2)) |> 
-  pack_rows("Stage of schooling", 1, 3, color = grattan_orange) |> 
-  pack_rows("Sector", 4, 6, color = grattan_orange) |> 
-  pack_rows("Jursidiction", 7, 14, color = grattan_orange) |> 
-  pack_rows("Level of advantage or disadvantage", 15, 17, color = grattan_orange) |> 
-  pack_rows("Remoteness", 18, 21, color = grattan_orange) |> 
-  pack_rows("School size", 22, 33, color = grattan_orange)
+  pack_rows("Stage of schooling", 1, 4, color = grattan_orange) |> 
+  pack_rows("Sector", 5, 8, color = grattan_orange) |> 
+  pack_rows("Jursidiction", 9, 17, color = grattan_orange) |> 
+  pack_rows("Level of advantage or disadvantage", 18, 21, color = grattan_orange) |> 
+  pack_rows("Remoteness", 22, 26, color = grattan_orange) |> 
+  pack_rows("School size", 27, 39, color = grattan_orange)
 
   
 ```
