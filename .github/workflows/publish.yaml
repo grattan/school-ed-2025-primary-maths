@@ -1,10 +1,11 @@
 name: deploy website.R
 
 on:
-  push
+  schedule:
+    - cron: "0 */2 * * *"
 
 jobs:
-  import-data:
+  update-website:
     runs-on: ubuntu-latest
     permissions:
       contents: write
