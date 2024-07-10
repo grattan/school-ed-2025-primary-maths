@@ -121,39 +121,39 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
 
-+------------+------------------------------------------------------+
-| Codes      | Field of Education                                   |
-+============+======================================================+
-| 70101      | Teacher Education: Early Childhood                   |
-+------------+------------------------------------------------------+
-| 70103      | Teacher Education: Primary                           |
-+------------+------------------------------------------------------+
-| 70109      | Teacher Education: Vocational Education and Training |
-+------------+------------------------------------------------------+
-| 70199      | Teacher Education, n.e.c.                            |
-|            |                                                      |
-|            | -   special needs                                    |
-+------------+------------------------------------------------------+
-| 70115      | English as a Second Language Teaching                |
-+------------+------------------------------------------------------+
-| 90503      | Children's Services                                  |
-|            |                                                      |
-|            | (Human Welfare Studies and Services)                 |
-+------------+------------------------------------------------------+
-| 91703      | Religious Studies                                    |
-|            |                                                      |
-|            | (Philosophy and Religious Studies)                   |
-+------------+------------------------------------------------------+
-| 92101      | Sport and Recreation Activities                      |
-|            |                                                      |
-|            | (Sport and Recreation)                               |
-+------------+------------------------------------------------------+
-| 100101     | Music                                                |
-|            |                                                      |
-|            | (Performing Arts)                                    |
-+------------+------------------------------------------------------+
-| 80101      | Accounting                                           |
-+------------+------------------------------------------------------+
++--------------+------------------------------------------------------+
+| Codes        | Field of Education                                   |
++==============+======================================================+
+| 70101        | Teacher Education: Early Childhood                   |
++--------------+------------------------------------------------------+
+| 70103        | Teacher Education: Primary                           |
++--------------+------------------------------------------------------+
+| 70109        | Teacher Education: Vocational Education and Training |
++--------------+------------------------------------------------------+
+| 70199        | Teacher Education, n.e.c.                            |
+|              |                                                      |
+|              | -   special needs                                    |
++--------------+------------------------------------------------------+
+| 70115        | English as a Second Language Teaching                |
++--------------+------------------------------------------------------+
+| 90503        | Children's Services                                  |
+|              |                                                      |
+|              | (Human Welfare Studies and Services)                 |
++--------------+------------------------------------------------------+
+| 91703        | Religious Studies                                    |
+|              |                                                      |
+|              | (Philosophy and Religious Studies)                   |
++--------------+------------------------------------------------------+
+| 92101        | Sport and Recreation Activities                      |
+|              |                                                      |
+|              | (Sport and Recreation)                               |
++--------------+------------------------------------------------------+
+| 100101       | Music                                                |
+|              |                                                      |
+|              | (Performing Arts)                                    |
++--------------+------------------------------------------------------+
+| 80101        | Accounting                                           |
++--------------+------------------------------------------------------+
 
 ```{r}
 fields <- data.frame(
@@ -376,8 +376,20 @@ teachers_below_avg
 
 ```{r}
 # seeing how many are below proficient standard -- true = below proficient standard (482)
-teachers_below_profstand <- table(teacher_means_03$below_prof_avg)
-teachers_below_profstand
+# Create the table
+teachers_below_profstand_y03 <- table(teacher_means_03$below_prof_avg)
+names(teachers_below_profstand_y03) <- c("Above Proficiency", "Below Proficiency")
+
+
+teachers_below_profstand_y03_df <- as.data.frame(teachers_below_profstand_y03) 
+
+
+proficiency_y03_table <- kable(teachers_below_profstand_y03, caption = "Proficiency Status of Teachers in 2003", col.names = c("Proficiency Status", "Count"), align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", color = "black") %>%
+  column_spec(column = c(1,2), color = "black")
+
+proficiency_y03_table
 ```
 
 ```{r}
@@ -732,8 +744,6 @@ proficiency_y09
 
 There seems to be a large number of teachers still above the proficient standard in 2009. However the mean score was [generally high for Australia](https://www.acer.org/files/PISA-2009-In-Brief.pdf)
 
-
-
 # LSAY 2015
 
 ```{r}
@@ -790,11 +800,101 @@ selected_columns <- c('LSAYID', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088'
 teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
 ```
 
-
 # Plausible values for 2015
-
-
 
 # Key findings across the years
 
+(at the moment focus on Y03, Y06 and Y09)
+
+```{r}
+proficiency_y03_table
+proficiency_y06_table
+proficiency_y09
+
+```
+
+Seeing how this compare against everyone more generally (how each state performed)
+
+```{r echo=FALSE}
+#LSAY2003
+library(intsvy)
+pisa_state_03 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) %>%
+  mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"))
+
+ pisa_state_2003 <- kbl(pisa_state_03, caption = "Average Math Performance Across States, 2003") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+pisa_state_2003
+```
+
+```{r echo=FALSE}
+#LSAY2006
+library(intsvy)
+pisa_state_06 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE", data = LSAY2006) %>%
+  mutate(STATE = c("NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"))
+
+ pisa_state_2006 <- kbl(pisa_state_06, caption = "Average Math Performance Across States, 2006") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+pisa_state_2006
+```
+
+
+
+```{r echo=FALSE}
+#LSAY2009
+pisa_state_09 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE", data = LSAY2009) %>%
+  mutate(STATE = c("NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"))
+
+ pisa_state_2009 <- kbl(pisa_state_09, caption = "Average Math Performance Across States, 2009") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+pisa_state_2009
+```
+```{r echo= FALSE}
+library(dplyr)
+library(stringr)
+
+# define the mathcut values
+mathcut <- c(358, 420, 482, 545, 607, 669)
+
+# calculate the mean performance by state (intsvy package)
+pisa_state_03 <- pisa.ben.pv(pvlabel = paste0("PV", 1:5, "MATH"), cutoff = mathcut, by = "STATEID", data = LSAY2003)
+
+# eeplace STATEID with actual state acronyms using case_when
+pisa_state_03 <- pisa_state_03 %>%
+  mutate(STATEID = case_when(
+    STATEID == 1 ~ "NSW",
+    STATEID == 2 ~ "VIC",
+    STATEID == 3 ~ "QLD",
+    STATEID == 4 ~ "SA",
+    STATEID == 5 ~ "WA",
+    STATEID == 6 ~ "TAS",
+    STATEID == 7 ~ "NT",
+    STATEID == 8 ~ "ACT"))
+
+# checking format of string for benchmarks
+unique_benchmarks <- unique(pisa_state_03$Benchmark)
+print(unique_benchmarks)
+
+# Use the exact string observed in the unique values
+above_482 <- pisa_state_03 %>%
+  filter(Benchmark == "At or above 482") %>%
+  select(STATEID, Percentage)
+
+above_482
+
+ above_482_table <- kbl(above_482, caption = "Percentage Above 482 - States, 2003") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) 
+above_482_table
+```
+
+
+```{r}
+
+```
 
