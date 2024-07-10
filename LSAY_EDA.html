@@ -4680,57 +4680,6 @@ FALSE  TRUE
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co"># define the mathcut values</span></span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>mathcut <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">358</span>, <span class="dv">420</span>, <span class="dv">482</span>, <span class="dv">545</span>, <span class="dv">607</span>, <span class="dv">669</span>)</span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the mean performance by state (intsvy package)</span></span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>pisa_state_03 <span class="ot">&lt;-</span> <span class="fu">pisa.ben.pv</span>(<span class="at">pvlabel =</span> <span class="fu">paste0</span>(<span class="st">"PV"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"MATH"</span>), <span class="at">cutoff =</span> mathcut, <span class="at">by =</span> <span class="st">"STATEID"</span>, <span class="at">data =</span> LSAY2003)</span>
-<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a><span class="co"># eeplace STATEID with actual state acronyms using case_when</span></span>
-<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>pisa_state_03 <span class="ot">&lt;-</span> pisa_state_03 <span class="sc">%&gt;%</span></span>
-<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">STATEID =</span> <span class="fu">case_when</span>(</span>
-<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"NSW"</span>,</span>
-<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"VIC"</span>,</span>
-<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"QLD"</span>,</span>
-<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"SA"</span>,</span>
-<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"WA"</span>,</span>
-<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"TAS"</span>,</span>
-<span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="st">"NT"</span>,</span>
-<span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a>    STATEID <span class="sc">==</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">"ACT"</span>))</span>
-<span id="cb68-21"><a href="#cb68-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-22"><a href="#cb68-22" aria-hidden="true" tabindex="-1"></a><span class="co"># checking format of string for benchmarks</span></span>
-<span id="cb68-23"><a href="#cb68-23" aria-hidden="true" tabindex="-1"></a>unique_benchmarks <span class="ot">&lt;-</span> <span class="fu">unique</span>(pisa_state_03<span class="sc">$</span>Benchmark)</span>
-<span id="cb68-24"><a href="#cb68-24" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(unique_benchmarks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "At or above 358" "At or above 420" "At or above 482" "At or above 545"
-[5] "At or above 607" "At or above 669"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the exact string observed in the unique values</span></span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>above_482 <span class="ot">&lt;-</span> pisa_state_03 <span class="sc">%&gt;%</span></span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Benchmark <span class="sc">==</span> <span class="st">"At or above 482"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(STATEID, Percentage)</span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>above_482</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  STATEID Percentage
-1     NSW      79.12
-2     VIC      68.72
-3     QLD      63.68
-4      SA      69.96
-5      WA      74.23
-6     TAS      77.47
-7      NT      64.58
-8     ACT      62.57</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>above_482_table <span class="ot">&lt;-</span> <span class="fu">kbl</span>(above_482, <span class="at">caption =</span> <span class="st">"Percentage Above 482 - States, 2003"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_paper</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">"orange"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">width =</span> <span class="st">"1em"</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">2</span>, <span class="at">width =</span> <span class="st">"1em"</span>)</span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>above_482_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
@@ -4743,36 +4692,138 @@ FALSE  TRUE
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 1em;">NSW</td>
-<td style="text-align: right; width: 1em;">79.12</td>
+<td style="text-align: left;">NSW</td>
+<td style="text-align: right;">79.12</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 1em;">VIC</td>
-<td style="text-align: right; width: 1em;">68.72</td>
+<td style="text-align: left;">VIC</td>
+<td style="text-align: right;">68.72</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 1em;">QLD</td>
-<td style="text-align: right; width: 1em;">63.68</td>
+<td style="text-align: left;">QLD</td>
+<td style="text-align: right;">63.68</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 1em;">SA</td>
-<td style="text-align: right; width: 1em;">69.96</td>
+<td style="text-align: left;">SA</td>
+<td style="text-align: right;">69.96</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 1em;">WA</td>
-<td style="text-align: right; width: 1em;">74.23</td>
+<td style="text-align: left;">WA</td>
+<td style="text-align: right;">74.23</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 1em;">TAS</td>
-<td style="text-align: right; width: 1em;">77.47</td>
+<td style="text-align: left;">TAS</td>
+<td style="text-align: right;">77.47</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 1em;">NT</td>
-<td style="text-align: right; width: 1em;">64.58</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">64.58</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 1em;">ACT</td>
-<td style="text-align: right; width: 1em;">62.57</td>
+<td style="text-align: left;">ACT</td>
+<td style="text-align: right;">62.57</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Percentage Above 482 - States, 2006</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; background-color: orange !important;">STATE</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; background-color: orange !important;">Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NSW</td>
+<td style="text-align: right;">74.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VIC</td>
+<td style="text-align: right;">66.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">QLD</td>
+<td style="text-align: right;">64.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SA</td>
+<td style="text-align: right;">66.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WA</td>
+<td style="text-align: right;">67.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TAS</td>
+<td style="text-align: right;">71.54</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">58.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACT</td>
+<td style="text-align: right;">51.54</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Percentage Above 482 - States, 2009</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; background-color: orange !important;">STATE</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; background-color: orange !important;">Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NSW</td>
+<td style="text-align: right;">69.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VIC</td>
+<td style="text-align: right;">63.24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">QLD</td>
+<td style="text-align: right;">63.44</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SA</td>
+<td style="text-align: right;">65.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WA</td>
+<td style="text-align: right;">62.81</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TAS</td>
+<td style="text-align: right;">69.46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">52.76</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACT</td>
+<td style="text-align: right;">54.55</td>
 </tr>
 </tbody>
 </table>

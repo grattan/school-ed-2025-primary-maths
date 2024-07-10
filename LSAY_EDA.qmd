@@ -854,6 +854,11 @@ pisa_state_09 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE",
   scroll_box(width = "1000px", height = "300px")
 pisa_state_2009
 ```
+
+# Exploring State Averages Across the years.
+
+Looking at how the states performed on average in maths over the years using `intsvy` package.
+
 ```{r echo= FALSE}
 library(dplyr)
 library(stringr)
@@ -878,14 +883,12 @@ pisa_state_03 <- pisa_state_03 %>%
 
 # checking format of string for benchmarks
 unique_benchmarks <- unique(pisa_state_03$Benchmark)
-print(unique_benchmarks)
+
 
 # Use the exact string observed in the unique values
 above_482 <- pisa_state_03 %>%
   filter(Benchmark == "At or above 482") %>%
   select(STATEID, Percentage)
-
-above_482
 
  above_482_table <- kbl(above_482, caption = "Percentage Above 482 - States, 2003") %>%
   kable_paper() %>%
@@ -894,7 +897,65 @@ above_482_table
 ```
 
 
-```{r}
+```{r echo= FALSE}
+# calculate the mean performance by state (intsvy package)
+pisa_state_06 <- pisa.ben.pv(pvlabel = paste0("PV", 1:5, "MATH"), cutoff = mathcut, by = "STATE", data = LSAY2006)
 
+# eeplace STATEID with actual state acronyms using case_when
+pisa_state_06 <- pisa_state_06 %>%
+  mutate(STATE = case_when(
+    STATE == 1 ~ "NSW",
+    STATE == 2 ~ "VIC",
+    STATE == 3 ~ "QLD",
+    STATE == 4 ~ "SA",
+    STATE == 5 ~ "WA",
+    STATE == 6 ~ "TAS",
+    STATE == 7 ~ "NT",
+    STATE == 8 ~ "ACT"))
+
+# checking format of string for benchmarks
+unique_benchmarks <- unique(pisa_state_06$Benchmark)
+
+
+# Use the exact string observed in the unique values
+above_482_2006 <- pisa_state_06 %>%
+  filter(Benchmark == "At or above 482") %>%
+  select(STATE, Percentage)
+
+ above_482_2006_table <- kbl(above_482_2006, caption = "Percentage Above 482 - States, 2006") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) 
+above_482_2006_table
+```
+
+```{r echo=FALSE}
+# calculate the mean performance by state (intsvy package)
+pisa_state_09 <- pisa.ben.pv(pvlabel = paste0("PV", 1:5, "MATH"), cutoff = mathcut, by = "STATE", data = LSAY2009)
+
+# replace STATEID with actual state acronyms using case_when
+pisa_state_09 <- pisa_state_09 %>%
+  mutate(STATE = case_when(
+    STATE == 1 ~ "NSW",
+    STATE == 2 ~ "VIC",
+    STATE == 3 ~ "QLD",
+    STATE == 4 ~ "SA",
+    STATE == 5 ~ "WA",
+    STATE == 6 ~ "TAS",
+    STATE == 7 ~ "NT",
+    STATE == 8 ~ "ACT"))
+
+# checking format of string for benchmarks
+unique_benchmarks <- unique(pisa_state_09$Benchmark)
+
+
+# Use the exact string observed in the unique values
+above_482_2009 <- pisa_state_09 %>%
+  filter(Benchmark == "At or above 482") %>%
+  select(STATE, Percentage)
+
+ above_482_2009_table <- kbl(above_482_2009, caption = "Percentage Above 482 - States, 2009") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) 
+above_482_2009_table
 ```
 
