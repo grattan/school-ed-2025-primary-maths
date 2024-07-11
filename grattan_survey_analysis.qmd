@@ -245,7 +245,7 @@ bind_rows(rename(sex,
   pack_rows("Sex", 1, 5, color = grattan_orange) |> 
   pack_rows("Main teaching role", 6, 12, color = grattan_orange) |> 
   pack_rows("Leadership responsibilities*", 13, 19, color = grattan_orange) |> 
-  pack_rows("Years of teaching experience", 20, 25, color = grattan_orange) |> 
+  pack_rows("Years of teaching experience", 20, 26, color = grattan_orange) |> 
   add_footnote(glue("Options add up to more than ", total_sample, " because respondents could select multiple leadership responsibilities."), notation = "symbol",
                threeparttable = T) |> 
   add_footnote("Note: Population data incomplete, as document is a work in progress", notation = "none")
