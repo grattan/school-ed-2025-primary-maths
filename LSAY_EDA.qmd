@@ -15,6 +15,7 @@ library(dplyr)
 library(survey)
 library(intsvy)
 library(kableExtra)
+library(Rrepest)
 
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 
@@ -26,8 +27,6 @@ LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.
 How many primary school teachers are in the data set?
 
 ASCED code looking for 070103 (Teacher Education: Primary) Looking at field of study: Main area of study/training in this course.
-
-There were **29** people studying primary school teaching at some point in the Y03 data.
 
 ```{r}
 #0 and 1 if 70103
@@ -49,17 +48,18 @@ UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
   # Keep TRUE values
   filter(TEACHERS)
 
-UNIQUE_STUDYING_TEACHERS
-
+# UNIQUE_STUDYING_TEACHERS
 
  UNIQUE_STUDYING_TEACHERS_Y03 <- kbl(UNIQUE_STUDYING_TEACHERS, caption = "Count of Primary School Education Students in Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
 
-UNIQUE_STUDYING_TEACHERS_Y03
+#UNIQUE_STUDYING_TEACHERS_Y03
 
 ```
+
+There were **\`r nrow(UNIQUE_STUDYING_TEACHERS)\`** people studying primary school teaching at some point in the Y03 data.
 
 ```{r}
 # taking a deeper look at  student id 2659 and 9362
@@ -73,7 +73,7 @@ kbl(closer_look, caption = "Closer look at students who left teaching.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "945px", height = "200px")
-closer_look
+
 ```
 
 Student 2659 went into another field of study four years after: Business management (80301) Student 10049 went into another field of study four years after: Human Movement (69903)
@@ -121,39 +121,39 @@ teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
 
-+--------------+------------------------------------------------------+
-| Codes        | Field of Education                                   |
-+==============+======================================================+
-| 70101        | Teacher Education: Early Childhood                   |
-+--------------+------------------------------------------------------+
-| 70103        | Teacher Education: Primary                           |
-+--------------+------------------------------------------------------+
-| 70109        | Teacher Education: Vocational Education and Training |
-+--------------+------------------------------------------------------+
-| 70199        | Teacher Education, n.e.c.                            |
-|              |                                                      |
-|              | -   special needs                                    |
-+--------------+------------------------------------------------------+
-| 70115        | English as a Second Language Teaching                |
-+--------------+------------------------------------------------------+
-| 90503        | Children's Services                                  |
-|              |                                                      |
-|              | (Human Welfare Studies and Services)                 |
-+--------------+------------------------------------------------------+
-| 91703        | Religious Studies                                    |
-|              |                                                      |
-|              | (Philosophy and Religious Studies)                   |
-+--------------+------------------------------------------------------+
-| 92101        | Sport and Recreation Activities                      |
-|              |                                                      |
-|              | (Sport and Recreation)                               |
-+--------------+------------------------------------------------------+
-| 100101       | Music                                                |
-|              |                                                      |
-|              | (Performing Arts)                                    |
-+--------------+------------------------------------------------------+
-| 80101        | Accounting                                           |
-+--------------+------------------------------------------------------+
++--------+------------------------------------------------------+
+| Codes  | Field of Education                                   |
++========+======================================================+
+| 70101  | Teacher Education: Early Childhood                   |
++--------+------------------------------------------------------+
+| 70103  | Teacher Education: Primary                           |
++--------+------------------------------------------------------+
+| 70109  | Teacher Education: Vocational Education and Training |
++--------+------------------------------------------------------+
+| 70199  | Teacher Education, n.e.c.                            |
+|        |                                                      |
+|        | -   special needs                                    |
++--------+------------------------------------------------------+
+| 70115  | English as a Second Language Teaching                |
++--------+------------------------------------------------------+
+| 90503  | Children's Services                                  |
+|        |                                                      |
+|        | (Human Welfare Studies and Services)                 |
++--------+------------------------------------------------------+
+| 91703  | Religious Studies                                    |
+|        |                                                      |
+|        | (Philosophy and Religious Studies)                   |
++--------+------------------------------------------------------+
+| 92101  | Sport and Recreation Activities                      |
+|        |                                                      |
+|        | (Sport and Recreation)                               |
++--------+------------------------------------------------------+
+| 100101 | Music                                                |
+|        |                                                      |
+|        | (Performing Arts)                                    |
++--------+------------------------------------------------------+
+| 80101  | Accounting                                           |
++--------+------------------------------------------------------+
 
 ```{r}
 fields <- data.frame(
@@ -230,7 +230,8 @@ school_leavers_year
 # using intsvy package to calculate average scores for each state
 library(intsvy)
 pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) %>%
-  mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"))
+  mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"), .before = everything()) |> 
+  select(-STATEID)
 
  pisa_state <- kbl(pisa_state, caption = "Average Math Performance Across States") %>%
   kable_paper() %>%
@@ -331,7 +332,40 @@ overall_school_mean #using intsvy package method
 
 There is a discrepancy between the two different methods.
 
+Testing concordance of results using the *Rrepest* package. Note that this will take quite some time as it has to compute lots of replicates.
+
+```{r}
+LSAY2003_teachflag <- 
+  LSAY2003 |> 
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids, T, F))
+
+Rrepest::Rrepest(data = LSAY2003_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fstr",1:80)),
+        tabl = T)
+
+
+```
+
 Seems as though the level 3 proficiency levels for mathematics literacy is 482 in later years as well. \* [2018](https://nces.ed.gov/surveys/pisa/pisa2018/pdf/MathProfLevelDescriptionV2.pdf) \* [2022](https://nces.ed.gov/surveys/pisa/pisa2022/docs/DescriptionsOf2022ProficiencyLevels-TableI31.pdf)
+
+```{r}
+LSAY2003_proficiency <- 
+  LSAY2003_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
+
+Rrepest::Rrepest(data = LSAY2003_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
+        tabl = T)
+
+```
 
 ```{r}
 library(survey)
@@ -841,8 +875,6 @@ pisa_state_06 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE",
 pisa_state_2006
 ```
 
-
-
 ```{r echo=FALSE}
 #LSAY2009
 pisa_state_09 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE", data = LSAY2009) %>%
@@ -895,7 +927,6 @@ above_482 <- pisa_state_03 %>%
   row_spec(0, background = "orange", bold = TRUE) 
 above_482_table
 ```
-
 
 ```{r echo= FALSE}
 # calculate the mean performance by state (intsvy package)
@@ -958,4 +989,3 @@ above_482_2009 <- pisa_state_09 %>%
   row_spec(0, background = "orange", bold = TRUE) 
 above_482_2009_table
 ```
-
