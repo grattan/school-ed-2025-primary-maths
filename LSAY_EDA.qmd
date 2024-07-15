@@ -606,23 +606,117 @@ Rrepest::Rrepest(data = LSAY2015_proficiency,
 ```{r}
 #2003
 mathcut <- c(358, 420, 482, 545, 607, 669)
-pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+data_2003 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
 pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2003_teachflag)
 ```
 
 ```{r}
+# BOXPLOT FOR 2003
+
+data_summary <- data_2003 %>%
+  group_by(teacher) %>%
+  summarize(
+    ymin = min(Score),
+    lower = Score[Percentiles == 25],
+    middle = median(Score),
+    upper = Score[Percentiles == 75],
+    ymax = max(Score)
+  )
+
+ggplot(data_summary, aes(x = as.factor(teacher))) +
+  geom_boxplot(fill = 'orange', color = "black",
+    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
+    stat = "identity"
+  ) +
+  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
+  theme_minimal() +
+  labs(title = "Distribution of PISA Math Scores - 2003",
+       x = "Teacher",
+       y = "Score") +
+  theme(legend.position = "none") +
+  coord_flip()
+
+
+```
+
+
+
+
+
+```{r}
 # 2006
-pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+data_2006 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
 pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2006_teachflag)
 ```
 
 ```{r}
+# BOXPLOT FOR 2006
+
+data_summary <- data_2006 %>%
+  group_by(teacher) %>%
+  summarize(
+    ymin = min(Score),
+    lower = Score[Percentiles == 25],
+    middle = median(Score),
+    upper = Score[Percentiles == 75],
+    ymax = max(Score)
+  )
+
+ggplot(data_summary, aes(x = as.factor(teacher))) +
+  geom_boxplot(fill = 'orange', color = "black",
+    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
+    stat = "identity"
+  ) +
+  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
+  theme_minimal() +
+  labs(title = "Distribution of PISA Math Scores - 2006",
+       x = "Teacher",
+       y = "Score") +
+  theme(legend.position = "none") +
+  coord_flip()
+
+
+```
+
+
+```{r}
 # 2009
-pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
 pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2009_teachflag)
+```
+
+
+```{r}
+# BOXPLOT FOR 2009
+
+data_summary <- data_2009 %>%
+  group_by(teacher) %>%
+  summarize(
+    ymin = min(Score),
+    lower = Score[Percentiles == 25],
+    middle = median(Score),
+    upper = Score[Percentiles == 75],
+    ymax = max(Score)
+  )
+
+ggplot(data_summary, aes(x = as.factor(teacher))) +
+  geom_boxplot(fill = 'orange', color = "black",
+    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
+    stat = "identity"
+  ) +
+  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
+  theme_minimal() +
+  labs(title = "Distribution of PISA Math Scores - 2009",
+       x = "Teacher",
+       y = "Score") +
+  theme(legend.position = "none") +
+  coord_flip()
+
+
 ```
 
 
@@ -632,16 +726,45 @@ pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", d
 
 ```{r}
 # Quantiles for 2015
-pisa.per.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+data_2015 <- pisa.per.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
-pisa.mean.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher")
+#pisa.mean.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher")
 
 pisa.ben.pv(pvlabel= paste0("PV", 1:10, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2015_teachflag)
 
 
 ```
 
+```{r}
+library(ggplot2)
 
+# BOXPLOT FOR 2015
+
+data_summary <- data_2015 %>%
+  group_by(teacher) %>%
+  summarize(
+    ymin = min(Score),
+    lower = Score[Percentiles == 25],
+    middle = median(Score),
+    upper = Score[Percentiles == 75],
+    ymax = max(Score)
+  )
+
+ggplot(data_summary, aes(x = as.factor(teacher))) +
+  geom_boxplot(fill = 'orange', color = "black",
+    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
+    stat = "identity"
+  ) +
+  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
+  theme_minimal() +
+  labs(title = "Distribution of PISA Math Scores - 2015",
+       x = "Teacher",
+       y = "Score") +
+  theme(legend.position = "none") +
+  coord_flip()
+
+
+```
 
 
 
