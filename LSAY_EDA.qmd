@@ -24,19 +24,16 @@ LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.
 
 ## Y03
 
-How many primary school teachers are in the data set?
+### How many primary school teachers are in the data set?
 
-ASCED code looking for 070103 (Teacher Education: Primary) Looking at field of study: Main area of study/training in this course.
+To explore this in the Y03 data, we will look for the ASCED code 070103 (Teacher Education: Primary) in variables relating to questions focused at main area of study/training in this course at any given year: LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088
 
 ```{r}
-#0 and 1 if 70103
-#sum rows function
-#filter if it is greater than or equal to 1
 
 UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
   # selecting variables for current area of study
   select(STIDSTD, LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088) %>%
-  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
+  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103', NA values retained
   mutate(across(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088),
                 ~ case_when(
                    as.character(.) == '70103' ~ 1,  # PSE as 1
@@ -48,22 +45,19 @@ UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
   # Keep TRUE values
   filter(TEACHERS)
 
-# UNIQUE_STUDYING_TEACHERS
-
+# Creating table to display results
  UNIQUE_STUDYING_TEACHERS_Y03 <- kbl(UNIQUE_STUDYING_TEACHERS, caption = "Count of Primary School Education Students in Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
 
-#UNIQUE_STUDYING_TEACHERS_Y03
-
 ```
 
-There were **\`r nrow(UNIQUE_STUDYING_TEACHERS)\`** people studying primary school teaching at some point in the Y03 data.
+There were **`r nrow(UNIQUE_STUDYING_TEACHERS)`** people studying primary school teaching at some point in the Y03 data.
 
 ```{r}
-# taking a deeper look at  student id 2659 and 9362
-# looking at variable LHC087 as that's where both observations returned 0.
+# Deeper look at  student ID 2659 and 9362
+# Looking at variable LHC087 (Main area of study: 2010) as both individuals observations were 0 here.
 closer_look <- LSAY2003 %>% 
   filter(STIDSTD %in% c(2659, 10049)) %>% 
   select(STIDSTD, LDCZ087, LHC087) %>%
@@ -76,32 +70,36 @@ kbl(closer_look, caption = "Closer look at students who left teaching.") %>%
 
 ```
 
-Student 2659 went into another field of study four years after: Business management (80301) Student 10049 went into another field of study four years after: Human Movement (69903)
+- Student 2659 went into another field of study four years after: Business management (80301)
+
+- Student 10049 went into another field of study four years after: Human Movement (69903)
 
 ## How many people were working as a primary school teacher at any point of responding to the questions?
 
-"What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029). \* ANSZCO code = 2412 for primary school teachers.
+To see how many people were working as a primary school teacher at any point of responding to the questions, we focused on finding the ANSZVO code 2412 in variables related to the question:
+
+"What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029).
+
 
 ```{r}
-# SEEING THE AMOUNT PEOPLE WHO WERE PRIMARY SCHOOL TEACHERS AT ANY POINT
+# Seeing the amount of people who were primary school teachers at some point
 
 UNIQUE_TEACHERS_Y03 <- LSAY2003 %>%
-  # SELECTING VARIABLES FOR WHAT TYPE OF WORK DO YOU DO
+  # Selecting variables related to question: 'What kind of work do you do?'
   select(STIDSTD, LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029) %>%
-  # CHARACTER TYPE ACROSS
+  # Converting to character
   mutate(across(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), as.character)) %>%
-  # MUTATE ACROSS THE OBSERVATION 0 = NOT TEACHER, 1 = TEACHER, NA = NA. 
+  # Mutate across the observation 0 = not teacher, 1 = teacher, NA = NA. 
   mutate(across(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ case_when(
-    . == '2412' ~ 1, #TEACHER AS 1
-    is.na(.) ~ NA_integer_, # RETAIN NA
-    TRUE ~ 0 # NON-TEACHER AS 0
+    . == '2412' ~ 1, # Teacher = 1
+    is.na(.) ~ NA_integer_, # NA values retained
+    TRUE ~ 0 # Non-teacher = 0.
   ))) %>%
-  # CREATE NEW COLUMN WHERE ANY 1 IN THE ROW = TRUE (TEACHER), NO 1 = FALSE
+  # New column where 1 across row = TRUE(Teacher), all else = FALSE 
   mutate(legit_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
-  filter(legit_teachers) #FILTER FOR TRUE CONDITION
+  filter(legit_teachers) # Filtering for TRUE condition
 
-UNIQUE_TEACHERS_Y03
-
+# Creating table to display results
  UNIQUE_TEACHERS_Y03_table <- kbl(UNIQUE_TEACHERS_Y03, caption = "Number of Teachers in the Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
@@ -109,53 +107,26 @@ UNIQUE_TEACHERS_Y03
 
 ```
 
-What did these people study?
+```{r}
+# Getting the IDs of the teachers
+teacher_ids_y03 <- UNIQUE_TEACHERS_Y03$STIDSTD
+```
+
+## What did these people study?
 
 ```{r}
-# Selecting IDs which correlate to teachers 
+# Selecting IDs of previously identified Y03 Teachers
 teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% UNIQUE_TEACHERS_Y03$STIDSTD, ]
 
-# Using those IDs and selecting area of study to see their area of study
+# Using those IDs and selecting area of study variables across given years
 selected_columns <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
 teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
 
-+--------+------------------------------------------------------+
-| Codes  | Field of Education                                   |
-+========+======================================================+
-| 70101  | Teacher Education: Early Childhood                   |
-+--------+------------------------------------------------------+
-| 70103  | Teacher Education: Primary                           |
-+--------+------------------------------------------------------+
-| 70109  | Teacher Education: Vocational Education and Training |
-+--------+------------------------------------------------------+
-| 70199  | Teacher Education, n.e.c.                            |
-|        |                                                      |
-|        | -   special needs                                    |
-+--------+------------------------------------------------------+
-| 70115  | English as a Second Language Teaching                |
-+--------+------------------------------------------------------+
-| 90503  | Children's Services                                  |
-|        |                                                      |
-|        | (Human Welfare Studies and Services)                 |
-+--------+------------------------------------------------------+
-| 91703  | Religious Studies                                    |
-|        |                                                      |
-|        | (Philosophy and Religious Studies)                   |
-+--------+------------------------------------------------------+
-| 92101  | Sport and Recreation Activities                      |
-|        |                                                      |
-|        | (Sport and Recreation)                               |
-+--------+------------------------------------------------------+
-| 100101 | Music                                                |
-|        |                                                      |
-|        | (Performing Arts)                                    |
-+--------+------------------------------------------------------+
-| 80101  | Accounting                                           |
-+--------+------------------------------------------------------+
 
 ```{r}
+# Creating a table for what these individuals studied
 fields <- data.frame(
   Codes = c(70101, 70103, 70109, 70199, 70115, 90503, 91703, 92101, 100101, 80101),
   `Field_of_Education` = c(
@@ -171,6 +142,7 @@ fields <- data.frame(
   )
 )
 
+# Creating a table
  fields <- kbl(fields, caption = "Area of Study for Teachers in Y03.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
@@ -182,9 +154,9 @@ fields
 # Understanding how many school leavers enrol in primary school teaching courses
 
 ```{r}
-#taking the IDs of individuals who had enrolled in primary school teaching at some point
+# Taking the IDs of individuals who had enrolled in primary school teaching at some point
 studying_teachers <- unique(UNIQUE_STUDYING_TEACHERS$STIDSTD)
-# filter the LSAY2003 data for those IDs and high school leaving variables.
+# Filter the LSAY2003 data for those IDs and high school leaving variables.
 studying_teachers_y12 <- LSAY2003 %>% 
   filter(STIDSTD %in% studying_teachers) %>% 
   select(STIDSTD, LBWDV01, LCWDV01, LEWDV01, LIWDV01) %>%
@@ -197,7 +169,7 @@ Only two of those studying primary school teaching in 2003 LSAY were school leav
 2999 & 10049 (leavers)
 
 ```{r}
-# closer look at the school leavers (year and level)
+# Closer look at the school leavers (year and level)
 school_leavers_year_level <- LSAY2003 %>% 
   filter(STIDSTD %in% c(2999, 10049)) %>% 
   select(STIDSTD, LBB001, LCB001, LDB001, LEB001, LEA005, LFB001, LFA006)
@@ -209,6 +181,7 @@ Both left in year 11.
 ```{r}
 school_leavers_year <- LSAY2003 %>% 
   filter(STIDSTD %in% c(2999, 10049)) %>% 
+  # Selecting variables related to, "In which month and year did you leave school?"
   select(STIDSTD, LBA002B, LCA002B, LDA002B, LEA002B, LFA002Y)
 school_leavers_year
 ```
@@ -242,102 +215,13 @@ pisa_state
 
 "In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of [PISA 2003."](https://www.acer.org/files/PISA_screen.pdf)
 
-```{r}
-# Using Survey Package to calculate the average math scores for teachers
-
-# include only PS teachers
-teacher_ids <- UNIQUE_TEACHERS_Y03$STIDSTD
-teacher_data <- LSAY2003[LSAY2003$STIDSTD %in% teacher_ids, ]
-
-options(survey.lonely.psu = "adjust")
-
-# school-level stratification and student-level sampling
-teacher_design_03 <- svydesign(
-  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
-  strata = ~STATEID + SECTOR,  # stratification variables as per tech report
-  weights = ~W_FSTUWT,  # weights column in the data frame
-  data = teacher_data, # teacher data frame
-  nest = TRUE  
-)
-
-# mean math scores for each plausible value
-mean_pv1 <- svymean(~PV1MATH, teacher_design_03)
-mean_pv2 <- svymean(~PV2MATH, teacher_design_03)
-mean_pv3 <- svymean(~PV3MATH, teacher_design_03)
-mean_pv4 <- svymean(~PV4MATH, teacher_design_03)
-mean_pv5 <- svymean(~PV5MATH, teacher_design_03)
-
-# taking only the means
-mean_pv1_val <- coef(mean_pv1)
-mean_pv2_val <- coef(mean_pv2)
-mean_pv3_val <- coef(mean_pv3)
-mean_pv4_val <- coef(mean_pv4)
-mean_pv5_val <- coef(mean_pv5)
-
-# finding the overall mean score by averaging all the means of PVs
-overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
-
-# average math score for teachers
-overall_mean_math_pv
-
-#histograms
-#hist(teacher_data$PV1MATH, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
- # abline(v = mean(teacher_data$PV1MATH), col = "red")
-  
-#hist(teacher_data$W_FSTUWT, main = "Histogram of PV1MATH", xlab = "PV1MATH") 
-  #abline(v = mean(teacher_data$PV1MATH), col = "red")
-
-```
-
-```{r eval=FALSE, echo=FALSE}
-# this chunk is just checking to see if survey package gives similar results to intsvy package
-
-# survey options to handle strata with only one PSU
-options(survey.lonely.psu = "adjust")
-
-# create survey design object: stratification by schoolid? each obs independent
-teacher_design <- svydesign(ids = ~1, strata = ~SCHOOLID, weights = ~W_FSTUWT, data = LSAY2003)
-
-# calc mean math scores for each PV
-mean_pv1 <- svymean(~PV1MATH, teacher_design)
-mean_pv2 <- svymean(~PV2MATH, teacher_design)
-mean_pv3 <- svymean(~PV3MATH, teacher_design)
-mean_pv4 <- svymean(~PV4MATH, teacher_design)
-mean_pv5 <- svymean(~PV5MATH, teacher_design)
-
-# extracting means
-mean_pv1_val <- coef(mean_pv1)
-mean_pv2_val <- coef(mean_pv2)
-mean_pv3_val <- coef(mean_pv3)
-mean_pv4_val <- coef(mean_pv4)
-mean_pv5_val <- coef(mean_pv5)
-
-# overall mean score
-overall_mean_math_pv <- mean(c(mean_pv1_val, mean_pv2_val, mean_pv3_val, mean_pv4_val, mean_pv5_val))
-
-
-overall_mean_math_pv
-
-# Using intsvy to get mean for school
-
-pisa_means_intsvy <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "SCHOOLID", data = LSAY2003)
-overall_school_mean <- mean(pisa_means_intsvy$Mean)
-
-
-overall_mean_math_pv #using survey package method
-overall_school_mean #using intsvy package method
-
-
-```
-
-There is a discrepancy between the two different methods.
 
 Testing concordance of results using the *Rrepest* package. Note that this will take quite some time as it has to compute lots of replicates.
 
 ```{r}
 LSAY2003_teachflag <- 
   LSAY2003 |> 
-  mutate(teacher = if_else(STIDSTD %in% teacher_ids, T, F))
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids_y03, T, F))
 
 Rrepest::Rrepest(data = LSAY2003_teachflag,
         svy = "PISA",
@@ -345,7 +229,6 @@ Rrepest::Rrepest(data = LSAY2003_teachflag,
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
-
 
 ```
 
@@ -364,70 +247,6 @@ Rrepest::Rrepest(data = LSAY2003_proficiency,
         by = "teacher",
         cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
         tabl = T)
-
-```
-
-```{r}
-library(survey)
-
-# mean math scores for each teacher across each pv first
-mean_pv1_by_teacher <- svyby(~PV1MATH, ~STIDSTD, teacher_design_03, svymean)
-mean_pv2_by_teacher <- svyby(~PV2MATH, ~STIDSTD, teacher_design_03, svymean)
-mean_pv3_by_teacher <- svyby(~PV3MATH, ~STIDSTD, teacher_design_03, svymean)
-mean_pv4_by_teacher <- svyby(~PV4MATH, ~STIDSTD, teacher_design_03, svymean)
-mean_pv5_by_teacher <- svyby(~PV5MATH, ~STIDSTD, teacher_design_03, svymean)
-
-# creating a data frame with ID and mean for each PV for each ID
-teacher_means_03 <- data.frame(
-  STIDSTD = mean_pv1_by_teacher$STIDSTD,
-  mean_pv1 = mean_pv1_by_teacher$PV1MATH,
-  mean_pv2 = mean_pv2_by_teacher$PV2MATH,
-  mean_pv3 = mean_pv3_by_teacher$PV3MATH,
-  mean_pv4 = mean_pv4_by_teacher$PV4MATH,
-  mean_pv5 = mean_pv5_by_teacher$PV5MATH
-)
-
-# second average across the row for each teacher
-teacher_means_03$mean_score = rowMeans(teacher_means_03[, -1])
-
-threshold <- 549.5463 # average for teacher performance
-proficient_standard <- 482 # level 3 proficient standard
-
-# how many teachers are below teacher avg
-teacher_means_03$below_avg_teacher = teacher_means_03$mean_score < threshold 
-
-# how many teachers are below proficient standard (482)
-teacher_means_03$below_prof_avg = teacher_means_03$mean_score < proficient_standard
-
-
-```
-
-```{r}
-# seeing how many are below average -- true = below average (549.5463)
-teachers_below_avg <- table(teacher_means_03$below_prof_avg)
-teachers_below_avg
-```
-
-```{r}
-# seeing how many are below proficient standard -- true = below proficient standard (482)
-# Create the table
-teachers_below_profstand_y03 <- table(teacher_means_03$below_prof_avg)
-names(teachers_below_profstand_y03) <- c("Above Proficiency", "Below Proficiency")
-
-
-teachers_below_profstand_y03_df <- as.data.frame(teachers_below_profstand_y03) 
-
-
-proficiency_y03_table <- kable(teachers_below_profstand_y03, caption = "Proficiency Status of Teachers in 2003", col.names = c("Proficiency Status", "Count"), align = "c", booktabs = TRUE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-  row_spec(0, background = "orange", color = "black") %>%
-  column_spec(column = c(1,2), color = "black")
-
-proficiency_y03_table
-```
-
-```{r}
-# look at teacher_means and create possible row at the bottom w/ percentage above/below average
 
 ```
 
@@ -475,39 +294,19 @@ LEGIT_TEACHERS_2006 <- LSAY2006 %>%
   # Filter for TRUE condition
   filter(legit_teachers)
 
-LEGIT_TEACHERS_2006
 ```
 
 ```{r}
-# Taking a look at what the legit teachers studied
+# Taking a look at Y06 Teachers Area of Study
 teacher_jobs_06 <- LSAY2006[LSAY2006$STIDSTD %in% LEGIT_TEACHERS_2006$STIDSTD, ]
 
-# selecting student ID and area of study across the years
+# Selecting teacher student IDs and variables related to area of study across the years
 selected_columns <- c('STIDSTD', 'LBC087', 'LCC087', 'LDC087', 'LEC087', 'LFC087', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
 teacher_jobs_06 <- teacher_jobs_06[, selected_columns]
 ```
 
-| Code   | Field                              |
-|--------|------------------------------------|
-| 100705 | Written Communication              |
-| 100103 | Drama and Theatre Studies          |
-| 100101 | Music                              |
-| 80399  | Business and Management, n.e.c.    |
-| 70103  | Teacher Education: Primary         |
-| 70101  | Teacher Education: Early Childhood |
-| 70105  | Teacher Education: Secondary       |
-| 70199  | Teacher Education, n.e.c.          |
-| 91701  | Philosophy                         |
-| 60901  | Optometry                          |
-| 61399  | Public Health, n.e.c.              |
-| 60101  | General Medicine                   |
-| 91703  | Religious Studies                  |
-| 80101  | Accounting                         |
-| 81101  | Banking and Finance                |
-| 91523  | Literature                         |
-| 90513  | Counselling                        |
-
 ```{r}
+# Creating a table to see what the teachers studied.
 aos_2006 <- data.frame(
   Code = c(100705, 100103, 100101, 80399, 70103, 70101, 70105, 70199, 91701, 60901, 61399, 60101, 91703, 80101, 81101, 91523, 90513),
   Field = c(
@@ -541,7 +340,9 @@ aos_2006
 ```
 
 ```{r}
-studying_teachers_06 <- unique(STUDYING_TEACHERS_2006$STIDSTD)
+studying_teachers_06 <- unique(LEGIT_TEACHERS_2006$STIDSTD)
+
+
 # filter the LSAY2003 data for those IDs and high school leaving variables.
 school_leavers_06 <- LSAY2006 %>% 
   filter(STIDSTD %in% studying_teachers_06) %>% 
@@ -555,78 +356,39 @@ school_leavers_06 <- LSAY2006 %>%
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
-```{r}
-
-teacher_ids <- LEGIT_TEACHERS_2006$STIDSTD
-teacher_data_2006 <- LSAY2006[LSAY2006$STIDSTD %in% teacher_ids, ]
-
-
-options(survey.lonely.psu = "adjust")
-
-# school-level stratification and student-level sampling
-teacher_design_y06 <- svydesign(
-  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
-  strata = ~STATE + SECTOR,  # stratification variables as per tech report
-  weights = ~W_FSTUWT,  # weights column in the data frame
-  data = teacher_data_2006, # teacher data frame
-  nest = TRUE  
-)
-```
 
 ```{r}
-library(survey)
+teacher_ids_2006 <- LEGIT_TEACHERS_2006$STIDSTD
+LSAY2006_teachflag <- 
+  LSAY2006 |> 
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids_2006, T, F))
 
-# mean math scores for each teacher across each pv first
-mean_pv1_by_teacher_06 <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv2_by_teacher_06 <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv3_by_teacher_06 <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv4_by_teacher_06 <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y06, svymean)
-mean_pv5_by_teacher_06 <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y06, svymean)
-
-# creating a data frame with ID and mean for each PV for each ID
-teacher_means_y06 <- data.frame(
-  STIDSTD = mean_pv1_by_teacher_06$STIDSTD,
-  mean_pv1 = mean_pv1_by_teacher_06$PV1MATH,
-  mean_pv2 = mean_pv2_by_teacher_06$PV2MATH,
-  mean_pv3 = mean_pv3_by_teacher_06$PV3MATH,
-  mean_pv4 = mean_pv4_by_teacher_06$PV4MATH,
-  mean_pv5 = mean_pv5_by_teacher_06$PV5MATH
-)
-
-# second average across the row for each teacher
-teacher_means_y06$mean_score = rowMeans(teacher_means_y06[, -1])
-
-proficient_standard <- 482 # level 3 proficient standard - **double check if this has changed**
-
-# how many teachers are below proficient standard (482)
-teacher_means_y06$below_prof_avg = teacher_means_y06$mean_score < proficient_standard
-
-teacher_means_y06_table <- kable(teacher_means_y06, caption = "Proficiency Status of Teachers in 2006", align = "c", booktabs = TRUE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-  row_spec(0, background = "orange", color = "black") %>%
-  scroll_box(width = "1000px", height = "300px")
-
-teacher_means_y06_table
+Rrepest::Rrepest(data = LSAY2006_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fstr",1:80)),
+        tabl = T)
 
 ```
 
+
 ```{r}
-# TRUE being below the 482 proficient standard (level 3)
+LSAY2006_proficiency <- 
+  LSAY2006_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
 
-teachers_below_profstand_y06 <- table(teacher_means_y06$below_prof_avg)
-names(teachers_below_profstand_y06) <- c("Above Proficiency", "Below Proficiency")
-teachers_below_profstand_y06
+Rrepest::Rrepest(data = LSAY2006_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
+        tabl = T)
 
-# formatting
-teachers_below_profstand_y06_df <- as.data.frame(teachers_below_profstand_y06)
-
-proficiency_y06_table <- kable(teachers_below_profstand_y06_df, caption = "Proficiency Status of Teachers in 2006", col.names = c("Proficiency Status", "Count"), align = "c", booktabs = TRUE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-  row_spec(0, background = "orange", color = "black") %>%
-  column_spec(column = c(1,2), color = "black")
-
-proficiency_y06_table
 ```
+
 
 # LSAY 2009
 
@@ -704,79 +466,43 @@ What did they study?
 ## Plausible values for 2009
 
 ```{r}
+# Extracting the unique teacher IDs
+teacher_ids_2009 <- LEGIT_TEACHERS_2009$STIDSTD
 
-teacher_ids <- LEGIT_TEACHERS_2009$STIDSTD
-teacher_data_2009 <- LSAY2009[LSAY2009$STIDSTD %in% teacher_ids, ]
-
-
-options(survey.lonely.psu = "adjust")
-
-# school-level stratification and student-level sampling
-teacher_design_y09 <- svydesign(
-  ids = ~SCHOOLID + STIDSTD,  # two-stage sampling: schools then students
-  strata = ~STATE + SECTOR,  # stratification variables as per tech report
-  weights = ~W_FSTUWT,  # weights column in the data frame
-  data = teacher_data_2009, # teacher data frame
-  nest = TRUE  
-)
-```
-
-```{r}
-library(survey)
-
-# mean math scores for each teacher across each pv first
-mean_pv1_by_teacher_y09 <- svyby(~PV1MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv2_by_teacher_y09 <- svyby(~PV2MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv3_by_teacher_y09 <- svyby(~PV3MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv4_by_teacher_y09 <- svyby(~PV4MATH, ~STIDSTD, teacher_design_y09, svymean)
-mean_pv5_by_teacher_y09 <- svyby(~PV5MATH, ~STIDSTD, teacher_design_y09, svymean)
-
-# creating a data frame with ID and mean for each PV for each ID
-teacher_means_y09 <- data.frame(
-  STIDSTD = mean_pv1_by_teacher_y09$STIDSTD,
-  mean_pv1 = mean_pv1_by_teacher_y09$PV1MATH,
-  mean_pv2 = mean_pv2_by_teacher_y09$PV2MATH,
-  mean_pv3 = mean_pv3_by_teacher_y09$PV3MATH,
-  mean_pv4 = mean_pv4_by_teacher_y09$PV4MATH,
-  mean_pv5 = mean_pv5_by_teacher_y09$PV5MATH
-)
-
-# second average across the row for each teacher
-teacher_means_y09$mean_score = rowMeans(teacher_means_y09[, -1])
-
-proficient_standard <- 482 # level 3 proficient standard - **double check if this has changed**
-
-# how many teachers are below proficient standard (482)
-teacher_means_y09$below_prof_avg = teacher_means_y09$mean_score < proficient_standard
-
-teacher_means_y09_table <- kable(teacher_means_y09, caption = "Proficiency Status of Teachers in 2009", align = "c", booktabs = TRUE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-  row_spec(0, background = "orange", color = "black") %>%
-  scroll_box(width = "1000px", height = "300px")
-
-teacher_means_y09_table
 
 ```
 
 ```{r}
-# TRUE being below the 482 proficient standard (level 3)
 
-teachers_below_profstand_y09 <- table(teacher_means_y09$below_prof_avg)
-names(teachers_below_profstand_y09) <- c("Above Proficiency", "Below Proficiency")
-teachers_below_profstand_y09
+LSAY2009_teachflag <- 
+  LSAY2009 |> 
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids_2009, T, F))
 
-# formatting
-teachers_below_profstand_y09_df <- as.data.frame(teachers_below_profstand_y09)
+Rrepest::Rrepest(data = LSAY2009_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fstr",1:80)),
+        tabl = T)
 
-proficiency_y09 <- kable(teachers_below_profstand_y09_df, caption = "Proficiency Status of Teachers in 2009", col.names = c("Proficiency Status", "Count"), align = "c", booktabs = TRUE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-  row_spec(0, background = "orange", color = "black") %>%
-  column_spec(column = c(1,2), color = "black")
-
-proficiency_y09
 ```
 
-There seems to be a large number of teachers still above the proficient standard in 2009. However the mean score was [generally high for Australia](https://www.acer.org/files/PISA-2009-In-Brief.pdf)
+
+```{r}
+LSAY2009_proficiency <- 
+  LSAY2009_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
+
+Rrepest::Rrepest(data = LSAY2009_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
+        tabl = T)
+
+```
 
 # LSAY 2015
 
@@ -836,156 +562,43 @@ teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
 
 # Plausible values for 2015
 
-# Key findings across the years
+```{r}
+# Extracting the unique teacher IDs
+teacher_ids_2015 <- LEGIT_TEACHERS_2015$LSAYID
 
-(at the moment focus on Y03, Y06 and Y09)
+```
 
 ```{r}
-proficiency_y03_table
-proficiency_y06_table
-proficiency_y09
+
+LSAY2015_teachflag <- 
+  LSAY2015 |> 
+  mutate(teacher = if_else(LSAYID %in% teacher_ids_2015, T, F))
+
+Rrepest::Rrepest(data = LSAY2015_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fsturwt",1:80)),
+        tabl = T)
 
 ```
 
-Seeing how this compare against everyone more generally (how each state performed)
 
-```{r echo=FALSE}
-#LSAY2003
-library(intsvy)
-pisa_state_03 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) %>%
-  mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"))
+```{r}
+LSAY2015_proficiency <- 
+  LSAY2015_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
 
- pisa_state_2003 <- kbl(pisa_state_03, caption = "Average Math Performance Across States, 2003") %>%
-  kable_paper() %>%
-  row_spec(0, background = "orange", bold = TRUE) %>%
-  scroll_box(width = "1000px", height = "300px")
-pisa_state_2003
+Rrepest::Rrepest(data = LSAY2015_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fsturwt",1:80)), 
+        tabl = T)
+
 ```
 
-```{r echo=FALSE}
-#LSAY2006
-library(intsvy)
-pisa_state_06 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE", data = LSAY2006) %>%
-  mutate(STATE = c("NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"))
-
- pisa_state_2006 <- kbl(pisa_state_06, caption = "Average Math Performance Across States, 2006") %>%
-  kable_paper() %>%
-  row_spec(0, background = "orange", bold = TRUE) %>%
-  scroll_box(width = "1000px", height = "300px")
-pisa_state_2006
-```
-
-```{r echo=FALSE}
-#LSAY2009
-pisa_state_09 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATE", data = LSAY2009) %>%
-  mutate(STATE = c("NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"))
-
- pisa_state_2009 <- kbl(pisa_state_09, caption = "Average Math Performance Across States, 2009") %>%
-  kable_paper() %>%
-  row_spec(0, background = "orange", bold = TRUE) %>%
-  scroll_box(width = "1000px", height = "300px")
-pisa_state_2009
-```
-
-# Exploring State Averages Across the years.
-
-Looking at how the states performed on average in maths over the years using `intsvy` package.
-
-```{r echo= FALSE}
-library(dplyr)
-library(stringr)
-
-# define the mathcut values
-mathcut <- c(358, 420, 482, 545, 607, 669)
-
-# calculate the mean performance by state (intsvy package)
-pisa_state_03 <- pisa.ben.pv(pvlabel = paste0("PV", 1:5, "MATH"), cutoff = mathcut, by = "STATEID", data = LSAY2003)
-
-# eeplace STATEID with actual state acronyms using case_when
-pisa_state_03 <- pisa_state_03 %>%
-  mutate(STATEID = case_when(
-    STATEID == 1 ~ "NSW",
-    STATEID == 2 ~ "VIC",
-    STATEID == 3 ~ "QLD",
-    STATEID == 4 ~ "SA",
-    STATEID == 5 ~ "WA",
-    STATEID == 6 ~ "TAS",
-    STATEID == 7 ~ "NT",
-    STATEID == 8 ~ "ACT"))
-
-# checking format of string for benchmarks
-unique_benchmarks <- unique(pisa_state_03$Benchmark)
 
 
-# Use the exact string observed in the unique values
-above_482 <- pisa_state_03 %>%
-  filter(Benchmark == "At or above 482") %>%
-  select(STATEID, Percentage)
-
- above_482_table <- kbl(above_482, caption = "Percentage Above 482 - States, 2003") %>%
-  kable_paper() %>%
-  row_spec(0, background = "orange", bold = TRUE) 
-above_482_table
-```
-
-```{r echo= FALSE}
-# calculate the mean performance by state (intsvy package)
-pisa_state_06 <- pisa.ben.pv(pvlabel = paste0("PV", 1:5, "MATH"), cutoff = mathcut, by = "STATE", data = LSAY2006)
-
-# eeplace STATEID with actual state acronyms using case_when
-pisa_state_06 <- pisa_state_06 %>%
-  mutate(STATE = case_when(
-    STATE == 1 ~ "NSW",
-    STATE == 2 ~ "VIC",
-    STATE == 3 ~ "QLD",
-    STATE == 4 ~ "SA",
-    STATE == 5 ~ "WA",
-    STATE == 6 ~ "TAS",
-    STATE == 7 ~ "NT",
-    STATE == 8 ~ "ACT"))
-
-# checking format of string for benchmarks
-unique_benchmarks <- unique(pisa_state_06$Benchmark)
-
-
-# Use the exact string observed in the unique values
-above_482_2006 <- pisa_state_06 %>%
-  filter(Benchmark == "At or above 482") %>%
-  select(STATE, Percentage)
-
- above_482_2006_table <- kbl(above_482_2006, caption = "Percentage Above 482 - States, 2006") %>%
-  kable_paper() %>%
-  row_spec(0, background = "orange", bold = TRUE) 
-above_482_2006_table
-```
-
-```{r echo=FALSE}
-# calculate the mean performance by state (intsvy package)
-pisa_state_09 <- pisa.ben.pv(pvlabel = paste0("PV", 1:5, "MATH"), cutoff = mathcut, by = "STATE", data = LSAY2009)
-
-# replace STATEID with actual state acronyms using case_when
-pisa_state_09 <- pisa_state_09 %>%
-  mutate(STATE = case_when(
-    STATE == 1 ~ "NSW",
-    STATE == 2 ~ "VIC",
-    STATE == 3 ~ "QLD",
-    STATE == 4 ~ "SA",
-    STATE == 5 ~ "WA",
-    STATE == 6 ~ "TAS",
-    STATE == 7 ~ "NT",
-    STATE == 8 ~ "ACT"))
-
-# checking format of string for benchmarks
-unique_benchmarks <- unique(pisa_state_09$Benchmark)
-
-
-# Use the exact string observed in the unique values
-above_482_2009 <- pisa_state_09 %>%
-  filter(Benchmark == "At or above 482") %>%
-  select(STATE, Percentage)
-
- above_482_2009_table <- kbl(above_482_2009, caption = "Percentage Above 482 - States, 2009") %>%
-  kable_paper() %>%
-  row_spec(0, background = "orange", bold = TRUE) 
-above_482_2009_table
-```
