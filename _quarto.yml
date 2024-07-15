@@ -9,7 +9,7 @@ website:
     background: '#FFFFFF'
     foreground: '#EF7900'
     left:
-      - href: grattan_survey_analysis.qmd
+      - href: index.qmd
         text: Demographics
       - href: blank-page.qmd
         text: Teacher attitudes

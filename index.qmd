@@ -138,7 +138,6 @@ clean_survey |>
   theme_grattan() +
   scale_x_datetime(
     date_labels = "%d-%b",
-    date_breaks = "day"
   ) +
   scale_y_continuous_grattan() +
   labs(x = NULL)
