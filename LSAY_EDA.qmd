@@ -766,13 +766,66 @@ ggplot(data_summary, aes(x = as.factor(teacher))) +
 
 ```
 
+```{r}
+# t test for 2003
+t.test(Score ~ teacher, data = data_2003, var.equal = FALSE)
+
+# t test for 2006
+t.test(Score ~ teacher, data = data_2006, var.equal = FALSE)
+
+# t test for 2009
+t.test(Score ~ teacher, data = data_2009, var.equal = FALSE)
+
+# t test for 2015
+t.test(Score ~ teacher, data = data_2015, var.equal = FALSE)
 
 
-**NEXT STEPS** 
+```
 
-Two big questions
-- distribution of teacher performance (for all years --> boxplots, visualisations)
-- adding frequency and quantiles to the code --> boxplot after (sus intsvy maybe for quantiles)
-- comparing teachers with other jobs in the professional 
-- anzic > occupation classification list (major groups) - managers & professionals, within professionals - top level (major group): at the last point in the survey what were they (as opposed to any time - last non NA value) --> do for the year with largest sample of teachers first.
+
+```{r}
+# Calculating 2003 - Double check t.test
+
+scores_FALSE <- c(406.79, 465.18, 595.95, 648.90)
+scores_TRUE <- c(465.18, 501.89, 598.02, 632.96)
+
+# means
+mean_FALSE <- mean(scores_FALSE)
+mean_TRUE <- mean(scores_TRUE)
+
+# variances
+var_FALSE <- var(scores_FALSE)
+var_TRUE <- var(scores_TRUE)
+
+# se
+se <- sqrt(var_FALSE / length(scores_FALSE) + var_TRUE / length(scores_TRUE))
+
+# t-value
+t_value <- (mean_FALSE - mean_TRUE) / se
+
+# dof
+df <- (var_FALSE / length(scores_FALSE) + var_TRUE / length(scores_TRUE))^2 / 
+      ((var_FALSE / length(scores_FALSE))^2 / (length(scores_FALSE) - 1) + (var_TRUE / length(scores_TRUE))^2 / (length(scores_TRUE) - 1))
+
+# p-value
+p_value <- 2 * pt(-abs(t_value), df)
+
+# conf int
+ci_lower <- (mean_FALSE - mean_TRUE) - qt(0.975, df) * se
+ci_upper <- (mean_FALSE - mean_TRUE) + qt(0.975, df) * se
+
+
+list(
+  mean_FALSE = mean_FALSE,
+  mean_TRUE = mean_TRUE,
+  var_FALSE = var_FALSE,
+  var_TRUE = var_TRUE,
+  se = se,
+  t_value = t_value,
+  df = df,
+  p_value = p_value,
+  confidence_interval = c(ci_lower, ci_upper)
+)
+
+```
 
