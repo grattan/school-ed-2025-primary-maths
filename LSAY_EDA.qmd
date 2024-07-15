@@ -51,6 +51,7 @@ UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
 
+UNIQUE_STUDYING_TEACHERS_Y03
 ```
 
 There were **`r nrow(UNIQUE_STUDYING_TEACHERS)`** people studying primary school teaching at some point in the Y03 data.
@@ -469,7 +470,6 @@ What did they study?
 # Extracting the unique teacher IDs
 teacher_ids_2009 <- LEGIT_TEACHERS_2009$STIDSTD
 
-
 ```
 
 ```{r}
@@ -598,7 +598,58 @@ Rrepest::Rrepest(data = LSAY2015_proficiency,
         cm.weights = c(paste0("w_fsturwt",1:80)), 
         tabl = T)
 
+
+```
+
+## Quantiles Across the Years
+
+```{r}
+#2003
+mathcut <- c(358, 420, 482, 545, 607, 669)
+pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2003_teachflag)
+```
+
+```{r}
+# 2006
+pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2006_teachflag)
+```
+
+```{r}
+# 2009
+pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2009_teachflag)
 ```
 
 
+
+
+
+
+```{r}
+# Quantiles for 2015
+pisa.per.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+pisa.mean.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher")
+
+pisa.ben.pv(pvlabel= paste0("PV", 1:10, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2015_teachflag)
+
+
+```
+
+
+
+
+
+**NEXT STEPS** 
+
+Two big questions
+- distribution of teacher performance (for all years --> boxplots, visualisations)
+- adding frequency and quantiles to the code --> boxplot after (sus intsvy maybe for quantiles)
+- comparing teachers with other jobs in the professional 
+- anzic > occupation classification list (major groups) - managers & professionals, within professionals - top level (major group): at the last point in the survey what were they (as opposed to any time - last non NA value) --> do for the year with largest sample of teachers first.
 
