@@ -71,16 +71,15 @@ kbl(closer_look, caption = "Closer look at students who left teaching.") %>%
 
 ```
 
-- Student 2659 went into another field of study four years after: Business management (80301)
+-   Student 2659 went into another field of study four years after: Business management (80301)
 
-- Student 10049 went into another field of study four years after: Human Movement (69903)
+-   Student 10049 went into another field of study four years after: Human Movement (69903)
 
 ## How many people were working as a primary school teacher at any point of responding to the questions?
 
 To see how many people were working as a primary school teacher at any point of responding to the questions, we focused on finding the ANSZVO code 2412 in variables related to the question:
 
 "What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029).
-
 
 ```{r}
 # Seeing the amount of people who were primary school teachers at some point
@@ -124,7 +123,6 @@ selected_columns <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC
 teacher_jobs <- teacher_jobs[, selected_columns]
 
 ```
-
 
 ```{r}
 # Creating a table for what these individuals studied
@@ -215,7 +213,6 @@ pisa_state
 ```
 
 "In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of [PISA 2003."](https://www.acer.org/files/PISA_screen.pdf)
-
 
 Testing concordance of results using the *Rrepest* package. Note that this will take quite some time as it has to compute lots of replicates.
 
@@ -357,7 +354,6 @@ school_leavers_06 <- LSAY2006 %>%
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
-
 ```{r}
 teacher_ids_2006 <- LEGIT_TEACHERS_2006$STIDSTD
 LSAY2006_teachflag <- 
@@ -372,7 +368,6 @@ Rrepest::Rrepest(data = LSAY2006_teachflag,
         tabl = T)
 
 ```
-
 
 ```{r}
 LSAY2006_proficiency <- 
@@ -389,7 +384,6 @@ Rrepest::Rrepest(data = LSAY2006_proficiency,
         tabl = T)
 
 ```
-
 
 # LSAY 2009
 
@@ -486,7 +480,6 @@ Rrepest::Rrepest(data = LSAY2009_teachflag,
         tabl = T)
 
 ```
-
 
 ```{r}
 LSAY2009_proficiency <- 
@@ -585,8 +578,6 @@ Rrepest::Rrepest(data = LSAY2015_teachflag,
 
 ```
 
-
-
 ```{r}
 LSAY2015_proficiency <- 
   LSAY2015_teachflag |> 
@@ -644,10 +635,6 @@ ggplot(data_2003_summary, aes(x = as.factor(teacher))) +
 
 ```
 
-
-
-
-
 ```{r}
 # 2006
 data_2006 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
@@ -684,14 +671,12 @@ ggplot(data_2006_summary, aes(x = as.factor(teacher))) +
 
 ```
 
-
 ```{r}
 # 2009
 data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
 pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2009_teachflag)
 ```
-
 
 ```{r}
 # BOXPLOT FOR 2009
@@ -721,11 +706,6 @@ ggplot(data_2009_summary, aes(x = as.factor(teacher))) +
 
 
 ```
-
-
-
-
-
 
 ```{r}
 # Quantiles for 2015
@@ -768,11 +748,6 @@ ggplot(data_2015_summary, aes(x = as.factor(teacher))) +
 
 
 ```
-
-
-
-
-
 
 ```{r}
 # Manual t-test calculation for 2003
@@ -843,13 +818,13 @@ t_value
 ```{r}
 # Manual t-test calculation for 2015
 pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2015_teachflag, by = "teacher")
-mean_FALSE <- 513.7
-mean_TRUE <- 552.7
-sd_FALSE <- 95.1
-sd_TRUE <- 63.9
-n_FALSE <- 14130
-n_TRUE <- 121
-se <- sqrt((95.1^2 / 14130) + (63.9^2 / 121)) # For Welch's t-test
+mean_FALSE <- 494.0
+mean_TRUE <- 519.4
+sd_FALSE <- 92.5
+sd_TRUE <- 61.0
+n_FALSE <- 14503
+n_TRUE <- 27
+se <- sqrt((92.5^2 / 14503) + (61.0^2 / 27)) # For Welch's t-test
 t_value <- (mean_FALSE - mean_TRUE) / se
 
 # approx dof
@@ -859,6 +834,97 @@ df <- ( (sd_FALSE^2 / n_FALSE) + (sd_TRUE^2 / n_TRUE) )^2 /
 # p-value
 p_value <- 2 * pt(t_value, df = df, lower.tail = TRUE)
 p_value
+t_value
 
 ```
+
+## Comparing Teacher Performance with other Professionals
+
+Starting with 2003 first as it has the largest sample of teachers. 
+looking at other professions at the end of the waves.
+
+-   medical practitioners,
+
+-   midwifery and nursing professionals
+
+-   legal professionals,
+
+-   accounts auditors and company secretaries
+
+-    engineering professionals
+
+| Professionals                             | ANSZCO Code |
+|-------------------------------------------|-------------|
+| Medical Practitioners                     | 253         |
+| Midwifery and Nursing Professionals       | 254         |
+| Legal professionals                       | 271         |
+| accounts auditors and company secretaries | 221         |
+| Engineering professionals                 | 233         |
+
+
+
+```{r}
+# Adapting the code earlier to see the frequency of each profession in the last wave
+UNIQUE_PROFESSIONALS_Y03 <- LSAY2003 |>
+  # Selecting variables related to question: 'What kind of work do you do?'
+  select(STIDSTD, LKD029) |>
+  mutate(across(c(LKD029), as.character)) |>
+  # Mutate across the observation to get the different professions
+  mutate(across(c(LKD029), ~ case_when(
+    . == '2412' ~ 1,  # Teacher = 1
+    startsWith(., '253')  ~ 2,  # Medical Practitioners = 2
+    startsWith(., '254')  ~ 3,  # Midwifery and Nursing Professionals = 3
+    startsWith(., '271')  ~ 4,  # Legal Professionals = 4
+    startsWith(., '221')  ~ 5,  # Accounts Auditors and Company Secretaries = 5
+    startsWith(., '233')  ~ 6,  # Engineering Professionals = 6
+    is.na(.) ~ NA_integer_, # NA values retained
+    TRUE ~ 0 # All others = 0
+  ))) %>%
+  # New column to check if the observation is one of the targeted professions
+  mutate(legit_professions = if_any(c(LKD029), ~ . %in% 1:6)) %>%
+  filter(legit_professions) # Filtering for just the IDs with professions
+
+profession_frequency <- UNIQUE_PROFESSIONALS_Y03 %>%
+  count(LKD029) %>%
+  mutate(
+    Profession = case_when(
+      LKD029 == 1 ~ 'Teacher',
+      LKD029 == 2 ~ 'Medical Practitioners',
+      LKD029 == 3 ~ 'Midwifery and Nursing Professionals',
+      LKD029 == 4 ~ 'Legal Professionals',
+      LKD029 == 5 ~ 'Accounts Auditors and Company Secretaries',
+      LKD029 == 6 ~ 'Engineering Professionals'
+    )
+  )
+```
+
+
+
+```{r}
+
+# Adapting the code to include different professions
+LSAY2003_profession_flag <- LSAY2003 %>%
+  mutate(LKD029 = as.character(LKD029)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 'Teacher',
+    startsWith(LKD029, '253') ~ 'Medical Practitioners',
+    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
+    startsWith(LKD029, '271') ~ 'Legal Professionals',
+    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
+    startsWith(LKD029, '233') ~ 'Engineering Professionals',
+    TRUE ~ 'Other'
+  ))
+
+Rrepest::Rrepest(
+  data = LSAY2003_profession_flag,
+  svy = "PISA",
+  est = est(c("mean","std"),"pv@math"),
+  by = c("profession"),
+  cm.weights = c(paste0("w_fstr", 1:80)),
+  tabl = TRUE
+)
+```
+
+
+
 
