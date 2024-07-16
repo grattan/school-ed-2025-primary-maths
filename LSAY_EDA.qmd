@@ -865,35 +865,34 @@ looking at other professions at the end of the waves.
 
 ```{r}
 # Adapting the code earlier to see the frequency of each profession in the last wave
-UNIQUE_PROFESSIONALS_Y03 <- LSAY2003 |>
-  # Selecting variables related to question: 'What kind of work do you do?'
-  select(STIDSTD, LKD029) |>
-  mutate(across(c(LKD029), as.character)) |>
-  # Mutate across the observation to get the different professions
-  mutate(across(c(LKD029), ~ case_when(
-    . == '2412' ~ 1,  # Teacher = 1
-    startsWith(., '253')  ~ 2,  # Medical Practitioners = 2
-    startsWith(., '254')  ~ 3,  # Midwifery and Nursing Professionals = 3
-    startsWith(., '271')  ~ 4,  # Legal Professionals = 4
-    startsWith(., '221')  ~ 5,  # Accounts Auditors and Company Secretaries = 5
-    startsWith(., '233')  ~ 6,  # Engineering Professionals = 6
-    is.na(.) ~ NA_integer_, # NA values retained
+UNIQUE_PROFESSIONALS_Y03 <- LSAY2003 %>%
+  # Selecting last wave variable related to question: 'What kind of work do you do?'
+  select(STIDSTD, LKD029) %>%
+  mutate(across(c(LKD029), as.character)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 1,  # Teacher = 1
+    startsWith(LKD029, '253')  ~ 2,  # Medical Practitioners = 2
+    startsWith(LKD029, '254')  ~ 3,  # Midwifery and Nursing Professionals = 3
+    startsWith(LKD029, '271')  ~ 4,  # Legal Professionals = 4
+    startsWith(LKD029, '221')  ~ 5,  # Accounts Auditors and Company Secretaries = 5
+    startsWith(LKD029, '233')  ~ 6,  # Engineering Professionals = 6
+    is.na(LKD029) ~ NA_integer_, # NA values retained
     TRUE ~ 0 # All others = 0
-  ))) %>%
-  # New column to check if the observation is one of the targeted professions
-  mutate(legit_professions = if_any(c(LKD029), ~ . %in% 1:6)) %>%
-  filter(legit_professions) # Filtering for just the IDs with professions
+  )) %>%
+  # keeping 1:6 professions
+  filter(profession != 0 & !is.na(profession))
 
+# frequency of each profession
 profession_frequency <- UNIQUE_PROFESSIONALS_Y03 %>%
-  count(LKD029) %>%
+  count(profession) %>%
   mutate(
     Profession = case_when(
-      LKD029 == 1 ~ 'Teacher',
-      LKD029 == 2 ~ 'Medical Practitioners',
-      LKD029 == 3 ~ 'Midwifery and Nursing Professionals',
-      LKD029 == 4 ~ 'Legal Professionals',
-      LKD029 == 5 ~ 'Accounts Auditors and Company Secretaries',
-      LKD029 == 6 ~ 'Engineering Professionals'
+      profession == 1 ~ 'Teacher',
+      profession == 2 ~ 'Medical Practitioners',
+      profession == 3 ~ 'Midwifery and Nursing Professionals',
+      profession == 4 ~ 'Legal Professionals',
+      profession == 5 ~ 'Accounts Auditors and Company Secretaries',
+      profession == 6 ~ 'Engineering Professionals'
     )
   )
 ```
@@ -927,4 +926,15 @@ Rrepest::Rrepest(
 
 
 
+
+```{r}
+#70th percentile
+pisa.per.pv(pvlabel= paste0("PV",1:5,"MATH"),
+per=c(10, 25, 70, 90), data= LSAY2003)
+```
+
+```{r}
+# Finding how many teachers are above the 70th percentile: '582.26'
+pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=582.26, by="teacher", data=LSAY2003_teachflag)
+```
 
