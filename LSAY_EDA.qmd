@@ -16,6 +16,11 @@ library(survey)
 library(intsvy)
 library(kableExtra)
 library(Rrepest)
+library(ggplot2)
+library(tidyverse)
+library(grattantheme)
+library(ggrepel)
+library(scales)
 
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 
@@ -638,12 +643,7 @@ ggplot(data_2003_summary, aes(x = as.factor(teacher))) +
 ```
 
 ```{r}
-# Load necessary libraries
-library(ggplot2)
-library(tidyverse)
-library(grattantheme)
-library(ggrepel)
-library(scales)
+
 # Adapting data frame for plotting
 data_2003 <- data_2003 |>
   rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
@@ -658,16 +658,15 @@ base_chart <- ggplot(data_2003, aes(x = as.factor(Percentiles), y = Score, fill 
        x = "Percentiles",
        y = "Score",
        fill = "Teacher") +
-   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1) +
-  theme_minimal()
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
 
 base_chart +
   theme_grattan(chart_type =  "bar") +
-  grattan_colour_manual(2)
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+
+grattan_save_pptx(filename = "atlas/Y03PISAPercentiles.pptx")
 ```
-
-
-
 
 
 
@@ -709,6 +708,34 @@ ggplot(data_2006_summary, aes(x = as.factor(teacher))) +
 ```
 
 ```{r}
+data_2006 <- data_2006 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart <- ggplot(data_2006, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2006 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+
+base_chart + 
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+```
+
+
+
+
+
+
+
+```{r}
 # 2009
 data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
@@ -743,6 +770,31 @@ ggplot(data_2009_summary, aes(x = as.factor(teacher))) +
 
 
 ```
+
+
+```{r}
+data_2009 <- data_2009 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart_2009 <- ggplot(data_2009, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2009 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+
+base_chart_2009 + 
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+```
+
+
 
 ```{r}
 # Quantiles for 2015
@@ -785,6 +837,32 @@ ggplot(data_2015_summary, aes(x = as.factor(teacher))) +
 
 
 ```
+
+```{r}
+data_2015 <- data_2015 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart_2015 <- ggplot(data_2015, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2015 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+
+base_chart_2015 + 
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+```
+
+
+
+
 
 ```{r}
 # Manual t-test calculation for 2003
