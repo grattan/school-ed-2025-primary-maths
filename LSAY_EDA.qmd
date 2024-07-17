@@ -385,7 +385,7 @@ Rrepest::Rrepest(data = LSAY2006_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
-        cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
+        cm.weights = c(paste0("w_fstr",1:80)), 
         tabl = T)
 
 ```
@@ -610,9 +610,6 @@ data_2003 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_te
 data <- pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2003_teachflag)
 ```
 
-
-
-
 ```{r}
 # BOXPLOT FOR 2003
 
@@ -667,9 +664,6 @@ base_chart +
 
 grattan_save_pptx(filename = "atlas/Y03PISAPercentiles.pptx")
 ```
-
-
-
 
 ```{r}
 # 2006
@@ -729,12 +723,6 @@ base_chart +
   grattan_y_continuous()
 ```
 
-
-
-
-
-
-
 ```{r}
 # 2009
 data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
@@ -771,7 +759,6 @@ ggplot(data_2009_summary, aes(x = as.factor(teacher))) +
 
 ```
 
-
 ```{r}
 data_2009 <- data_2009 |>
   rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
@@ -793,8 +780,6 @@ base_chart_2009 +
   grattan_colour_manual(2) +
   grattan_y_continuous()
 ```
-
-
 
 ```{r}
 # Quantiles for 2015
@@ -859,10 +844,6 @@ base_chart_2015 +
   grattan_colour_manual(2) +
   grattan_y_continuous()
 ```
-
-
-
-
 
 ```{r}
 # Manual t-test calculation for 2003
@@ -954,12 +935,9 @@ t_value
 
 ```
 
-
-
 ## Comparing Teacher Performance with other Professionals
 
-Starting with 2003 first as it has the largest sample of teachers. 
-looking at other professions at the end of the waves.
+Starting with 2003 first as it has the largest sample of teachers. looking at other professions at the end of the waves.
 
 -   medical practitioners,
 
@@ -969,7 +947,7 @@ looking at other professions at the end of the waves.
 
 -   accounts auditors and company secretaries
 
--    engineering professionals
+-   engineering professionals
 
 | Professionals                             | ANSZCO Code |
 |-------------------------------------------|-------------|
@@ -978,8 +956,6 @@ looking at other professions at the end of the waves.
 | Legal professionals                       | 271         |
 | accounts auditors and company secretaries | 221         |
 | Engineering professionals                 | 233         |
-
-
 
 ```{r}
 # Adapting the code earlier to see the frequency of each profession in the last wave
@@ -1015,8 +991,6 @@ profession_frequency <- UNIQUE_PROFESSIONALS_Y03 %>%
   )
 ```
 
-
-
 ```{r}
 
 # Adapting the code to include different professions
@@ -1042,13 +1016,7 @@ Rrepest::Rrepest(
 )
 ```
 
-https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs
-* how to show standard error/explain simply
-
-
-Confidence intervals --> 
-
-
+https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs \* how to show standard error/explain simply
 
 ```{r}
 #70th percentile
@@ -1061,4 +1029,11 @@ per=c(10, 25, 70, 90), data= LSAY2003)
 pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=582.26, by="teacher", data=LSAY2003_teachflag)
 ```
 
+pooled percentage for proficiency and high performance across all years:
 
+| Year | Teachers | Percentage at or above 482 |
+|------|----------|----------------------------|
+| 2003 |          |                            |
+| 2006 |          |                            |
+| 2009 |          |                            |
+| 2015 |          |                            |
