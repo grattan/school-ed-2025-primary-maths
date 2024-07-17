@@ -575,7 +575,6 @@ Rrepest::Rrepest(data = LSAY2015_teachflag,
         tabl = T)
 
 
-
 ```
 
 ```{r}
@@ -603,8 +602,11 @@ mathcut <- c(358, 420, 482, 545, 607, 669)
 
 data_2003 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
-pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2003_teachflag)
+data <- pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2003_teachflag)
 ```
+
+
+
 
 ```{r}
 # BOXPLOT FOR 2003
@@ -634,6 +636,41 @@ ggplot(data_2003_summary, aes(x = as.factor(teacher))) +
 
 
 ```
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(tidyverse)
+library(grattantheme)
+library(ggrepel)
+library(scales)
+# Adapting data frame for plotting
+data_2003 <- data_2003 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart <- ggplot(data_2003, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2003 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1) +
+  theme_minimal()
+
+base_chart +
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2)
+```
+
+
+
+
+
+
 
 ```{r}
 # 2006
@@ -767,6 +804,7 @@ df <- ( (sd_FALSE^2 / n_FALSE) + (sd_TRUE^2 / n_TRUE) )^2 /
 # p-value
 p_value <- 2 * pt(t_value, df = df, lower.tail = TRUE)
 p_value
+t_value
 ```
 
 ```{r}
@@ -837,6 +875,8 @@ p_value
 t_value
 
 ```
+
+
 
 ## Comparing Teacher Performance with other Professionals
 
@@ -924,6 +964,11 @@ Rrepest::Rrepest(
 )
 ```
 
+https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs
+* how to show standard error/explain simply
+
+
+Confidence intervals --> 
 
 
 
@@ -937,4 +982,5 @@ per=c(10, 25, 70, 90), data= LSAY2003)
 # Finding how many teachers are above the 70th percentile: '582.26'
 pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=582.26, by="teacher", data=LSAY2003_teachflag)
 ```
+
 
