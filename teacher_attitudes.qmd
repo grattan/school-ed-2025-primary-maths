@@ -11,10 +11,16 @@ format:
     toc_depth: 2
     number_sections: yes
     df_print: kable
+    fig-height: 5.7
+    fig-width: 8.75
     fig-cap-location: top
+    fig-dpi: 300
+lightbox: true
 execute:
   echo: false
   warning: false
+  cache: true
+  freeze: auto
 editor: visual
 editor_options: 
   chunk_output_type: console
@@ -66,6 +72,7 @@ clean_survey |>
 
 ```{r}
 #| label: teacher-confidence
+#| fig.height: 8
 teacher_confidence_labels <- clean_survey |> 
   select(Q38_1:Q38_8) |> 
   var_labels() |> 
@@ -101,10 +108,10 @@ teacher_confidence_df |>
   theme_grattan(flipped = T,
                 base_size = 14) +
   grattan_y_continuous(labels = percent) +
-  labs(title = "Most primary teachers consider themselves confident in maths",
+  labs(title = "Most primary teachers feel confident to teach maths",
        subtitle = "Percent of teachers who agree or strongly agree (with 90 per cent confidence interval)",
        x = NULL, y = NULL,
-       caption = glue("Notes: Total responses to statements varied by statement between comma({min(teacher_confidence_df$n) |> comma()} and {max(teacher_confidence_df$n) |> comma()}. {source_caption}"))
+       caption = glue("Notes: Total responses to statements varied by statement between {min(teacher_confidence_df$n) |> comma()} and {max(teacher_confidence_df$n) |> comma()}. {source_caption}"))
   
 ```
 

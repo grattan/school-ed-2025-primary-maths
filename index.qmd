@@ -103,7 +103,7 @@ save(clean_survey, file = "data/clean_survey.Rdata")
 
 ```
 
-Through this process, we lose `r initial_sample - total_sample` responses. This leaves us with `r total_sample` valid responses.
+Through this process, we lose `r initial_sample - total_sample` responses. This leaves us with `r comma(total_sample)` valid responses.
 
 We also check for duplicates, using [Qualtrics duplicate flag](https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/). This pulls out respondents who try reattempt the survey from the same IP address. We can see if they are duplicates by looking through their answers manually.
 
@@ -141,7 +141,7 @@ We create tables to determine the representativeness of the sample. We compare t
 ## Teacher characteristics
 
 ```{r}
-# label: tab-demographic-counts
+#| label: tab-demographic-counts
 
 # create custom function
 demographic_counts <- function(column) {
@@ -245,6 +245,7 @@ bind_rows(rename(sex,
 ## School characteristics
 
 ```{r}
+# | label: school characteristics
 # Read in ACARA school profile dataset
 # Source: https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fdataandreporting.blob.core.windows.net%2Fanrdataportal%2FData-Access-Program%2FSchool%2520Profile%25202023.xlsx&wdOrigin=BROWSELINK
 

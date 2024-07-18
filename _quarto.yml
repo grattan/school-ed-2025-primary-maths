@@ -13,14 +13,10 @@ website:
         text: Demographics
       - href: teacher_attitudes.qmd
         text: Teacher attitudes
-      - href: blank-page.qmd
+      - href: school_practices.qmd
         text: School practices
-      - href: blank-page.qmd
+      - href: leader_views.qmd
         text: Leaders' views
-      - href: blank-page.qmd
-        text: Open text
-      - href: blank-page.qmd
-        text: References
 
 
 
