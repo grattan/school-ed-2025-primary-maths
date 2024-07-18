@@ -11,7 +11,7 @@ website:
     left:
       - href: index.qmd
         text: Demographics
-      - href: blank-page.qmd
+      - href: teacher_attitudes.qmd
         text: Teacher attitudes
       - href: blank-page.qmd
         text: School practices

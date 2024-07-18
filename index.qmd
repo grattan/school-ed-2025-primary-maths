@@ -21,24 +21,11 @@ editor_options:
 ---
 
 ```{r}
-#| label: libraries
+#| label: set-up
 #| include: false
 
-library(tidyverse)
-library(grattantheme)
-library(qualtRics)
-library(knitr)
-library(knitr)
-library(kableExtra)
-library(sjlabelled)
-library(readxl)
-library(janitor)
-library(scales)
-library(strayr)
-library(glue)
+source("R/globals.R")
 
-# Additional configuration
-options(knitr.kable.NA = '')
 ```
 
 # Import data
@@ -110,6 +97,10 @@ responses_to_keep <- rowSums(is.na(clean_survey[substantive_questions])) < lengt
 clean_survey <- clean_survey[responses_to_keep, ]
 
 total_sample <- nrow(clean_survey)
+
+# Export survey
+save(clean_survey, file = "data/clean_survey.Rdata")
+
 ```
 
 Through this process, we lose `r initial_sample - total_sample` responses. This leaves us with `r total_sample` valid responses.
@@ -462,5 +453,3 @@ rbind(school_type,
   
 ```
 
-\
-\
