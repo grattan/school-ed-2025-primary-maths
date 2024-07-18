@@ -1,7 +1,7 @@
 [
   {
-    "objectID": "blank-page.html",
-    "href": "blank-page.html",
+    "objectID": "blank_page.html",
+    "href": "blank_page.html",
     "title": "Making it count",
     "section": "",
     "text": "This page is currently a work in progress."
@@ -18,42 +18,70 @@
     "href": "index.html#teacher-characteristics",
     "title": "Making it count: Improving primary school maths",
     "section": "Teacher characteristics",
-    "text": "Teacher characteristics\n\n\n\n\n \n\nCharacteristic\nGrattan survey\nPopulation data\n\n  \n    Response \n    N \n    % \n    N \n    % \n  \n \n\n  Sex\n\n    Female \n    953 \n    82% \n    129,560 \n    82% \n  \n  \n    Male \n    189 \n    16% \n    28,207 \n    18% \n  \n  \n    Prefer not to say \n    14 \n    1% \n     \n     \n  \n  \n    Something else \n    1 \n    0% \n     \n     \n  \n  \n    Total \n    1,157 \n    100% \n    157,767 \n    100% \n  \n  Main teaching role\n\n    Generalist teacher \n    621 \n    54% \n     \n     \n  \n  \n    No teaching load \n    248 \n    21% \n     \n     \n  \n  \n    Tutor \n    91 \n    8% \n     \n     \n  \n  \n    Specialist subject teacher \n    83 \n    7% \n     \n     \n  \n  \n    Relief teacher \n    62 \n    5% \n     \n     \n  \n  \n    Other \n    52 \n    4% \n     \n     \n  \n  \n    Total \n    1,157 \n    100% \n     \n     \n  \n  Leadership responsibilities*\n\n    Principal \n    164 \n    13% \n     \n     \n  \n  \n    Deputy principal \n    126 \n    10% \n     \n     \n  \n  \n    Instructional leader \n    282 \n    23% \n     \n     \n  \n  \n    Team leader \n    134 \n    11% \n     \n     \n  \n  \n    Pastoral or wellbeing leader \n    35 \n    3% \n     \n     \n  \n  \n    Other leadership role \n    133 \n    11% \n     \n     \n  \n  \n    No leadership role \n    366 \n    30% \n     \n     \n  \n  Years of teaching experience\n\n    Total \n    1,240 \n    100% \n     \n     \n  \n  \n    &lt;2 years \n    19 \n    2% \n     \n     \n  \n  \n    2-4 years \n    45 \n    4% \n     \n     \n  \n  \n    5-9 years \n    127 \n    11% \n     \n     \n  \n  \n    10-20 years \n    337 \n    29% \n     \n     \n  \n  \n    &gt;20 years \n    629 \n    54% \n     \n     \n  \n  \n    Total \n    1,157 \n    100% \n     \n     \n  \n\n\n\n Note: Population data incomplete, as document is a work in progress\n\n\n\n\n* Options add up to more than 1157 because respondents could select multiple leadership responsibilities."
+    "text": "Teacher characteristics\n\n\n\n\n \n\nCharacteristic\nGrattan survey\nPopulation data\n\n  \n    Response \n    N \n    % \n    N \n    % \n  \n \n\n  Sex\n\n    Female \n    956 \n    82% \n    129,560 \n    82% \n  \n  \n    Male \n    190 \n    16% \n    28,207 \n    18% \n  \n  \n    Prefer not to say \n    14 \n    1% \n     \n     \n  \n  \n    Something else \n    1 \n    0% \n     \n     \n  \n  \n    Total \n    1,161 \n    100% \n    157,767 \n    100% \n  \n  Main teaching role\n\n    Generalist teacher \n    622 \n    54% \n     \n     \n  \n  \n    No teaching load \n    249 \n    21% \n     \n     \n  \n  \n    Tutor \n    92 \n    8% \n     \n     \n  \n  \n    Specialist subject teacher \n    83 \n    7% \n     \n     \n  \n  \n    Relief teacher \n    62 \n    5% \n     \n     \n  \n  \n    Other \n    53 \n    5% \n     \n     \n  \n  \n    Total \n    1,161 \n    100% \n     \n     \n  \n  Leadership responsibilities*\n\n    Principal \n    165 \n    13% \n     \n     \n  \n  \n    Deputy principal \n    127 \n    10% \n     \n     \n  \n  \n    Instructional leader \n    283 \n    23% \n     \n     \n  \n  \n    Team leader \n    134 \n    11% \n     \n     \n  \n  \n    Pastoral or wellbeing leader \n    35 \n    3% \n     \n     \n  \n  \n    Other leadership role \n    133 \n    11% \n     \n     \n  \n  \n    No leadership role \n    367 \n    30% \n     \n     \n  \n  Years of teaching experience\n\n    Total \n    1,244 \n    100% \n     \n     \n  \n  \n    &lt;2 years \n    19 \n    2% \n     \n     \n  \n  \n    2-4 years \n    45 \n    4% \n     \n     \n  \n  \n    5-9 years \n    128 \n    11% \n     \n     \n  \n  \n    10-20 years \n    338 \n    29% \n     \n     \n  \n  \n    &gt;20 years \n    631 \n    54% \n     \n     \n  \n  \n    Total \n    1,161 \n    100% \n     \n     \n  \n\n\n\n Note: Population data incomplete, as document is a work in progress\n\n\n\n\n* Options add up to more than 1161 because respondents could select multiple leadership responsibilities."
   },
   {
     "objectID": "index.html#school-characteristics",
     "href": "index.html#school-characteristics",
     "title": "Making it count: Improving primary school maths",
     "section": "School characteristics",
-    "text": "School characteristics\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n\n\nGrattan survey\n\n\nPopulation data\n\n\n\nResponse\nN\n%\nN\n%\n\n\n\n\nStage of schooling\n\n\nPrimary\n948\n82%\n138,613\n58%\n\n\nCombined\n149\n13%\n76,931\n37%\n\n\nSpecial\n54\n5%\n6,080\n5%\n\n\nTotal\n1,151\n100%\n221,624\n100%\n\n\nSector\n\n\nCatholic\n268\n23%\n27,307\n17%\n\n\nGovernment\n745\n64%\n109,372\n69%\n\n\nIndependent\n144\n12%\n21,088\n13%\n\n\nTotal\n1,157\n100%\n157,767\n100%\n\n\nJursidiction\n\n\nAustralian Capital Territory\n38\n3%\n2,936\n2%\n\n\nNew South Wales\n218\n19%\n46,753\n30%\n\n\nNorthern Territory\n13\n1%\n1,963\n1%\n\n\nQueensland\n151\n13%\n32,598\n21%\n\n\nSouth Australia\n63\n5%\n10,649\n7%\n\n\nTasmania\n41\n4%\n3,282\n2%\n\n\nVictoria\n540\n47%\n43,059\n27%\n\n\nWestern Australia\n93\n8%\n16,526\n10%\n\n\nTotal\n1,157\n100%\n157,767\n100%\n\n\nLevel of advantage or disadvantage\n\n\nA fairly even mix of advantaged and disadvantaged students\n484\n42%\n108,716\n31%\n\n\nMostly advantaged\n422\n36%\n155,345\n45%\n\n\nMostly disadvantaged\n251\n22%\n81,996\n24%\n\n\nTotal\n1,157\n100%\n346,057\n100%\n\n\nRemoteness\n\n\nMetropolitan\n703\n61%\n247,899\n71%\n\n\nRegional\n309\n27%\n62,251\n18%\n\n\nRural\n120\n10%\n29,475\n8%\n\n\nRemote\n25\n2%\n7,786\n2%\n\n\nTotal\n1,157\n100%\n347,411\n100%\n\n\nSchool size\n\n\nUp to 50 students\n43\n4%\n3,539\n3%\n\n\n51 to 100 students\n56\n5%\n4,021\n3%\n\n\n101 to 200 students\n154\n13%\n13,869\n10%\n\n\n201 to 300 students\n166\n15%\n18,855\n14%\n\n\n301 to 400 students\n199\n17%\n23,613\n17%\n\n\n401 to 500 students\n168\n15%\n21,307\n15%\n\n\n501 to 600 students\n139\n12%\n17,299\n12%\n\n\n601 to 700 students\n70\n6%\n13,726\n10%\n\n\n701 to 800 students\n54\n5%\n8,003\n6%\n\n\n801 to 900 students\n35\n3%\n4,640\n3%\n\n\n901 to 1000 students\n24\n2%\n3,842\n3%\n\n\nMore than 1,000 students\n34\n3%\n5,852\n4%\n\n\nTotal\n1,142\n100%\n138,566\n100%"
+    "text": "School characteristics\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n\n\nGrattan survey\n\n\nPopulation data\n\n\n\nResponse\nN\n%\nN\n%\n\n\n\n\nStage of schooling\n\n\nPrimary\n951\n82%\n138,613\n58%\n\n\nCombined\n150\n13%\n76,931\n37%\n\n\nSpecial\n54\n5%\n6,080\n5%\n\n\nTotal\n1,155\n100%\n221,624\n100%\n\n\nSector\n\n\nCatholic\n270\n23%\n27,307\n17%\n\n\nGovernment\n747\n64%\n109,372\n69%\n\n\nIndependent\n144\n12%\n21,088\n13%\n\n\nTotal\n1,161\n100%\n157,767\n100%\n\n\nJursidiction\n\n\nAustralian Capital Territory\n38\n3%\n2,936\n2%\n\n\nNew South Wales\n219\n19%\n46,753\n30%\n\n\nNorthern Territory\n13\n1%\n1,963\n1%\n\n\nQueensland\n151\n13%\n32,598\n21%\n\n\nSouth Australia\n63\n5%\n10,649\n7%\n\n\nTasmania\n41\n4%\n3,282\n2%\n\n\nVictoria\n543\n47%\n43,059\n27%\n\n\nWestern Australia\n93\n8%\n16,526\n10%\n\n\nTotal\n1,161\n100%\n157,767\n100%\n\n\nLevel of advantage or disadvantage\n\n\nA fairly even mix of advantaged and disadvantaged students\n488\n42%\n108,716\n31%\n\n\nMostly advantaged\n422\n36%\n155,345\n45%\n\n\nMostly disadvantaged\n251\n22%\n81,996\n24%\n\n\nTotal\n1,161\n100%\n346,057\n100%\n\n\nRemoteness\n\n\nMetropolitan\n704\n61%\n247,899\n71%\n\n\nRegional\n311\n27%\n62,251\n18%\n\n\nRural\n121\n10%\n29,475\n8%\n\n\nRemote\n25\n2%\n7,786\n2%\n\n\nTotal\n1,161\n100%\n347,411\n100%\n\n\nSchool size\n\n\nUp to 50 students\n43\n4%\n3,539\n3%\n\n\n51 to 100 students\n57\n5%\n4,021\n3%\n\n\n101 to 200 students\n154\n13%\n13,869\n10%\n\n\n201 to 300 students\n166\n14%\n18,855\n14%\n\n\n301 to 400 students\n202\n18%\n23,613\n17%\n\n\n401 to 500 students\n168\n15%\n21,307\n15%\n\n\n501 to 600 students\n139\n12%\n17,299\n12%\n\n\n601 to 700 students\n70\n6%\n13,726\n10%\n\n\n701 to 800 students\n54\n5%\n8,003\n6%\n\n\n801 to 900 students\n35\n3%\n4,640\n3%\n\n\n901 to 1000 students\n24\n2%\n3,842\n3%\n\n\nMore than 1,000 students\n34\n3%\n5,852\n4%\n\n\nTotal\n1,146\n100%\n138,566\n100%"
+  },
+  {
+    "objectID": "leader_views.html#to-what-extent-are-teachers-hesistant-about-upper-primary",
+    "href": "leader_views.html#to-what-extent-are-teachers-hesistant-about-upper-primary",
+    "title": "Leaders’ views",
+    "section": "To what extent are teachers’ hesistant about upper primary?",
+    "text": "To what extent are teachers’ hesistant about upper primary?\n\n\n\n\n\nQ31\nN\nprop\n\n\n\n\nNo teachers\n36\n7.0%\n\n\nSome teachers\n208\n41.0%\n\n\nAbout half of teachers\n149\n30.0%\n\n\nMost teachers\n111\n22.0%\n\n\nAll teachers\n1\n0.0%"
+  },
+  {
+    "objectID": "school_practices.html",
+    "href": "school_practices.html",
+    "title": "Schools’ practices",
+    "section": "",
+    "text": "Q24\nN\nprop\n\n\n\n\nScheduled maths block\n476\n46%\n\n\nCommon approach, but no scheduled maths block\n457\n44%\n\n\nTeacher discretion\n91\n9%\n\n\nOther\n7\n1%"
+  },
+  {
+    "objectID": "school_practices.html#how-do-schools-schedule-maths",
+    "href": "school_practices.html#how-do-schools-schedule-maths",
+    "title": "Schools’ practices",
+    "section": "",
+    "text": "Q24\nN\nprop\n\n\n\n\nScheduled maths block\n476\n46%\n\n\nCommon approach, but no scheduled maths block\n457\n44%\n\n\nTeacher discretion\n91\n9%\n\n\nOther\n7\n1%"
+  },
+  {
+    "objectID": "school_practices.html#school-practices",
+    "href": "school_practices.html#school-practices",
+    "title": "Schools’ practices",
+    "section": "School practices",
+    "text": "School practices"
+  },
+  {
+    "objectID": "school_practices.html#perceptions-of-colleagues-content-knowledge",
+    "href": "school_practices.html#perceptions-of-colleagues-content-knowledge",
+    "title": "Schools’ practices",
+    "section": "Perceptions of colleagues’ content knowledge",
+    "text": "Perceptions of colleagues’ content knowledge"
   },
   {
     "objectID": "teacher_attitudes.html",
     "href": "teacher_attitudes.html",
     "title": "Teachers’ attitudes towards maths",
     "section": "",
-    "text": "Q13\nN\nprop\n\n\n\n\nLower intermediate maths\n398\n0.37\n\n\nUpper intermediate maths\n301\n0.28\n\n\nAdvanced maths\n146\n0.14\n\n\nNo maths\n140\n0.13\n\n\nFoundational maths\n88\n0.08"
-  },
-  {
-    "objectID": "blank_page.html",
-    "href": "blank_page.html",
-    "title": "Making it count",
-    "section": "",
-    "text": "This page is currently a work in progress."
+    "text": "Question\nN\nprop\n\n\n\n\nNo maths\n140\n13%\n\n\nFoundational maths\n88\n8%\n\n\nLower intermediate maths\n399\n37%\n\n\nUpper intermediate maths\n303\n28%\n\n\nAdvanced maths\n146\n14%"
   },
   {
     "objectID": "teacher_attitudes.html#how-many-teachers-studied-maths-in-year-12",
     "href": "teacher_attitudes.html#how-many-teachers-studied-maths-in-year-12",
     "title": "Teachers’ attitudes towards maths",
     "section": "",
-    "text": "Q13\nN\nprop\n\n\n\n\nLower intermediate maths\n398\n0.37\n\n\nUpper intermediate maths\n301\n0.28\n\n\nAdvanced maths\n146\n0.14\n\n\nNo maths\n140\n0.13\n\n\nFoundational maths\n88\n0.08"
+    "text": "Question\nN\nprop\n\n\n\n\nNo maths\n140\n13%\n\n\nFoundational maths\n88\n8%\n\n\nLower intermediate maths\n399\n37%\n\n\nUpper intermediate maths\n303\n28%\n\n\nAdvanced maths\n146\n14%"
   },
   {
     "objectID": "teacher_attitudes.html#how-many-teachers-studied-maths-in-higher-education",
     "href": "teacher_attitudes.html#how-many-teachers-studied-maths-in-higher-education",
     "title": "Teachers’ attitudes towards maths",
     "section": "How many teachers studied maths in higher education?",
-    "text": "How many teachers studied maths in higher education?\n\n\n\n\n\nQ14\nN\nprop\n\n\n\n\nNo\n992\n0.92\n\n\nYes\n81\n0.08"
+    "text": "How many teachers studied maths in higher education?\n\n\n\n\n\nQ14\nN\nprop\n\n\n\n\nNo\n995\n92%\n\n\nYes\n81\n8%"
   },
   {
     "objectID": "teacher_attitudes.html#how-confident-do-teachers-feel-about-maths",
