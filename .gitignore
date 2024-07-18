@@ -4,5 +4,4 @@
 atlas/
 /.quarto/
 /_site/
-data/clean_survey.Rdata
 *.Rdata

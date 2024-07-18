@@ -16,3 +16,5 @@ library(glue)
 
 # Additional configuration
 options(knitr.kable.NA = '')
+
+source_caption <- "Source: Grattan Institute's 2024 survey on primary mathematics."
