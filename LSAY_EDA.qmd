@@ -21,6 +21,8 @@ library(tidyverse)
 library(grattantheme)
 library(ggrepel)
 library(scales)
+library(glue)
+library(ggtext)
 
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 
@@ -652,17 +654,19 @@ base_chart <- ggplot(data_2003, aes(x = as.factor(Percentiles), y = Score, fill 
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
                 position = position_dodge(0.9), width = 0.25, color = "black") +
-  labs(title = "Scores at Different Percentiles by Teacher Status",
-       subtitle = "PISA 2003 Math Scores for Teachers and Non-Teachers Across Percentiles",
+  labs(title = "Scores at different percentiles by teacher status",
+       subtitle = glue("PISA 2003 Mathematical Proficiency scores for {colour_text(grattan_red, 'teachers')} and {colour_text(grattan_orange, 'non-teachers')} across percentiles"),
        x = "Percentiles",
-       y = "Score",
        fill = "Teacher") +
-   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+   geom_hline(yintercept = 482, linetype = "dotted", color = "black", size = 1) +
+  annotate(geom = "text", y = 484, x = "90", vjust = "bottom", hjust = -.6, label = "Proficiency\nbenchmark")
 
 base_chart +
-  theme_grattan(chart_type =  "bar") +
+  theme_grattan() +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
   grattan_colour_manual(2) +
-  grattan_y_continuous()
+  grattan_y_continuous() +
+  scale_x_discrete(expand = expansion(mult = c(0, 0.6)))
 
 grattan_save_pptx(filename = "atlas/Y03PISAPercentiles.pptx")
 ```
@@ -1039,4 +1043,3 @@ pooled percentage for proficiency and high performance across all years:
 | 2006 |          |                            |
 | 2009 |          |                            |
 | 2015 |          |                            |
-
