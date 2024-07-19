@@ -876,6 +876,8 @@ t_value
 # Manual t-test calculation for 2006
 #pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher")
 
+#NP: Normally, I would soft code in the values by pulling them from the flex table produced at the start of this document. For the purposes of this analysis, I think hard coding is okay. 
+
 mean_FALSE <- 518.6
 mean_TRUE <- 550.7
 sd_FALSE <- 87.9
