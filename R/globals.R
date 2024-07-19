@@ -13,6 +13,7 @@ library(janitor)
 library(scales)
 library(strayr)
 library(glue)
+library(ggdirectlabel)
 
 # Additional configuration
 options(knitr.kable.NA = '')
