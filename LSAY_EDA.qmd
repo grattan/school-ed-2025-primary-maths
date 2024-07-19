@@ -21,6 +21,8 @@ library(tidyverse)
 library(grattantheme)
 library(ggrepel)
 library(scales)
+library(glue)
+library(ggtext)
 
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 
@@ -286,6 +288,7 @@ LEGIT_TEACHERS_2006 <- LSAY2006 %>%
   # Selecting variables for kind of work
   select(STIDSTD, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
   # Mutate across the observation 
+  # Just checking that the variables are meant to go from 011 to 024, to 029
   mutate(across(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
                 ~ case_when(
                    as.character(.) == '2412' ~ 1,  # PSE as 1
@@ -310,6 +313,7 @@ teacher_jobs_06 <- teacher_jobs_06[, selected_columns]
 
 ```{r}
 # Creating a table to see what the teachers studied.
+# NP: It could be worth adding in the counts for each field here
 aos_2006 <- data.frame(
   Code = c(100705, 100103, 100101, 80399, 70103, 70101, 70105, 70199, 91701, 60901, 61399, 60101, 91703, 80101, 81101, 91523, 90513),
   Field = c(
@@ -650,17 +654,19 @@ base_chart <- ggplot(data_2003, aes(x = as.factor(Percentiles), y = Score, fill 
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
                 position = position_dodge(0.9), width = 0.25, color = "black") +
-  labs(title = "Scores at Different Percentiles by Teacher Status",
-       subtitle = "PISA 2003 Math Scores for Teachers and Non-Teachers Across Percentiles",
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in maths compared to the general population",
+       subtitle = glue("PISA 2003 Mathematical Proficiency scores for {colour_text(grattan_red, 'teachers')} and {colour_text(grattan_orange, 'non-teachers')} across percentiles"),
        x = "Percentiles",
-       y = "Score",
        fill = "Teacher") +
-   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+   geom_hline(yintercept = 482, linetype = "dotted", color = "black", size = 1) +
+  annotate(geom = "text", y = 484, x = "90", vjust = "bottom", hjust = -.6, label = "Proficiency\nbenchmark")
 
 base_chart +
-  theme_grattan(chart_type =  "bar") +
+  theme_grattan() +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
   grattan_colour_manual(2) +
-  grattan_y_continuous()
+  grattan_y_continuous() +
+  scale_x_discrete(expand = expansion(mult = c(0, 0.6)))
 
 grattan_save_pptx(filename = "atlas/Y03PISAPercentiles.pptx")
 ```
@@ -869,6 +875,8 @@ t_value
 ```{r}
 # Manual t-test calculation for 2006
 #pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher")
+
+#NP: Normally, I would soft code in the values by pulling them from the flex table produced at the start of this document. For the purposes of this analysis, I think hard coding is okay. 
 
 mean_FALSE <- 518.6
 mean_TRUE <- 550.7
