@@ -654,7 +654,7 @@ base_chart <- ggplot(data_2003, aes(x = as.factor(Percentiles), y = Score, fill 
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
                 position = position_dodge(0.9), width = 0.25, color = "black") +
-  labs(title = "Scores at different percentiles by teacher status",
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in maths compared to the general population",
        subtitle = glue("PISA 2003 Mathematical Proficiency scores for {colour_text(grattan_red, 'teachers')} and {colour_text(grattan_orange, 'non-teachers')} across percentiles"),
        x = "Percentiles",
        fill = "Teacher") +
