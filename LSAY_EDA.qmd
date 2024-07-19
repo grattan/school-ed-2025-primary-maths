@@ -286,6 +286,7 @@ LEGIT_TEACHERS_2006 <- LSAY2006 %>%
   # Selecting variables for kind of work
   select(STIDSTD, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
   # Mutate across the observation 
+  # Just checking that the variables are meant to go from 011 to 024, to 029
   mutate(across(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
                 ~ case_when(
                    as.character(.) == '2412' ~ 1,  # PSE as 1
@@ -310,6 +311,7 @@ teacher_jobs_06 <- teacher_jobs_06[, selected_columns]
 
 ```{r}
 # Creating a table to see what the teachers studied.
+# NP: It could be worth adding in the counts for each field here
 aos_2006 <- data.frame(
   Code = c(100705, 100103, 100101, 80399, 70103, 70101, 70105, 70199, 91701, 60901, 61399, 60101, 91703, 80101, 81101, 91523, 90513),
   Field = c(
@@ -1037,3 +1039,4 @@ pooled percentage for proficiency and high performance across all years:
 | 2006 |          |                            |
 | 2009 |          |                            |
 | 2015 |          |                            |
+
