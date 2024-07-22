@@ -13,11 +13,13 @@ format:
     number_sections: yes
     df_print: kable
     fig-cap-location: top
+    fig-dpi: 300
 execute:
   echo: false
   warning: false
 editor_options: 
   chunk_output_type: console
+bibliography: references.bib
 ---
 
 ```{r}
@@ -167,25 +169,60 @@ acara_staff_data <- read_xlsx(path = "data/acara_staff_data.xlsx") |>
   filter(calendar_year == 2023)
 
 # Sex
+sex_population_data <-
+  acara_staff_data |>
+  filter(
+    state_territory == "Australia",
+    school_sector == "All",
+    school_level == "Primary",
+    staff_function == "Teaching staff"
+  ) |>
+  group_by(sex_gender) |>
+  summarise(Freq = sum(staff_count)) |>
+  filter(sex_gender != "All")
+
 sex <- demographic_counts("Q4") |>
   left_join(
-    (acara_staff_data |>
-      filter(
-        state_territory == "Australia",
-        school_sector == "All",
-        school_level == "Primary",
-        staff_function == "Teaching staff"
-      ) |>
-      group_by(sex_gender) |>
-      summarise(n = sum(staff_count)) |>
-      filter(sex_gender != "All") |>
-      mutate(prop = (n / sum(n)))),
-    by = join_by(response == sex_gender)) |> 
-  adorn_totals(fill = "Total") |> 
-  select(-demographic)
+    (sex_population_data |>
+      mutate(prop = (Freq / sum(Freq)))),
+    by = join_by(response == sex_gender)
+  ) |>
+  adorn_totals(fill = "Total") |>
+  select(-demographic) |> 
+  rename(prop = prop.x)
 
 
 # Leadership status
+# Note that AITSL data is not restricted to primary school
+leadership_roles_population <- 
+  read.csv("data/school_leaders_gender.csv", skip = 1, header = T, nrows = 6) |> 
+  janitor::clean_names() |> 
+  select(school_leaders, x2036) |> 
+  group_by(school_leaders) |> 
+  summarise(Freq = sum(x2036)) |> 
+  filter(school_leaders != "School leaders") |> 
+  rename(role_in_school = school_leaders)
+
+classroom_teachers_population <- 
+  read.csv("data/classroom_teachers_gender.csv", skip = 1, header = T, nrows = 6) |> 
+  janitor::clean_names() |> 
+  select(classroom_teachers , x2022) |> 
+  filter(classroom_teachers == "Classroom teachers") |> 
+  group_by(classroom_teachers) |> 
+  summarise(Freq = sum(x2022)) |> 
+  rename(role_in_school = classroom_teachers)
+
+role_in_school_population <- 
+  rbind(leadership_roles_population,
+      classroom_teachers_population)
+
+clean_survey <- 
+  clean_survey |> 
+  mutate(role_in_school =
+         case_when(grepl("principal", Q6, ignore.case = T) ~ "Senior leaders",
+                   is.na(Q6) ~ "Classroom teachers", 
+                   .default = "Middle leaders"))
+                   
 leadership_roles <- 
   clean_survey |> 
   separate_rows(Q6, sep = ",") |> 
@@ -216,14 +253,43 @@ role <- demographic_counts("Q5") |>
 
 
 # Years of experience
-years_of_experience <- demographic_counts("Q11") |> 
-  arrange(n) |> # May need to switch this code around, depending on response rate
-  select(-demographic) |> 
-  adorn_totals(fill = "Total")
+# From AITSL.
+years_of_experience_population <- 
+  read.csv("data/workforce_by_experience.csv", header = T, skip = 1, nrows = 6) |> 
+  janitor::clean_names() |> 
+  select(years_in_profession, x2022) |> 
+  rename(Freq = x2022) |>
+  mutate(new_year_categories = factor(c(
+  "<5 years",       # AITSL data is 1-5 years, so doesn't match our <5 years
+  "5-9 years",      # AITSL data is 6-9 years, so doesn't match our 5-9 years
+  "10-20 years",    # AITSL data is 10-19 years, so doesn't match our 10-20 years
+  "20+ years",      # 20-29 years (20+ is aggregated)
+  "20+ years",      # 30-39 years (20+ is aggregated)
+  "20+ years"       # 40 or more years (20+ is aggregated)
+))) |> 
+  aggregate(Freq ~ new_year_categories, sum)
 
-bind_rows(rename(sex, 
-                 c(n = n.x, 
-                   prop = prop.x)), 
+clean_survey <- clean_survey |> 
+  mutate(new_year_categories =
+         case_when(Q11 == "<2 years" ~ "<5 years", 
+                   Q11 == "2-4 years" ~ "<5 years", 
+                   Q11 == "5-9 years" ~ "5-9 years", 
+                   Q11 == "10-20 years" ~ "10-20 years", 
+                   Q11 == ">20 years" ~ "20+ years") |> 
+           factor(levels = c("<5 years", "5-9 years", "10-20 years", "20+ years")))
+
+years_of_experience <- clean_survey |>
+  count(new_year_categories) |> 
+  mutate(prop = n/sum(n)) |> # May need to switch this code around, depending on response rate
+  left_join(years_of_experience_population |> 
+  mutate(prop = Freq/sum(Freq)), 
+  join_by(new_year_categories == new_year_categories)) |> 
+  arrange(new_year_categories) |> 
+  adorn_totals(fill = "Total") |> 
+  rename(c(response = new_year_categories,
+           prop = prop.x))
+
+bind_rows(sex,
           role, 
           leadership_roles, 
           years_of_experience) |> 
@@ -234,11 +300,11 @@ bind_rows(rename(sex,
   add_header_above(c("Characteristic" = 1, "Grattan survey" = 2, "Population data" = 2)) |> 
   pack_rows("Sex", 1, 5, color = grattan_orange) |> 
   pack_rows("Main teaching role", 6, 12, color = grattan_orange) |> 
-  pack_rows("Leadership responsibilities*", 13, 19, color = grattan_orange) |> 
-  pack_rows("Years of teaching experience", 20, 26, color = grattan_orange) |> 
+  pack_rows("Leadership responsibilities*", 13, 20, color = grattan_orange) |> 
+  pack_rows("Years of teaching experience", 21, 25, color = grattan_orange) |> 
   add_footnote(glue("Options add up to more than ", total_sample, " because respondents could select multiple leadership responsibilities."), notation = "symbol",
                threeparttable = T) |> 
-  add_footnote("Note: Population data incomplete, as document is a work in progress", notation = "none")
+  add_footnote("Note: Population data is taken from ACARA (2023) and AITSL (2023). AITSL's years of experience buckets are only an approximate match for our buckets.", notation = "none")
 
 ```
 
@@ -255,9 +321,8 @@ acara_school_data <- read_excel("data/acara_school_profile.xlsx", sheet = 2) |>
 # School type
 school_type_school_profile <- acara_school_data |> 
   group_by(school_type) |> 
-  summarise(n = sum(teaching_staff, na.rm = T)) |> 
-  filter(school_type %in% c("Primary", "Combined", "Special")) |> 
-  mutate(prop = n/sum(n))
+  summarise(Freq = sum(teaching_staff, na.rm = T)) |> 
+  filter(school_type %in% c("Primary", "Combined", "Special"))
 
 school_type_staff_data <- acara_staff_data |> 
   filter(state_territory == "Australia", 
@@ -265,64 +330,67 @@ school_type_staff_data <- acara_staff_data |>
          sex_gender == "All",
          staff_function == "Teaching staff") |> 
   group_by(school_level) |> 
-  summarise(n = sum(staff_count)) |> 
-  mutate(prop = n/sum(n))
+  summarise(Freq = sum(staff_count))
 
 combined_in_primary <- 
-  (school_type_school_profile |> 
-  filter(school_type == "Combined") |> 
-  pull(n)) - (school_type_staff_data$n[2] - school_type_school_profile$n[2] - school_type_school_profile$n[3]/2) # Assume that half of all teachers in special schools work with primary aged kids
+  (school_type_staff_data$Freq[2] - school_type_school_profile$Freq[2] - school_type_school_profile$Freq[3]/2) # Assume that half of all teachers in special schools work with primary aged kids
 
 # Determine how many of the combined and special staff work in primaries
 school_type_australia <- 
   school_type_school_profile |> 
-  mutate(n = case_when(
+  mutate(Freq = case_when(
     school_type == "Combined" ~ combined_in_primary,
-    school_type == "Special" ~ n/2, 
-    .default = n)) |> 
+    school_type == "Special" ~ Freq/2, 
+    .default = Freq)) |> 
   filter(school_type %in% c("Primary", "Combined", "Special"))
+  
 
-school_type_survey <- clean_survey |> 
+clean_survey <- clean_survey |> 
   mutate(school_type =  case_when(
     Q16 == "Yes" ~ "Special",
     Q3 == "Primary" ~ "Primary", 
-    Q3 == "Combined primary and secondary" ~ "Combined"
-  )) |> 
+    Q3 == "Combined primary and secondary" ~ "Combined",
+    is.na(Q3) ~ "Primary" # Six responses somehow have missing values for this question, despite it being compulsory and them responding with details about their school
+  ))
+
+
+school_type_survey <- 
+  clean_survey |> 
   count(school_type) |> 
   drop_na() |> 
   mutate(prop = n/sum(n))
 
 school_type <- left_join(school_type_survey, 
-                         school_type_australia, 
+                         (school_type_australia |> 
+                            mutate(prop = Freq/sum(Freq))), 
                          by = join_by(school_type == school_type)) |> 
-  arrange(-n.x) |> 
+  arrange(-n) |> 
   rename(response = school_type) |> 
   adorn_totals(fill = "Total")
 
-rm(school_type_australia, school_type_school_profile, school_type_staff_data, school_type_survey)
+rm(school_type_school_profile, school_type_staff_data, school_type_survey)
 
 # School sector
-school_sector <- left_join(
-demographic_counts("Q18"),
-  (acara_staff_data |> 
+school_sector_population <- 
+  acara_staff_data |> 
   filter(state_territory == "Australia", 
          school_level == "Primary",
          staff_function == "Teaching staff",
          sex_gender == "All") |> 
   group_by(school_sector) |> 
-  summarise(n = sum(staff_count)) |> 
-  filter(school_sector != c("All", "All non-government")) |> 
-  mutate(prop = n/sum(n))),
+  summarise(Freq = sum(staff_count)) |> 
+  filter(school_sector != c("All", "All non-government"))
+
+school_sector <- left_join(
+demographic_counts("Q18"),
+  (school_sector_population |> 
+  mutate(prop = Freq/sum(Freq))),
 by = join_by(response == school_sector)) |> 
   select(-demographic) |> 
   adorn_totals(fill = "Total")
 
 # State and territory 
-state_and_territory <- 
-  left_join(
-  (demographic_counts("Q19") |> 
-  mutate(response = clean_state(response, to = "state_name"))),
-  (acara_staff_data |>
+state_and_territory_population <- acara_staff_data |>
     filter(
       school_sector == "All",
       school_level == "Primary",
@@ -330,28 +398,37 @@ state_and_territory <-
       sex_gender == "All"
     ) |>
     group_by(state_territory) |>
-    summarise(n = sum(staff_count)) |>
-    filter(state_territory != "Australia") |>
-    mutate(prop = n / sum(n))),
+    summarise(Freq = sum(staff_count)) |>
+    filter(state_territory != "Australia") 
+
+state_and_territory <- 
+  left_join(
+  (demographic_counts("Q19") |> 
+  mutate(response = clean_state(response, to = "state_name"))),
+  (state_and_territory_population |>
+    mutate(prop = Freq / sum(Freq))),
   by = join_by(response == state_territory)
 ) |> 
   select(-demographic) |> 
   adorn_totals(fill = "Total")
 
 # Advantage
-ses <-  
-  left_join(
-    demographic_counts("Q20"),
-  (acara_school_data |> 
+ses_population <- 
+  acara_school_data |> 
   mutate(ses = case_when(
     icsea_percentile <= 33.33 ~ "Mostly disadvantaged",
     between(icsea_percentile, 33.33, 66.66) ~ "A fairly even mix of advantaged and disadvantaged students",
     icsea_percentile >= 66.66 ~ "Mostly advantaged"
   )) |> 
   group_by(ses) |> 
-  summarise(n = sum(teaching_staff, na.rm = T)) |> 
-  drop_na() |> # Some NAs for schools without ICSEA values
-  mutate(prop = n/sum(n))),
+  summarise(Freq = sum(teaching_staff, na.rm = T)) |> 
+  drop_na()
+
+ses <-  
+  left_join(
+    demographic_counts("Q20"),
+  (ses_population |> # Some NAs for schools without ICSEA values
+  mutate(prop = Freq/sum(Freq))),
   by = join_by(response == ses)) |> 
   select(-demographic) |> 
   adorn_totals(fill = "Total")
@@ -370,8 +447,8 @@ location <-
     geolocation == "Very Remote" ~ "Remote"
   )) |> 
   group_by(simplified_geography) |> 
-  summarise(n = sum(teaching_staff, na.rm = T)) |> 
-  mutate(prop = n/sum(n))),
+  summarise(Freq = sum(teaching_staff, na.rm = T)) |> 
+  mutate(prop = Freq/sum(Freq))),
   by = join_by(response == simplified_geography)) |> 
   select(-demographic) |> 
   adorn_totals(fill = "Total")
@@ -403,15 +480,16 @@ school_size_australia <-
     total_enrolments > 1000 ~ "More than 1,000 students"
   )) %>%
   group_by(size) |> 
-  summarise(n = sum(teaching_staff, na.rm = T)) |> 
+  summarise(Freq = sum(teaching_staff, na.rm = T)) |> 
   drop_na() |> 
-  mutate(prop = n/sum(n))
+  rename(school_size = size)
 
 school_size <- 
   left_join(
   school_size_survey, 
-  school_size_australia, 
-  by = join_by(Q22 == size)
+  (school_size_australia |> 
+  mutate(prop = Freq/sum(Freq))), 
+  by = join_by(Q22 == school_size)
 ) |>  
   mutate(Q22 = factor(Q22, levels = c(
     "Up to 50 students",
@@ -453,4 +531,181 @@ rbind(school_type,
 
   
 ```
+
+# Weighting the responses
+
+Our survey represents a sample from the total population of teachers and principals. To reduce the biases of our estimates, we weight responses
+
+To weight responses, we use the same method as that employed by [@socialresearchcentre2023].
+
+Best practice would involve a two-step process [@kalton2003weighting]. The first step is reduce biases caused by non-coverage of the population and non-response (for example, teachers not on Facebook). The second step is to align weighted sample estimates with external data about the target population.
+
+We cannot do this first step, as we lack numerical data about the selection mechanisms which would or would not cause people to respond to our survey. [@socialresearchcentre2023] similarly could not calculate base weights in their survey of educators.
+
+We include the following variables in weighting:
+
+-   Gender
+
+-   Years of experience
+
+-   State and territory
+
+-   School type
+
+-   School sector
+
+-   School-level of advantage.
+
+-   School size
+
+We cannot include the following categories:
+
+-   Role (e.g. principal, classroom teacher): AITSL's public datasets do not distinguish between primary and secondary. I have sent a data request to try get the split of leadership roles for primary schools.
+
+-   Geography: AITSL and ACARA match a school's postcode with the ABS's *Australian Statistical Geography Standard.* We asked teachers about their school's location. I am not confident enough in the concordance between perception data and matched postcode data to weight by this variable.
+
+We had to make some transformations to the data to weight it. Namely:
+
+-   Gender: In its school staff dataset, ACARA randomly assigns people who identify as a gender other than Male or Female to one of Male or Female. We use this method too.
+
+-   School size: There were `r clean_survey |>  filter(is.na(Q22)) |>  nrow()` survey respondents who did not mention their school's size. I have imputed a school size for these respondents.
+
+```{r}
+#| label: weighting-survey
+#| output: false
+#| include: false
+
+# Function to randomly assign other genders to Male / Female, per the ABS
+
+reassign_gender <- function(gender) {
+  if (gender %in% c("Prefer not to say", "Something else")) {
+    return(sample(c("Female", "Male"), 1))
+  } else {
+    return(gender)
+  }
+}
+
+clean_survey$sex_gender <- sapply(clean_survey$Q4, reassign_gender)
+
+# Clean up state names
+clean_survey$state_territory <- clean_state(clean_survey$Q19, to = "state_name")
+
+# Fix other names
+clean_survey <- rename(clean_survey, 
+       c(school_sector = Q18,
+       ses = Q20))
+
+# Impute missing school sizes
+predictor_columns <- c("state_territory", 
+                       "Q3", # school type
+                       "school_sector", 
+                       "ses",
+                       "Q21", # rurality
+                       "Q22")
+
+clean_survey <- 
+  clean_survey |> 
+  mutate(across(c(state_territory,
+                  Q3, 
+                  school_sector,
+                  ses,
+                  Q21,
+                  Q22), 
+                as_factor))
+
+predictorMatrix <- make.predictorMatrix(clean_survey[,predictor_columns])
+predictorMatrix[,] <- 0
+predictorMatrix["Q22", predictor_columns] <- 1
+
+summary(clean_survey$Q22)
+
+imputation_model <- mice::mice(clean_survey[,predictor_columns], 
+                             m = 5, 
+                             predictorMatrix = predictorMatrix, 
+                             seed = 500)
+
+imputed_data <- mice::complete(imputation_model)
+
+clean_survey$school_size <- imputed_data$Q22
+
+summary(clean_survey$Q22)
+summary(clean_survey$school_size)
+
+# Create survey object
+survey_data <- 
+  clean_survey |> 
+  srvyr::as_survey_design(ids = NULL)
+
+# Post-stratify on sex, experience, state, sector, and level of advantage 
+# We choose not to post-stratify by geography or stage of schooling given I am not confident in the population data for these variables. 
+# We also cannot rake by school size, as this question was not compulsory, so some users skipped it and raking requires so missing data. 
+survey_data_raked <- survey::rake(
+  design = survey_data,
+  sample.margins = list(~sex_gender, 
+                        ~new_year_categories, 
+                        ~state_territory, 
+                        ~school_type,  
+                        ~school_sector, 
+                        ~ses,
+                        ~school_size),
+  population.margins = list(sex_population_data, 
+                            years_of_experience_population, 
+                            state_and_territory_population, 
+                            school_type_australia, 
+                            school_sector_population, 
+                            ses_population,
+                            school_size_australia)
+)
+```
+
+We can compare the results of weighting the datasets.
+
+```{r}
+# label: compare results
+
+weighted_results <- 
+  survey_data_raked |>
+  drop_na(Q13) |> 
+  group_by(Q13) |> 
+  summarise(prop = survey_mean(na.rm = T, vartype = "ci", level = 0.9)) |> 
+  drop_na(Q13) |> 
+  mutate(method = "Weighted")
+
+unweighted_results <- count(clean_survey, Q13) |> 
+  drop_na() |> 
+  mutate(prop = n/sum(n)) |> 
+  select(-n) |> 
+  mutate(method = "Unweighted")
+
+bind_rows(weighted_results, unweighted_results) |> 
+  ggplot(aes(x = factor(Q13, 
+                        levels = c("No maths",
+                                   "Foundational maths",
+                                   "Lower intermediate maths", 
+                                   "Upper intermediate maths",
+                                   "Advanced maths")) |> fct_rev(),
+             y = prop, 
+             ymin = prop_low, 
+             ymax = prop_upp, 
+             fill = method)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(position = "dodge", 
+                color = "black") +
+  ggdirectlabel::geom_richlegend(aes(label = fct_rev(method), 
+                                     color = method), 
+                                 size = 18/.pt) +
+  coord_flip() +
+  # theme and labels
+  theme_grattan(flipped = T) + 
+  grattan_colour_manual(n = 2) +
+  grattan_fill_manual(n = 2) +
+  grattan_y_continuous(labels = percent) + 
+  labs(title = "Our survey's weighted results are similar to raw results,\nbut will help us draw more reliable inferences",
+       subtitle = "Survey results with 90 per cent confidence intervals",
+       y = NULL,
+       caption = "Source: Analysis of Grattan's 2024 survey on primary school mathematics.")
+  
+```
+
+Please note that the remaining charts throughout this file are yet to be updated with appropriate weights.
 
