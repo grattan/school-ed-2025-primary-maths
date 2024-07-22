@@ -5,3 +5,8 @@ atlas/
 /.quarto/
 /_site/
 *.Rdata
+/_freeze
+/school_practices_cache
+/leader_views_cache
+/teacher_attitudes_cache
+/index_cache
