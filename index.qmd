@@ -674,7 +674,7 @@ data.frame(x = weights(survey_data_raked)) |>
   grattan_y_continuous(labels = comma) + 
   labs(title = "The distribution of weights is left-skewed",
        subtitle = "Distribution of person-unit weights",
-       x = "Person-level weight\n(approximate number of teachers in population represented per respondent)", y = NULL,
+       x = "Person-level weight\n(approximate number of teachers in population\nrepresented per respondent)", y = NULL,
        caption = glue('{source_caption}'))
 ```
 

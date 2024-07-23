@@ -89,6 +89,8 @@ leaders_views_df |>
 Check results by state and territory.
 
 ```{r}
+#| label: views_by_state_and_territory
+#| fig.height: 9
 leaders_views_state_and_territory <- survey_data_raked |>
   select(state_territory, Q30_5, Q30_6) |> 
   mutate(across(starts_with("Q30"), ~ case_when(
@@ -126,9 +128,9 @@ leaders_views_state_and_territory |>
              fill = label, 
              group = label)) +
   geom_linerange(color = rep(c(grattan_red4, grattan_orange4), 8),
-                linewidth = 18/.pt, 
+                linewidth = 14/.pt, 
                 position = position_dodge(0.9)) +
-  geom_point(position = position_dodge(0.9), size = 18/.pt, color = rep(c(grattan_red, grattan_orange), 8)) +
+  geom_point(position = position_dodge(0.9), size = 14/.pt, color = rep(c(grattan_red, grattan_orange), 8)) +
   geom_text(aes(label = percent(pct, 1)), 
             position = position_dodge(0.9), size = 14/.pt, 
             vjust = -.75, 
