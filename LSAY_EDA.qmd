@@ -1111,7 +1111,8 @@ distributions_2003 <- visualisation_2003 |>
   caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)") +
   geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
   annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
- scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))  +
+   xlim(300, 750)
 
 combined_label <- glue("
   Mean SE (Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == TRUE], 2)}\n
@@ -1128,8 +1129,7 @@ distributions_2003 <- distributions_2003 +
   theme_grattan(chart_type = "bar", flipped = T) +
   theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
   grattan_colour_manual(3, faded_level = 2) +
-   theme(axis.line = element_line(colour = "grey80")) +
-   coord_fixed(ratio = 100)
+   theme(axis.line = element_line(colour = "grey80")) 
    
 
 
@@ -1157,7 +1157,8 @@ distributions_2006 <- visualisation_2006 |>
   caption = "Source: Longitudinal Surveys of Australian Youth, 2006 cohort (Version 7.1)") +
   geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
   annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
- scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))  +
+   xlim(300, 750)
 
 combined_label <- glue("
   Mean SE (Teachers): {round(visualisation_2006$s.e[visualisation_2006$teacher == TRUE], 2)}\n
@@ -1202,7 +1203,8 @@ distributions_2009 <- visualisation_2009 |>
   caption = "Source: Longitudinal Surveys of Australian Youth, 2009 cohort (Version 7.1)") +
   geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
   annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
- scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))  +
+   xlim(300, 750)
 
 combined_label <- glue("
   Mean SE (Teachers): {round(visualisation_2009$s.e[visualisation_2009$teacher == TRUE], 2)}\n
@@ -1219,12 +1221,54 @@ distributions_2009 <- distributions_2009 +
   theme_grattan(chart_type = "bar", flipped = T) +
   theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
   grattan_colour_manual(3, faded_level = 2) +
-   theme(axis.line = element_line(colour = "grey80")) +
-   coord_fixed(ratio = 100)
+   theme(axis.line = element_line(colour = "grey80"))
    
 
 
 grattan_save_pptx(filename = "atlas/StatInterval_Plot2009.pptx")
+
+```
+
+```{r}
+visualisation_2015 <- pisa.mean.pv(pvlabel = paste0("PV", 1:10, "MATH"), by = "teacher", data = LSAY2015_teachflag)
+
+names(visualisation_2015)[which(names(visualisation_2015) == "s.e")[1]] <- "SD_s.e"
+
+
+distributions_2015 <- visualisation_2015 |> 
+  ggplot(aes(y= teacher, xdist = dist_normal(Mean, SD))) +
+  stat_interval() +
+  geom_point(aes(x = Mean), size = 3, color = "black") +
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
+       subtitle = glue("Distribution of {colour_text('#FF0000','PISA 2015')} Mathematical Proficiency scores for teachers and non-teachers"),
+       x = "Score",
+       y = "Teacher",
+  caption = "Source: Longitudinal Surveys of Australian Youth, 2015 cohort (Version 7.1)") +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher")) +
+   xlim(300, 750)
+
+combined_label <- glue("
+  Mean SE (Teachers): {round(visualisation_2015$s.e[visualisation_2015$teacher == TRUE], 2)}\n
+  SD SE (Teachers): {round(visualisation_2015$SD_s.e[visualisation_2015$teacher == TRUE], 2)}\n
+  Mean SE (Non-Teachers): {round(visualisation_2015$s.e[visualisation_2015$teacher == FALSE], 2)}\n
+  SD SE (Non-Teachers): {round(visualisation_2015$SD_s.e[visualisation_2015$teacher == FALSE], 2)}
+")
+
+# Add the combined label as a single annotation
+distributions_2015 <- distributions_2015 +
+  annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
+
+ distributions_2015 +
+  theme_grattan(chart_type = "bar", flipped = T) +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
+  grattan_colour_manual(3, faded_level = 2) +
+   theme(axis.line = element_line(colour = "grey80"))
+   
+
+
+grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
 
 ```
 
