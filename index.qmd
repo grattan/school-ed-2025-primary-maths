@@ -534,7 +534,7 @@ rbind(school_type,
 
 # Weighting the responses
 
-Our survey represents a sample from the total population of teachers and principals. To reduce the biases of our estimates, we weight responses
+Our survey represents a sample from the total population of teachers and principals. To reduce the biases of our estimates, we weight responses.
 
 To weight responses, we use the same method as that employed by [@socialresearchcentre2023].
 
@@ -656,6 +656,26 @@ survey_data_raked <- survey::rake(
                             ses_population,
                             school_size_australia)
 )
+
+save(survey_data_raked, file = "data/raked_survey.Rdata")
+```
+
+We can visualise the distribution of weights.
+
+```{r}
+data.frame(x = weights(survey_data_raked)) |> 
+  ggplot(aes(x = x)) +
+  geom_histogram(binwidth = 10) + 
+  geom_freqpoly(binwidth = 10) +
+  # theme and labels
+  theme_grattan() + 
+  grattan_colour_manual() +
+  grattan_fill_manual() +
+  grattan_y_continuous(labels = comma) + 
+  labs(title = "The distribution of weights is left-skewed",
+       subtitle = "Distribution of person-unit weights",
+       x = "Person-level weight\n(approximate number of teachers in population represented per respondent)", y = NULL,
+       caption = glue('{source_caption}'))
 ```
 
 We can compare the results of weighting the datasets.
@@ -703,9 +723,8 @@ bind_rows(weighted_results, unweighted_results) |>
   labs(title = "Our survey's weighted results are similar to raw results,\nbut will help us draw more reliable inferences",
        subtitle = "Survey results with 90 per cent confidence intervals",
        y = NULL,
-       caption = "Source: Analysis of Grattan's 2024 survey on primary school mathematics.")
+       caption = glue('{source_caption}'))
   
 ```
 
 Please note that the remaining charts throughout this file are yet to be updated with appropriate weights.
-

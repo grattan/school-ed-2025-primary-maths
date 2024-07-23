@@ -32,30 +32,36 @@ editor_options:
 
 source("R/globals.R")
 load(file = "data/clean_survey.Rdata")
+load(file = "data/raked_survey.Rdata")
 ```
 
 ## How do schools schedule maths?
 
 ```{r}
 #| label: maths-scheduling-approach
-clean_survey |> 
+survey_data_raked |> 
   drop_na(Q24) |> 
-  tabulator::tab(Q24) |> 
-  select(-cum_prop) |> 
-  mutate(prop = percent(prop, 1)) |> 
-  kable(align = "lrr")
+  group_by(Q24) |> 
+  summarise(pct = survey_mean(vartype = "ci", level = 0.9, na.rm = T)) |>
+  drop_na() |> 
+  arrange(-pct) |> 
+  mutate(across(starts_with("pct"), ~percent(.x, 0.1))) |> 
+  kable(align = "lrrr", col.names = c("Approach to scheduling maths", "%", "90% CI (lower)", "90% CI (upper)"))
+
+  
 ```
 
 ```{r}
 #| label: hours_of_maths
 hours_taught_df <- 
-  clean_survey |> 
+  survey_data_raked |> 
   mutate(hours_taught = coalesce(clean_survey$Q25, clean_survey$Q26)) |> 
-  group_by(hours_taught) |> 
-  summarise(n = n()) |> 
   drop_na(hours_taught) |> 
-  mutate(prop = n/sum(n),
-         n = sum(n),
+  group_by(hours_taught) |> 
+  summarise(pct = survey_mean(na.rm = T, vartype = "ci", level = 0.9),
+            n = n()) |> 
+  drop_na(hours_taught) |> 
+  mutate(n = sum(n),
          hours_taught = str_extract(hours_taught, "\\d+\\.?\\d*"),
          hours_taught = if_else(row_number() == 1, ">10",
                      if_else(row_number() == n(), "<2", 
@@ -64,15 +70,16 @@ hours_taught_df <-
   mutate(hours_taught = factor(hours_taught, hours_taught))
 
 hours_taught_df |> 
-  ggplot(aes(x = hours_taught, y = prop)) +
+  ggplot(aes(x = hours_taught, y = pct, ymax = pct_upp, ymin = pct_low)) +
   geom_col() + 
+  geom_errorbar(color = "black", width = .2) +
   # theme and labels
   theme_grattan(base_size = 14) + 
   grattan_colour_manual() +
   grattan_fill_manual() +
   grattan_y_continuous(labels = percent) + 
   labs(title = "Most schools teach between 4 and 5 hours of maths a week",
-       subtitle = "Proportion of teachers and principals who selected each response",
+       subtitle = "Percentage of teachers and principals who selected each response (with 90% confidence intervals)",
        x = "Timetabled hours of maths per week", y = NULL,
        caption = glue("Note: Total number of responses is {min(hours_taught_df$n) |> comma()}. {source_caption}"))
 ```
@@ -89,26 +96,34 @@ school_practice_labels <- clean_survey |>
   str_replace_all(c("school_practices - " = "",
                   "\\s*\\([^\\)]+\\)" = ""))
 
-school_practice_df <- clean_survey |>
- select(starts_with("Q27")) |> 
+school_practice_df <- survey_data_raked |>
+ select(starts_with(c("Q27"))) |> 
   mutate(across(starts_with("Q27"), ~ case_when(
     . == "Agree" ~ T,
     . == "Strongly agree" ~ T,
     is.na(.) ~ NA,
     .default = F
-  ))) |> 
-  pivot_longer(everything(), names_to = "question", values_to = "response") |> 
-  group_by(question) |> 
-  summarise(mean = mean(response, na.rm = T), 
-            se = sd(response, na.rm = T)  / sqrt(sum(!is.na(response))),
-            n = sum(!is.na(response))) |> 
+  )))
+
+school_practice_df <- 
+  school_practice_df |> 
+  summarise(across(everything(),
+                     list(pct = ~survey_mean(.x, na.rm = T, vartype = "ci", level = 0.9),
+                          n = ~sum(!is.na(.x)))
+                   )
+            ) |> 
+   pivot_longer(
+   cols = everything(),
+    names_to = c("question", ".value"),
+    names_pattern = "(Q27_\\d+)_(.+)"
+  ) |> 
   mutate(label = school_practice_labels)
 
 school_practice_df |> 
-  ggplot(aes(x = factor(str_wrap(label, 40)) |> fct_reorder(mean),
-             y = mean, 
-             ymin = mean - 1.65 * se, 
-             ymax = mean + 1.65 * se)) +
+  ggplot(aes(x = factor(str_wrap(label, 40)) |> fct_reorder(pct),
+             y = pct, 
+             ymin = pct_low, 
+             ymax = pct_upp)) +
   geom_col() +
   geom_errorbar(color = grattan_black,
                 width = .2) +
