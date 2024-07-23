@@ -18,6 +18,7 @@ library(mice)
 library(survey)
 library(srvyr)
 library(rmarkdown)
+library(ggtext)
 
 # Additional configuration
 options(knitr.kable.NA = '')

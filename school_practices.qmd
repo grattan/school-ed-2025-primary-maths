@@ -19,7 +19,6 @@ lightbox: auto
 execute:
   echo: false
   warning: false
-  cache: true
   freeze: auto
 editor: visual
 editor_options: 
@@ -138,6 +137,90 @@ school_practice_df |>
        caption = glue("Notes: Total responses to statements varied by statement between {min(school_practice_df$n) |> comma()} and {max(school_practice_df$n) |> comma()}. {source_caption}"))
 ```
 
+We can see how these results differ by ses
+
+```{r}
+#| label: school_practices_ses
+#| fig.height: 11
+
+school_practices_by_ses <- survey_data_raked |>
+ select(starts_with(c("ses", "Q27"))) |> 
+  mutate(across(starts_with("Q27"), ~ case_when(
+    . == "Agree" ~ T,
+    . == "Strongly agree" ~ T,
+    is.na(.) ~ NA,
+    .default = F
+  ))) |> 
+  mutate(ses = factor(ses, levels = c(
+                           "Mostly disadvantaged", 
+                           "A fairly even mix of advantaged and disadvantaged students", 
+                           "Mostly advantaged")
+                           ))
+
+# Playing around with statistical tests
+
+# svyranktest(Q27_1 ~ ses, survey_data_raked, na.rm = T, test= "KruskalWallis")
+# 
+# svychisq(~Q27_1 + ses, school_practices_by_ses)
+# 
+# model <- svyglm(Q27_1~ses, school_practice_df)
+# summary(model)
+
+# Simple two-sample t-tests
+# Will need to soft-code and automate this
+# survey::svyttest(Q27_1 ~ ses=="Mostly advantaged", subset(school_practices_by_ses, ses != "A fairly even mix of advantaged and disadvantaged students")) # Significant
+# survey::svyttest(Q27_2 ~ ses=="Mostly advantaged", subset(school_practices_by_ses, ses != "A fairly even mix of advantaged and disadvantaged students"))
+# survey::svyttest(Q27_3 ~ ses=="Mostly advantaged", subset(school_practices_by_ses,ses != "A fairly even mix of advantaged and disadvantaged students"))
+# survey::svyttest(Q27_4 ~ ses=="Mostly advantaged", subset(school_practices_by_ses, ses != "A fairly even mix of advantaged and disadvantaged students"))
+# survey::svyttest(Q27_5 ~ ses=="Mostly advantaged", subset(school_practices_by_ses, ses != "A fairly even mix of advantaged and disadvantaged students"))
+# survey::svyttest(Q27_6 ~ ses=="Mostly advantaged", subset(school_practices_by_ses, ses != "A fairly even mix of advantaged and disadvantaged students")) # Significant
+# survey::svyttest(Q27_7 ~ ses=="Mostly advantaged", subset(school_practices_by_ses, ses != "A fairly even mix of advantaged and disadvantaged students")) # Significant
+
+
+school_practices_by_ses_df <- 
+school_practices_by_ses |> 
+group_by(ses) |> 
+summarise(across(starts_with("Q27"),
+                     list(pct = ~survey_mean(.x, na.rm = T, vartype = "ci", level = 0.9),
+                          n = ~sum(!is.na(.x)))
+                   )
+            )  |> 
+  pivot_longer(
+   cols = !ses,
+    names_to = c("question", ".value"),
+    names_pattern = "(Q27_\\d+)_(.+)"
+  ) |> 
+  drop_na() |> 
+  mutate(label = rep(school_practice_labels, 3), 
+         significant = rep(c("*", "", "", "", "", "*", "*"), 3), 
+         label = paste0(label, significant)) 
+  
+school_practices_by_ses_df |> 
+  ggplot(aes(x = factor(str_wrap(label, 40)) |> fct_reorder(pct),
+             y = pct, 
+             ymin = pct_low, 
+             ymax = pct_upp,
+             fill = fct_rev(ses), 
+             )) +
+  geom_col(position = "dodge") +
+  geom_errorbar(color = grattan_black,
+                width = .2, position = position_dodge(0.9)) +
+  coord_flip() +
+  # theme and labels
+  theme_grattan(flipped = T,
+                base_size = 14) +
+  theme(plot.subtitle = ggtext::element_markdown()) +
+  grattan_y_continuous(labels = percent, expand_top = 0.4) +
+  # geom_richlegend(aes(label = ses, color = ses), legend.position = "bottomright", vjust = 0) +
+  labs(title = "Challenges exist in all schools, but especially in disadvantaged schools",
+       subtitle = glue("Percent of teachers who agree or strongly agree (with 90 per cent confidence interval)<br/>in schools with {colour_text(grattan_red, 'mostly disadvantaged')}, {colour_text(grattan_orange, 'an even mix')}, or {colour_text(grattan_yellow, 'mostly advantaged')} students"),
+       x = NULL, y = NULL,
+       caption = glue("Notes: Total responses to statements by group were at least {school_practices_by_ses_df |> group_by(ses) |> summarise(min = min(n)) |> pull(min) |> paste(collapse = ', ')} respectively. Statements marked with an asterisk mean that there was a significant difference\n(at the 90 per cent confidence interval) between the porportion of teachers in disavantaged and advantaged schools who agreed or strongly agreed with the statement.\n{source_caption}"))
+
+
+
+```
+
 ## Perceptions of colleagues' content knowledge
 
 ```{r}
@@ -191,4 +274,3 @@ teacher_knowledge_df |>
   
 ```
 
-## 
