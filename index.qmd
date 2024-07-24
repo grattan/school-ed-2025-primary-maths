@@ -673,7 +673,7 @@ data.frame(x = weights(survey_data_raked)) |>
   grattan_fill_manual() +
   grattan_y_continuous(labels = comma) + 
   labs(title = "The distribution of weights is left-skewed",
-       subtitle = "Distribution of person-unit weights",
+       subtitle = "Distribution of person-level weights",
        x = "Person-level weight\n(approximate number of teachers in population\nrepresented per respondent)", y = NULL,
        caption = glue('{source_caption}'))
 ```
@@ -727,4 +727,4 @@ bind_rows(weighted_results, unweighted_results) |>
   
 ```
 
-Please note that the remaining charts throughout this file are yet to be updated with appropriate weights.
+Please note that the some of the charts throughout this file are yet to be updated with appropriate weights.
