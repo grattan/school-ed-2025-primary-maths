@@ -137,7 +137,7 @@ chart_jurn_hist_naplan_num <-
         x = NULL,
         y = NULL,
         colour = "Year level",
-        title = glue("NAPLAN suggests {strayr::clean_state(jurn, to = 'state_name')} numeracy achievement is stagnating over time"),
+        title = glue("NAPLAN suggests numeracy achievement in {strayr::clean_state(jurn, to = 'state_name')} is stagnating over time"),
         subtitle = glue("Effective years of learning in numeracy at each year level in {strayr::clean_state(jurn, to = 'state_name')}")
       ) + #Label the chart
       #geom_text(data = label_lines, aes(label = chart_label), size = 18/.pt, fontface = "bold", nudge_y = 0.5) + #Label the chart lines, reduce the text size by (relatively) half
@@ -165,7 +165,7 @@ chart_jurn_hist_naplan_num <-
 state_charts <-
   map(pull(all_jurns), chart_jurn_hist_naplan_num)
 
-grattan_save_pptx(state_charts, "NAPLAN_08_22_by_jurisdiction.pptx")
+grattan_save_pptx(state_charts, "atlas/NAPLAN_08_22_by_jurisdiction.pptx")
 
 
 # 6. Check the trend over time in each jurisdiction.
