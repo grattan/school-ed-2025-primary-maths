@@ -536,11 +536,11 @@ rbind(school_type,
 
 Our survey represents a sample from the total population of teachers and principals. To reduce the biases of our estimates, we weight responses.
 
-To weight responses, we use the same method as that employed by [@socialresearchcentre2023].
+To weight responses, we use the same method as that employed by the Social Research Centre [-@socialresearchcentre2023].
 
 Best practice would involve a two-step process [@kalton2003weighting]. The first step is reduce biases caused by non-coverage of the population and non-response (for example, teachers not on Facebook). The second step is to align weighted sample estimates with external data about the target population.
 
-We cannot do this first step, as we lack numerical data about the selection mechanisms which would or would not cause people to respond to our survey. [@socialresearchcentre2023] similarly could not calculate base weights in their survey of educators.
+We cannot do this first step, as we lack numerical data about the selection mechanisms which would or would not cause people to respond to our survey. The Social Research Centre [-@socialresearchcentre2023] similarly could not calculate base weights in their survey of educators.
 
 We include the following variables in weighting:
 
@@ -727,4 +727,4 @@ bind_rows(weighted_results, unweighted_results) |>
   
 ```
 
-Please note that the some of the charts throughout this file are yet to be updated with appropriate weights.
+Please note that not all the charts throughout this file have been updated with appropriate weights.
