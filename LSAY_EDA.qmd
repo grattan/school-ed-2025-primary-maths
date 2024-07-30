@@ -5,31 +5,19 @@ format:
     toc: true
     toc_float: true
     toc_depth: 3
+execute:
+  warning: false
+  message: false
+  
 editor: visual
 ---
 
-```{r warnings=FALSE, message=FALSE}
-library(haven)
-library(tidyverse)
-library(dplyr)
-library(survey)
-library(intsvy)
-library(kableExtra)
-library(Rrepest)
-library(ggplot2)
-library(tidyverse)
-library(grattantheme)
-library(ggrepel)
-library(scales)
-library(ggdist)
-library(distributional)
-library(glue)
-library(plotly)
+```{r}
+#| warning: false
+#| messages: false
 
-
-
+source("R/00-setup.R")
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
-
 
 ```
 
@@ -645,36 +633,6 @@ ggplot(data_2003_summary, aes(x = as.factor(teacher))) +
 
 ```
 
-```{r}
-library(ggtext)
-# Adapting data frame for plotting
-#data_2003 <- data_2003 |>
-  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
-
-
-
-# Plot the data
-base_chart <- ggplot(data_2003, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
-                position = position_dodge(0.9), width = 0.25, color = "black") +
-  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in maths compared to the general population",
-       subtitle = glue("Pisa 2003 Mathematical Proficiency scores for {colour_text(grattan_red, 'teachers')} and {colour_text(grattan_orange, 'non-teachers')} across percentiles"),
-       x = "Percentiles",
-       y = "Score",
-       fill = "Teacher") +
-   geom_hline(yintercept = 482, linetype = "dotted", color = "black", size = 1) +
-  annotate(geom = "text", y = 495, x = "90", colour = "black", vjust = "bottom", hjust = -.6, label = "Proficiency\nbenchmark")
-
-base_chart +
-  theme_grattan(chart_type =  "bar") +
-  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
-  grattan_colour_manual(2) +
-  grattan_y_continuous() +
-  scale_x_discrete(expand = expansion(mult = c(0, 0.6)))
-
-grattan_save_pptx(filename = "atlas/Y03PISAPercentiles.pptx")
-```
 
 ```{r}
 # 2006
@@ -1175,9 +1133,7 @@ distributions_2006 <- distributions_2006 +
   theme_grattan(chart_type = "bar", flipped = T) +
   theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
   grattan_colour_manual(3, faded_level = 2) +
-   theme(axis.line = element_line(colour = "grey80")) +
-   coord_fixed(ratio = 100)
-   
+   theme(axis.line = element_line(colour = "grey80")) 
 
 
 grattan_save_pptx(filename = "atlas/StatInterval_Plot2006.pptx")
