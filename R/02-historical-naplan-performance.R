@@ -64,6 +64,22 @@ naplan_numeracy_eyl |>
             min_change_in_mean = last(numeracy_eyl_lower) - first(numeracy_eyl_upper),
             min_change_in_mean_mths = 12 * min_change_in_mean)
 
+# 3.3. Does Year 5 improve if we begin the time series at 2012?
+
+y5_last_decade <-
+  naplan_numeracy_data |>
+  filter(state == "AUS",
+         subgroup == "All",
+         calendar_year >= 2012,
+         year_level == 5)
+
+model_NAPLAN_point <- lm(formula = mean ~ calendar_year, data = y5_last_decade)
+model_eyl <- lm(formula = numeracy_eyl ~ calendar_year, data = y5_last_decade)
+
+summary(model_NAPLAN_point)
+summary(model_eyl)
+
+
 # 4. Chart national NAPLAN scale scores for the past decade (2012-22) for each year level ----
 # Note: Filter and chart within the one chunk of code
 # Note: Try make the y-axis start at EYL1 and show breaks for every two equivalent year levels
