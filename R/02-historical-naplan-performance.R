@@ -52,6 +52,7 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 head(naplan_numeracy_eyl$numeracy_eyl_lower) # Some NA values for confidence. Down to too few participants
 head(naplan_numeracy_eyl$numeracy_eyl_upper)
 
+grattan_save_all("atlas/")
 
 # 3.2. Understand magnitude of improvement
 
@@ -67,18 +68,34 @@ naplan_numeracy_eyl |>
 # 3.3. Does Year 5 improve if we begin the time series at 2012?
 
 y5_last_decade <-
-  naplan_numeracy_data |>
+  naplan_numeracy_eyl |>
   filter(state == "AUS",
          subgroup == "All",
          calendar_year >= 2012,
          year_level == 5)
 
+# Linear models
 model_NAPLAN_point <- lm(formula = mean ~ calendar_year, data = y5_last_decade)
 model_eyl <- lm(formula = numeracy_eyl ~ calendar_year, data = y5_last_decade)
 
 summary(model_NAPLAN_point)
 summary(model_eyl)
 
+# Non-linear models
+nlm_model_NAPLAN_point <- lm(formula = mean ~ poly(calendar_year, 2), data = y5_last_decade)
+nlm_model_eyl <- lm(formula = numeracy_eyl ~ poly(calendar_year, 2), data = y5_last_decade)
+
+summary(nlm_model_NAPLAN_point)
+summary(nlm_model_eyl)
+
+#plotting the model
+ggplot(y5_last_decade, aes(calendar_year, numeracy_eyl)) +
+  geom_point() +
+  geom_line(aes(calendar_year, predict(nlm_model_eyl))) +
+  ggtitle("Quadratic Regression") +
+  scale_y_continuous_grattan(limits = c(4,6)) +
+  theme_grattan() +
+  scale_x_continuous_grattan(labels = round, name = NULL)
 
 # 4. Chart national NAPLAN scale scores for the past decade (2012-22) for each year level ----
 # Note: Filter and chart within the one chunk of code
