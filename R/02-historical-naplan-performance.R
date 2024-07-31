@@ -44,9 +44,25 @@ intercept <- 213.536
 
 naplan_numeracy_eyl <-
   naplan_numeracy_data %>%
-    mutate(numeracy_eyl = exp((mean - intercept)/slope))
+    mutate(numeracy_eyl = exp((mean - intercept)/slope),
+           numeracy_eyl_lower = exp((mean - mean_ci - intercept)/slope),
+           numeracy_eyl_upper = exp((mean + mean_ci - intercept)/slope))
 
 head(naplan_numeracy_eyl$numeracy_eyl)
+head(naplan_numeracy_eyl$numeracy_eyl_lower) # Some NA values for confidence. Down to too few participants
+head(naplan_numeracy_eyl$numeracy_eyl_upper)
+
+
+# 3.2. Understand magnitude of improvement
+
+naplan_numeracy_eyl |>
+  filter(state == "AUS", subgroup == "All", calendar_year %in% c(2008, 2022)) |>
+  select(year_level, calendar_year, starts_with("numeracy_eyl")) |>
+  group_by(year_level) |>
+  summarise(change_in_mean = last(numeracy_eyl) - first(numeracy_eyl),
+            change_in_mean_mths = 12 * change_in_mean,
+            min_change_in_mean = last(numeracy_eyl_lower) - first(numeracy_eyl_upper),
+            min_change_in_mean_mths = 12 * min_change_in_mean)
 
 # 4. Chart national NAPLAN scale scores for the past decade (2012-22) for each year level ----
 # Note: Filter and chart within the one chunk of code
