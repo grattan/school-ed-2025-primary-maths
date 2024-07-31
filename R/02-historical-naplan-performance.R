@@ -52,8 +52,6 @@ head(naplan_numeracy_eyl$numeracy_eyl)
 head(naplan_numeracy_eyl$numeracy_eyl_lower) # Some NA values for confidence. Down to too few participants
 head(naplan_numeracy_eyl$numeracy_eyl_upper)
 
-grattan_save_all("atlas/")
-
 # 3.2. Understand magnitude of improvement
 
 naplan_numeracy_eyl |>
