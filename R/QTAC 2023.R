@@ -54,14 +54,15 @@ library(dplyr)
   SM_table <- table(data2023$`SPECIALIST MATHEMATICS`)
   print(SM_table)
 
+  #For now/ test purposes, only count teachers classified as studying primary teaching as the class of teachers we care about.
   primary_only <- filter(data2023, DetailedFOEDesc == "Teacher Education: Primary")
 
-  GM_table_pri_only <- table(data2023$`GENERAL MATHEMATICS`)
-  MM_table_pri_only <- table(data2023$`MATHEMATICAL METHODS`)
-  SM_table_pri_only <- table(data2023$`SPECIALIST MATHEMATICS`)
+  GM_table_pri_only <- table(primary_only$`GENERAL MATHEMATICS`)
+  MM_table_pri_only <- table(primary_only$`MATHEMATICAL METHODS`)
+  SM_table_pri_only <- table(primary_only$`SPECIALIST MATHEMATICS`)
   print(GM_table_pri_only)
   print(MM_table_pri_only)
   print(SM_table_pri_only)
 
-  null_NR <- c("NR", 0) #This is a row not a column)
+  null_NR <- c("NR", 0) #This is a row not a column, might not be useful to plug missing values into in the MM and SP tables. Rethink this
 
