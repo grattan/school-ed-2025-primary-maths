@@ -21,7 +21,8 @@ library(grattantheme) # remotes::install_github("grattan/grattantheme")
 
 # specific ------
 library(ggtext)     # for chart labelling
-library(readxl)
+library(tidyr)
+library(dplyr)
 
 # common objects ---------------------------------------------------------------
 
@@ -35,4 +36,32 @@ library(readxl)
   data2023 <- read_xlsx(datafile2023)
 
 # helper functions =============================================================
+
+  #Turn data into a tibble
+  data2023 <- as_tibble(data2023)
+
+  #See the values and their frequencies for key variables in the data set
+
+  DetailedFOEDesc_table <- table(data2023$DetailedFOEDesc)
+  print(DetailedFOEDesc_table)
+
+  MM_table <- table(data2023$`MATHEMATICAL METHODS`)
+  print(MM_table)
+
+  GM_table <- table(data2023$`GENERAL MATHEMATICS`)
+  print(GM_table)
+
+  SM_table <- table(data2023$`SPECIALIST MATHEMATICS`)
+  print(SM_table)
+
+  primary_only <- filter(data2023, DetailedFOEDesc == "Teacher Education: Primary")
+
+  GM_table_pri_only <- table(data2023$`GENERAL MATHEMATICS`)
+  MM_table_pri_only <- table(data2023$`MATHEMATICAL METHODS`)
+  SM_table_pri_only <- table(data2023$`SPECIALIST MATHEMATICS`)
+  print(GM_table_pri_only)
+  print(MM_table_pri_only)
+  print(SM_table_pri_only)
+
+  null_NR <- c("NR", 0) #This is a row not a column)
 
