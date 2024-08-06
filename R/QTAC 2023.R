@@ -110,9 +110,13 @@ colnames(flip_table) <- t(labels)
 flip_table <- as_tibble(as.data.frame(flip_table))
 
 #add participation
+flip_table <- flip_table %>%
+  mutate(partn = rowSums(select(., A, B, C, D, '-', NR), na.rm = TRUE), partn_rate = partn/total*100)
+
+#calculate middle/median score
 flip_table %>%
-  mutate(part_rate = rowSums(select(., A, B, C, D, '-', NR, 'NULL'), na.rm = TRUE)/total)
-#this isn't working
-
-
-#calculate median scores
+    mutate(typicalresult = if_else(
+      partn/2 <= A, "A", if_else(
+        partn/2 <= A+B, "B", if_else(
+          partn/2 <= A+B+C, "C", if_else(
+            partn/2 <= A+D+B+D,"D","TBC")))))
