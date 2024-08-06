@@ -87,7 +87,32 @@ combined_table <- GM_table_pri_only %>%
     mutate(MM_table_pri_only$MMfreq, SM_table_pri_only$SMfreq) %>%
        rename(MMfreq = 'MM_table_pri_only$MMfreq', SMfreq = 'SM_table_pri_only$SMfreq')
 
-#calculate participation rates
+#rearrange order and add a totals row
+combined_table <- combined_table %>%
+  slice(c(2:5, 1, 6:7)) %>%
+    bind_rows(combined_table %>%
+      summarise(across(where(is.numeric), ~sum(.x, na.rm = TRUE)) %>%
+        mutate(result = "total")))
+
+#save labels as a vector
+labels <- combined_table %>%
+  select(result) %>%
+
+#remove labels and transpose the table
+
+flip_table <- combined_table %>%
+  select(-result) %>%
+    t()
+
+colnames(flip_table) <- t(labels)
+
+#reclassify as tibble
+flip_table <- as_tibble(as.data.frame(flip_table))
+
+#add participation
+flip_table %>%
+  mutate(part_rate = rowSums(select(., A, B, C, D, '-', NR, 'NULL'), na.rm = TRUE)/total)
+#this isn't working
 
 
-#calcualte median scores (??)
+#calculate median scores
