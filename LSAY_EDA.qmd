@@ -8,7 +8,6 @@ format:
 execute:
   warning: false
   message: false
-  
 editor: visual
 ---
 
@@ -1023,15 +1022,55 @@ LSAY2003_profession_flag <- LSAY2003 %>%
     TRUE ~ 'Other'
   ))
 
-Rrepest::Rrepest(
+professionals <- Rrepest::Rrepest(
   data = LSAY2003_profession_flag,
   svy = "PISA",
   est = est(c("mean","std"),"pv@math"),
   by = c("profession"),
   cm.weights = c(paste0("w_fstr", 1:80)),
-  tabl = TRUE
+  tabl = FALSE
 )
+
 ```
+
+```{r}
+
+professionals_vis <- professionals %>%
+  rename(
+    Profession = profession,
+    Mean_Math = `b.mean.pv@math`,
+    SE_Mean_Math = `se.mean.pv@math`,
+    Std_Math = `b.std.pv@math`,
+    SE_Std_Math = `se.std.pv@math`
+  )
+
+profession_visualisation <- professionals_vis %>%
+  ggplot(aes(y = Profession, xdist = dist_normal(Mean_Math, Std_Math))) +
+  stat_interval() +
+  geom_point(aes(x = Mean_Math), size = 3, color = "black") +
+  labs(
+    title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population but less than other professionals",
+    subtitle = glue("Distribution of {colour_text('#FF0000','Pisa 2003')} Mathematical Proficiency scores for teachers and other professionals"),
+    x = "Score",
+    y = "Teacher",
+    caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)"
+  )  +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") + 
+   xlim(300, 750)
+
+ profession_visualisation +
+  theme_grattan(chart_type = "bar", flipped = T) +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
+  grattan_colour_manual(3, faded_level = 2) +
+   theme(axis.line = element_line(colour = "grey80")) 
+   
+
+
+
+```
+
+
 
 https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs \* how to show standard error/explain simply
 
@@ -1091,7 +1130,7 @@ distributions_2003 <- distributions_2003 +
    
 
 
-grattan_save_pptx(filename = "atlas/StatInterval_Plot2003.pptx")
+#grattan_save_pptx(filename = "atlas/StatInterval_Plot2003.pptx")
 
 
 
@@ -1228,4 +1267,49 @@ grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
 
 ```
 
+
+### Pooled figure of teachers above proficiency across the years
+
+```{r}
+pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2003_teachflag)
+pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2006_teachflag)
+pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2009_teachflag)
+pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2015_teachflag)
+```
+
+
+```{r}
+# getting the sample of 'true' teachers extracted.
+sample_sizes_2003 <- LSAY2003_teachflag %>%
+  group_by(teacher) %>%
+  summarize(n = n())
+
+sample_sizes_2006 <- LSAY2006_teachflag %>%
+  group_by(teacher) %>%
+  summarize(n = n())
+
+sample_sizes_2009 <- LSAY2009_teachflag %>%
+  group_by(teacher) %>%
+  summarize(n = n())
+
+sample_sizes_2015 <- LSAY2015_teachflag %>%
+  group_by(teacher) %>%
+  summarize(n = n())
+
+# soft code the percentages
+percentages <- c(84.05, 85.01, 86.99, 73.89)
+sample_sizes <- c(sample_sizes_2003$n, sample_sizes_2006$n, sample_sizes_2009$n, sample_sizes_2015$n)
+
+proportions <- percentages / 100
+
+abovprof <- proportions * sample_sizes
+
+total_abovprof <- sum(abovprof)
+total_sample_size <- sum(sample_sizes)
+
+pooled_proportion <- total_abovprof / total_sample_size
+
+pooled_percentage <- pooled_proportion * 100
+
+```
 
