@@ -64,5 +64,30 @@ library(dplyr)
   print(MM_table_pri_only)
   print(SM_table_pri_only)
 
-  null_NR <- c("NR", 0) #This is a row not a column, might not be useful to plug missing values into in the MM and SP tables. Rethink this
+  #turn table outputs into tibbles
+  GM_table_pri_only <- as_tibble(as.data.frame(GM_table_pri_only)) %>%
+      rename(result = Var1, GMfreq = Freq)
 
+  MM_table_pri_only <- as_tibble(as.data.frame(MM_table_pri_only)) %>%
+    rename(result = Var1, MMfreq = Freq)
+
+  SM_table_pri_only <- as_tibble(as.data.frame(SM_table_pri_only)) %>%
+    rename(result = Var1, SMfreq = Freq)
+
+  #add 0 observations for 'NR' result in MM and SM, which are implicit in the data only
+  MM_table_pri_only <- MM_table_pri_only %>%
+      add_row(result = "NR", MMfreq = 0, .before = 6)
+
+  SM_table_pri_only <- SM_table_pri_only %>%
+    add_row(result = "NR", SMfreq = 0, .before = 6)
+
+#Combine tables
+
+combined_table <- GM_table_pri_only %>%
+    mutate(MM_table_pri_only$MMfreq, SM_table_pri_only$SMfreq) %>%
+       rename(MMfreq = 'MM_table_pri_only$MMfreq', SMfreq = 'SM_table_pri_only$SMfreq')
+
+#calculate participation rates
+
+
+#calcualte median scores (??)
