@@ -20,6 +20,7 @@ source("R/00-setup.R")
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 LSAY2006 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01137_v10.1_unrestricted.dta")
 LSAY2009 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.30023v9_unrestricted.dta")
+LSAY2015 <- read_dta("data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta")
 
 ```
 
@@ -89,7 +90,7 @@ To see how many people were working as a primary school teacher at any point of 
 -   LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029
 
 ```{r}
-unique_teachers_yo3 <- LSAY2003 %>%
+unique_teachers_y03 <- LSAY2003 %>%
   # Selecting variables related to question: 'What kind of work do you do?'
   select(STIDSTD, LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029) %>%
   # Converting to character
@@ -105,7 +106,7 @@ unique_teachers_yo3 <- LSAY2003 %>%
   filter(actual_teachers) # Filtering for TRUE condition
 
 # Creating table to display results
- unique_teachers_yo3_table <- kbl(unique_teachers_yo3, caption = "Number of Teachers in the Y03 Data.") %>%
+ unique_teachers_yo3_table <- kbl(unique_teachers_y03, caption = "Number of Teachers in the Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
@@ -116,7 +117,7 @@ unique_teachers_yo3 <- LSAY2003 %>%
 
 ```{r}
 # Selecting IDs of previously identified Y03 Teachers
-teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% unique_teachers_yo3$STIDSTD, ]
+teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% unique_teachers_y03$STIDSTD, ]
 
 # Using those IDs and selecting area of study variables across given years
 teachers_aos <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
@@ -212,6 +213,8 @@ pisa_state
 
 
 ```{r}
+# Getting the IDs of the teachers
+teacher_ids_y03 <- unique_teachers_y03$STIDSTD
 # create a table for LSAY2003 splitting teachers and non-teachers
 LSAY2003_teachflag <- 
   LSAY2003 |> 
@@ -434,7 +437,7 @@ teachers_2009
 
 ```{r}
 # Taking a look at what the legit teachers studied
-teacher_jobs_2009 <- LSAY2009[LSAY2009$STIDSTD %in% LEGIT_TEACHERS_2009$STIDSTD, ]
+teacher_jobs_2009 <- LSAY2009[LSAY2009$STIDSTD %in% teachers_2009$STIDSTD, ]
 
 # selecting student ID and area of study across the years
 selected_columns <- c('STIDSTD', 'LBC089', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
@@ -469,7 +472,7 @@ aos_2009
 
 ```{r}
 # Extracting the unique teacher IDs
-teacher_ids_2009 <- LEGIT_TEACHERS_2009$STIDSTD
+teacher_ids_2009 <- teachers_2009$STIDSTD
 ```
 
 ```{r}
@@ -509,13 +512,14 @@ Rrepest::Rrepest(data = LSAY2009_proficiency,
 
 # LSAY 2015
 
-```{r}
-LSAY2015 <- read_dta("data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta")
-```
+## How many people in the 2015 cohort studied teaching?
+
+"What is your main area of study or training in this (apprenceship/traineeship/course)?"
+* LCC088, LDC088, LEC088, LFC088, LGC088, LHC088
 
 ```{r}
-# 2009 COHORT - exploring those who studied primary school teaching
-STUDYING_TEACHERS_2015 <- LSAY2015 %>%
+
+studying_teachers_2015 <- LSAY2015 %>%
   # selecting variables for current area of study
   select(LSAYID, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088) %>%
   # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
@@ -530,13 +534,17 @@ STUDYING_TEACHERS_2015 <- LSAY2015 %>%
   # Keep TRUE values
   filter(unique_teachers)
 
-STUDYING_TEACHERS_2015
+studying_teachers_2015
 ```
 
-```{r}
-# Looking at people who were at the time working as PS Teachers
+## How many teachers in the 2015 cohort?
 
-LEGIT_TEACHERS_2015 <- LSAY2015 %>%
+Looking for code `2412` in variables related to the question: "What kind of work do you do in this job?"
+LCD022, LDD022, LED022, LFD025, LGD022, LHD022
+
+```{r}
+
+teacher_2015 <- LSAY2015 %>%
   # Selecting variables for kind of work
   select(LSAYID, LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022) %>%
   # Mutate across the observation 
@@ -551,14 +559,16 @@ LEGIT_TEACHERS_2015 <- LSAY2015 %>%
   # Filter for TRUE condition
   filter(legit_teachers)
 
-LEGIT_TEACHERS_2015
+teacher_2015
 ```
 
-```{r}
-# Taking a look at what the legit teachers studied
-teacher_jobs_2015 <- LSAY2015[LSAY2015$LSAYID %in% LEGIT_TEACHERS_2015$LSAYID, ]
+## What did these teachers study?
 
-# selecting student ID and area of study across the years
+```{r}
+# Extracting IDs of teachers in 2015 Cohort
+teacher_jobs_2015 <- LSAY2015[LSAY2015$LSAYID %in% teacher_2015$LSAYID, ]
+
+# selecting student ID and 'area of study' variables 
 selected_columns <- c('LSAYID', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088')
 teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
 ```
@@ -567,16 +577,17 @@ teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
 
 ```{r}
 # Extracting the unique teacher IDs
-teacher_ids_2015 <- LEGIT_TEACHERS_2015$LSAYID
-
+teacher_ids_2015 <- teacher_2015$LSAYID
 ```
 
 ```{r}
 
+# creating a flag to distinguish between teachers and non-teachers
 LSAY2015_teachflag <- 
   LSAY2015 |> 
   mutate(teacher = if_else(LSAYID %in% teacher_ids_2015, T, F))
 
+# rrepest package to calculate mean and standard deviation
 Rrepest::Rrepest(data = LSAY2015_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
@@ -588,12 +599,15 @@ Rrepest::Rrepest(data = LSAY2015_teachflag,
 ```
 
 ```{r}
+
+# flag for proficient and not proficient
 LSAY2015_proficiency <- 
   LSAY2015_teachflag |> 
   mutate(across(PV1MATH:PV5MATH,
                 ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
                 .names = "{col}proficient"))
 
+# finding percentage and standard error of both groups proficient and non-proficient in math
 Rrepest::Rrepest(data = LSAY2015_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
@@ -1038,8 +1052,8 @@ professionals <- Rrepest::Rrepest(
 
 ```
 
-```{r}
 
+```{r}
 professionals_vis <- professionals %>%
   rename(
     Profession = profession,
@@ -1047,7 +1061,9 @@ professionals_vis <- professionals %>%
     SE_Mean_Math = `se.mean.pv@math`,
     Std_Math = `b.std.pv@math`,
     SE_Std_Math = `se.std.pv@math`
-  )
+  ) %>%
+  arrange(Mean_Math) %>%
+  mutate(Profession = factor(Profession, levels = unique(Profession))) # Reorder Profession factor
 
 profession_visualisation <- professionals_vis %>%
   ggplot(aes(y = Profession, xdist = dist_normal(Mean_Math, Std_Math))) +
@@ -1059,21 +1075,22 @@ profession_visualisation <- professionals_vis %>%
     x = "Score",
     y = "Teacher",
     caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)"
-  )  +
-  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  ) +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "red", size = 1) + 
   annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark", size =2) + 
-   xlim(300, 750)
+  xlim(300, 750)
 
- profession_visualisation +
-  theme_grattan(chart_type = "bar", flipped = T) +
+profession_visualisation +
+  theme_grattan(chart_type = "bar", flipped = TRUE) +
   theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
   grattan_colour_manual(3, faded_level = 2) +
-   theme(axis.line = element_line(colour = "grey80")) 
-   
-
-
+  theme(axis.line = element_line(colour = "grey80"))
 
 ```
+
+
+
+
 
 https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs \* how to show standard error/explain simply
 
