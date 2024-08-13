@@ -24,11 +24,11 @@ LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.
 
 ### How many primary school teachers are in the data set?
 
-To explore this in the Y03 data, we will look for the ASCED code 070103 (Teacher Education: Primary) in variables relating to questions focused at main area of study/training in this course at any given year: LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088
+To explore this in the Y03 data, we will look for the ASCED code `070103` (Teacher Education: Primary) in variables relating to questions focused at main area of study/training in this course at any given year: LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088
 
 ```{r}
 
-UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
+unique_studying_teachers_y03 <- LSAY2003 %>%
   # selecting variables for current area of study
   select(STIDSTD, LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088) %>%
   # Mutate across the observation to replace 0 = not '70103', 1 = is '70103', NA values retained
@@ -39,50 +39,54 @@ UNIQUE_STUDYING_TEACHERS <- LSAY2003 %>%
                    TRUE ~ 0  # All else as 0
                  ))) %>%
   # Create new column where any 1 in the row = TRUE, no 1 = FALSE
-  mutate(TEACHERS = if_any(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088), ~ . == 1)) %>%
+  mutate(teachers = if_any(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088), ~ . == 1)) %>%
   # Keep TRUE values
-  filter(TEACHERS)
+  filter(teachers)
 
 # Creating table to display results
- UNIQUE_STUDYING_TEACHERS_Y03 <- kbl(UNIQUE_STUDYING_TEACHERS, caption = "Count of Primary School Education Students in Y03 Data.") %>%
+ unique_studying_teachers_y03_tbl <- kbl(unique_studying_teachers_y03, caption = "Count of Primary School Education Students in Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
 # Displaying table 
-UNIQUE_STUDYING_TEACHERS_Y03
+unique_studying_teachers_y03_tbl
 ```
 
 There were **`r nrow(UNIQUE_STUDYING_TEACHERS)`** people studying primary school teaching at some point in the Y03 data.
 
 ```{r}
-# Deeper look at  student ID 2659 and 9362
-# Looking at variable LHC087 (Main area of study: 2010) as both individuals observations were 0 here.
-closer_look <- LSAY2003 %>% 
+# Looking at student ID 2659 and 9362
+# Variable LHC087 (Main area of study: 2010) as both returned 0 here.
+students_left_teaching <- LSAY2003 %>% 
   filter(STIDSTD %in% c(2659, 10049)) %>% 
   select(STIDSTD, LDCZ087, LHC087) %>%
   mutate(NEW_COURSE = c("Business Management", "Human Movement"))
 
-kbl(closer_look, caption = "Closer look at students who left teaching.") %>%
+kbl(students_left_teaching, caption = "Closer look at students who left teaching.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "945px", height = "200px")
 
 ```
 
--   Student 2659 went into another field of study four years after: Business management (80301)
+-   **Student 2659** went into another field of study four years after:
 
--   Student 10049 went into another field of study four years after: Human Movement (69903)
+    Business management (80301)
 
-## How many people were working as a primary school teacher at any point of responding to the questions?
+-   **Student 10049** went into another field of study four years after:
 
-To see how many people were working as a primary school teacher at any point of responding to the questions, we focused on finding the ANSZVO code 2412 in variables related to the question:
+    Human Movement (69903)
 
-"What kind of work do you do?" (LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029).
+## How many primary school teachers?
+
+To see how many people were working as a primary school teacher at any point of responding to the questions, we focused on finding the ANSZVO code `2412` in variables related to the question:
+
+["What kind of work do you do?"]{.underline}
+
+-   LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029
 
 ```{r}
-# Seeing the amount of people who were primary school teachers at some point
-
-UNIQUE_TEACHERS_Y03 <- LSAY2003 %>%
+unique_teachers_yo3 <- LSAY2003 %>%
   # Selecting variables related to question: 'What kind of work do you do?'
   select(STIDSTD, LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029) %>%
   # Converting to character
@@ -94,36 +98,31 @@ UNIQUE_TEACHERS_Y03 <- LSAY2003 %>%
     TRUE ~ 0 # Non-teacher = 0.
   ))) %>%
   # New column where 1 across row = TRUE(Teacher), all else = FALSE 
-  mutate(legit_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
-  filter(legit_teachers) # Filtering for TRUE condition
+  mutate(actual_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  filter(actual_teachers) # Filtering for TRUE condition
 
 # Creating table to display results
- UNIQUE_TEACHERS_Y03_table <- kbl(UNIQUE_TEACHERS_Y03, caption = "Number of Teachers in the Y03 Data.") %>%
+ unique_teachers_yo3_table <- kbl(unique_teachers_yo3, caption = "Number of Teachers in the Y03 Data.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
   scroll_box(width = "1200px", height = "400px")
 
 ```
 
-```{r}
-# Getting the IDs of the teachers
-teacher_ids_y03 <- UNIQUE_TEACHERS_Y03$STIDSTD
-```
-
 ## What did these people study?
 
 ```{r}
 # Selecting IDs of previously identified Y03 Teachers
-teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% UNIQUE_TEACHERS_Y03$STIDSTD, ]
+teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% unique_teachers_yo3$STIDSTD, ]
 
 # Using those IDs and selecting area of study variables across given years
-selected_columns <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
-teacher_jobs <- teacher_jobs[, selected_columns]
+teachers_aos <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
+teacher_jobs <- teacher_jobs[, teachers_aos]
 
 ```
 
 ```{r}
-# Creating a table for what these individuals studied
+# table to visualise what teachers studied more clearly
 fields <- data.frame(
   Codes = c(70101, 70103, 70109, 70199, 70115, 90503, 91703, 92101, 100101, 80101),
   `Field_of_Education` = c(
@@ -139,7 +138,6 @@ fields <- data.frame(
   )
 )
 
-# Creating a table
  fields <- kbl(fields, caption = "Area of Study for Teachers in Y03.") %>%
   kable_paper() %>%
   row_spec(0, background = "orange", bold = TRUE) %>%
@@ -148,12 +146,14 @@ fields
 
 ```
 
-# Understanding how many school leavers enrol in primary school teaching courses
+# How many school leavers enroll in primary school teaching?
+
+To understand how many people who studied primary school teaching, we would select the IDs of those who were studying to be teachers then also select variables associated with question: "Left school before completing Year 12".
 
 ```{r}
-# Taking the IDs of individuals who had enrolled in primary school teaching at some point
-studying_teachers <- unique(UNIQUE_STUDYING_TEACHERS$STIDSTD)
-# Filter the LSAY2003 data for those IDs and high school leaving variables.
+# IDs of those enrolled in primary school aos at some point
+studying_teachers <- unique(unique_studying_teachers_y03$STIDSTD)
+# Filter for those studying primary school teaching and leaving school variables.
 studying_teachers_y12 <- LSAY2003 %>% 
   filter(STIDSTD %in% studying_teachers) %>% 
   select(STIDSTD, LBWDV01, LCWDV01, LEWDV01, LIWDV01) %>%
@@ -163,7 +163,7 @@ studying_teachers_y12 <- LSAY2003 %>%
 
 Only two of those studying primary school teaching in 2003 LSAY were school leavers. However both seemed to have return back to school to complete.
 
-2999 & 10049 (leavers)
+The student IDs of these two: 2999 and 10049.
 
 ```{r}
 # Closer look at the school leavers (year and level)
@@ -183,20 +183,17 @@ school_leavers_year <- LSAY2003 %>%
 school_leavers_year
 ```
 
-**2999 LEFT IN 2003, 10049 LEFT IN 2004.**
-
 -   2999 left in 2003 then went back to complete year 12 in 2005
 
 -   10049 left in 2004 and then went back to complete year 12 in 2005.
 
-# PISA PVs
+# How well are teachers performing?
 
 -   Determine the percentage of primary teachers in the sample below the National proficient standard
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
 ```{r}
-# understanding PVs (exploratory understanding)
 # using intsvy package to calculate average scores for each state
 library(intsvy)
 pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) %>%
@@ -210,27 +207,24 @@ pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", 
 pisa_state
 ```
 
-"In mathematical literacy, the average performance of students in the Australian Capital Territory was significantly higher than the average achieved by students in New South Wales, Queensland, Victoria, Tasmania and the Northern Territory, and students from the Australian Capital Territory, Western Australia, South Australia, New South Wales and Queensland attained a higher average score than students in the Northern Territory. However, the performance of students in Victoria and Tasmania was not significantly different from the performance of students in the Northern Territory. These differences are more pronounced than those in maths in PISA 2000, perhaps because this measure of mathematical literacy is better defined, being the focus of [PISA 2003."](https://www.acer.org/files/PISA_screen.pdf)
-
-Testing concordance of results using the *Rrepest* package. Note that this will take quite some time as it has to compute lots of replicates.
 
 ```{r}
+# create a table for LSAY2003 splitting teachers and non-teachers
 LSAY2003_teachflag <- 
   LSAY2003 |> 
   mutate(teacher = if_else(STIDSTD %in% teacher_ids_y03, T, F))
-
+# using rrepest package to calculate mean and standard deviation
 Rrepest::Rrepest(data = LSAY2003_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
-
 ```
 
-Seems as though the level 3 proficiency levels for mathematics literacy is 482 in later years as well. \* [2018](https://nces.ed.gov/surveys/pisa/pisa2018/pdf/MathProfLevelDescriptionV2.pdf) \* [2022](https://nces.ed.gov/surveys/pisa/pisa2022/docs/DescriptionsOf2022ProficiencyLevels-TableI31.pdf)
 
 ```{r}
+
 LSAY2003_proficiency <- 
   LSAY2003_teachflag |> 
   mutate(across(PV1MATH:PV5MATH,
@@ -241,7 +235,7 @@ Rrepest::Rrepest(data = LSAY2003_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
-        cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
+        cm.weights = c(paste0("w_fstr",1:80)), 
         tabl = T)
 
 ```
@@ -632,7 +626,6 @@ ggplot(data_2003_summary, aes(x = as.factor(teacher))) +
 
 ```
 
-
 ```{r}
 # 2006
 data_2006 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
@@ -812,6 +805,7 @@ base_chart_2015 +
   grattan_colour_manual(2) +
   grattan_y_continuous()
 ```
+
 ```{r}
 library(ggplot2)
 library(ggdist)
@@ -853,13 +847,6 @@ data_combined |>
 
 
 ```
-
-
-
-
-
-
-
 
 ```{r}
 # Manual t-test calculation for 2003
@@ -1056,7 +1043,7 @@ profession_visualisation <- professionals_vis %>%
     caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)"
   )  +
   geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
-  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark", size =2) + 
    xlim(300, 750)
 
  profession_visualisation +
@@ -1070,8 +1057,6 @@ profession_visualisation <- professionals_vis %>%
 
 ```
 
-
-
 https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs \* how to show standard error/explain simply
 
 ```{r}
@@ -1084,8 +1069,6 @@ per=c(10, 25, 70, 90), data= LSAY2003)
 # Finding how many teachers are above the 70th percentile: '582.26'
 pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=582.26, by="teacher", data=LSAY2003_teachflag)
 ```
-
-
 
 ```{r}
 # Trying out different visualisations
@@ -1179,7 +1162,6 @@ grattan_save_pptx(filename = "atlas/StatInterval_Plot2006.pptx")
 
 ```
 
-
 ```{r}
 # 2009 Visualisations (To replace boxplots/barcharts)
 visualisation_2009 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "teacher", data = LSAY2009_teachflag)
@@ -1267,7 +1249,6 @@ grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
 
 ```
 
-
 ### Pooled figure of teachers above proficiency across the years
 
 ```{r}
@@ -1276,7 +1257,6 @@ pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSA
 pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2009_teachflag)
 pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2015_teachflag)
 ```
-
 
 ```{r}
 # getting the sample of 'true' teachers extracted.
@@ -1312,4 +1292,3 @@ pooled_proportion <- total_abovprof / total_sample_size
 pooled_percentage <- pooled_proportion * 100
 
 ```
-
