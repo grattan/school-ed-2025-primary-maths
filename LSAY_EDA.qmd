@@ -19,6 +19,7 @@ source("R/00-setup.R")
 # reading in the data
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
 LSAY2006 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01137_v10.1_unrestricted.dta")
+LSAY2009 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.30023v9_unrestricted.dta")
 
 ```
 
@@ -384,37 +385,37 @@ Rrepest::Rrepest(data = LSAY2006_proficiency,
 
 # LSAY 2009
 
-```{r}
-# reading in 2009 data
-LSAY2009 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.30023v9_unrestricted.dta")
+## How many people in the 2009 cohort studied teaching?
 
-```
+"What is your main area of study or training in this (apprenceship/traineeship/course)?"
+* LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088
+
+Then filtering for ASCED code `70103` (Teacher Education: Primary)
 
 ```{r}
-# 2009 COHORT - exploring those who studied primary school teaching
-STUDYING_TEACHERS_2009 <- LSAY2009 %>%
+
+studying_teachers_2009 <- LSAY2009 %>%
   # selecting variables for current area of study
   select(STIDSTD, LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088) %>%
-  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
+  # mutate across the observation to replace 0 = not '70103', 1 = is '70103'
   mutate(across(c(LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088),
                 ~ case_when(
                    as.character(.) == '70103' ~ 1,  # PSE as 1
                    is.na(.) ~ NA_integer_, # Retain NA
                    TRUE ~ 0  # All else as 0
                  ))) %>%
-  # Create new column where any 1 in the row = TRUE, no 1 = FALSE
+  # create new column where any 1 in the row = TRUE, no 1 = FALSE
   mutate(unique_teachers = if_any(c(LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088), ~ . == 1)) %>%
   # Keep TRUE values
   filter(unique_teachers)
 
-STUDYING_TEACHERS_2009
+studying_teachers_2009
 ```
 
 ```{r}
-# Looking at people who were at the time working as PS Teachers
-
-LEGIT_TEACHERS_2009 <- LSAY2009 %>%
-  # Selecting variables for kind of work
+# finding teachers in the 2009 cohort
+teachers_2009 <- LSAY2009 %>%
+  # selecting variables for kind of work
   select(STIDSTD, LBD014, LCD029, LDD029, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
   # Mutate across the observation 
   mutate(across(c(LBD014, LCD029, LDD029, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
@@ -428,7 +429,7 @@ LEGIT_TEACHERS_2009 <- LSAY2009 %>%
   # Filter for TRUE condition
   filter(legit_teachers)
 
-LEGIT_TEACHERS_2009
+teachers_2009
 ```
 
 ```{r}
@@ -453,7 +454,29 @@ What did they study?
 | 70105 | Teacher Education: Secondary     |
 | 61799 | Rehabilitation Therapies, n.e.c. |
 
-\*\* revisit -- have to do proficiency standard \*\*
+
+```{r}
+aos_2009 <- data.frame(
+  Code = c(90701, 70199, 79999, 90503, 60501, 70103, 70105, 61799),
+  Field = c(
+    "Psychology",
+    "Teacher Education, n.e.c.",
+    "Education, n.e.c. ",
+    "Children's Services.",
+    "Pharmacy",
+    "Teacher Education: Primary",
+    "Teacher Education: Secondary",
+    "Rehabilitation Therapies, n.e.c."
+  )
+)
+aos_2009 <- kable(aos_2009, caption = "Field of Education Codes 2009", align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", bold = TRUE, color = "white") %>%
+  column_spec(1, bold = TRUE)
+
+aos_2009
+```
+
 
 ## Plausible values for 2009
 
