@@ -16,7 +16,9 @@ editor: visual
 #| messages: false
 
 source("R/00-setup.R")
+# reading in the data
 LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
+LSAY2006 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01137_v10.1_unrestricted.dta")
 
 ```
 
@@ -224,13 +226,13 @@ Rrepest::Rrepest(data = LSAY2003_teachflag,
 
 
 ```{r}
-
+# creating columns to indicate if teacher was proficient or not
 LSAY2003_proficiency <- 
   LSAY2003_teachflag |> 
   mutate(across(PV1MATH:PV5MATH,
                 ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
                 .names = "{col}proficient"))
-
+# finding percentage and standard error of teachers and non-teachers proficient in math
 Rrepest::Rrepest(data = LSAY2003_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
@@ -240,15 +242,18 @@ Rrepest::Rrepest(data = LSAY2003_proficiency,
 
 ```
 
-## Y06 LSAY
+# Y06 LSAY
+
+## How many people in the 2006 were studying primary school teaching?
+
+Looking for variables linked with the question: "What is your main area of study or training in this (apprenticeship/traineeship/course)?"
+
+* LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088
+
 
 ```{r}
-LSAY2006 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01137_v10.1_unrestricted.dta")
-```
 
-```{r}
-# 2006 COHORT - exploring those who studied primary school teaching
-STUDYING_TEACHERS_2006 <- LSAY2006 %>%
+studying_teachers_2006 <- LSAY2006 %>%
   # selecting variables for current area of study
   select(STIDSTD, LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088) %>%
   # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
@@ -263,13 +268,12 @@ STUDYING_TEACHERS_2006 <- LSAY2006 %>%
   # Keep TRUE values
   filter(unique_teachers)
 
-STUDYING_TEACHERS_2006
+studying_teachers_2006
 ```
 
 ```{r}
 # Looking at people who were at the time working as PS Teachers
-
-LEGIT_TEACHERS_2006 <- LSAY2006 %>%
+teachers_2006 <- LSAY2006 %>%
   # Selecting variables for kind of work
   select(STIDSTD, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
   # Mutate across the observation 
@@ -280,15 +284,15 @@ LEGIT_TEACHERS_2006 <- LSAY2006 %>%
                    TRUE ~ 0  # All else as 0
                  ))) %>%
   # column for TRUE = legit teachers, FALSE = not teachers
-  mutate(legit_teachers = if_any(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  mutate(teachers_2006 = if_any(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
   # Filter for TRUE condition
-  filter(legit_teachers)
+  filter(teachers_2006)
 
 ```
 
 ```{r}
-# Taking a look at Y06 Teachers Area of Study
-teacher_jobs_06 <- LSAY2006[LSAY2006$STIDSTD %in% LEGIT_TEACHERS_2006$STIDSTD, ]
+# Taking a look at Y06 Teachers area of study
+teacher_jobs_06 <- LSAY2006[LSAY2006$STIDSTD %in% teachers_2006$STIDSTD, ]
 
 # Selecting teacher student IDs and variables related to area of study across the years
 selected_columns <- c('STIDSTD', 'LBC087', 'LCC087', 'LDC087', 'LEC087', 'LFC087', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
@@ -296,7 +300,7 @@ teacher_jobs_06 <- teacher_jobs_06[, selected_columns]
 ```
 
 ```{r}
-# Creating a table to see what the teachers studied.
+# Creating a table to see what the teachers studied
 aos_2006 <- data.frame(
   Code = c(100705, 100103, 100101, 80399, 70103, 70101, 70105, 70199, 91701, 60901, 61399, 60101, 91703, 80101, 81101, 91523, 90513),
   Field = c(
@@ -326,14 +330,13 @@ aos_2006 <- kable(aos_2006, caption = "Field of Education Codes 2006", align = "
 
 aos_2006
 
-
 ```
 
 ```{r}
-studying_teachers_06 <- unique(LEGIT_TEACHERS_2006$STIDSTD)
+# extracting the IDs of those who were teachers
+studying_teachers_06 <- unique(teachers_2006$STIDSTD)
 
-
-# filter the LSAY2003 data for those IDs and high school leaving variables.
+# filter the LSAY2003 data for those IDs and high school leaving variables
 school_leavers_06 <- LSAY2006 %>% 
   filter(STIDSTD %in% studying_teachers_06) %>% 
   select(STIDSTD, LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) %>%
@@ -347,27 +350,29 @@ school_leavers_06 <- LSAY2006 %>%
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
 ```{r}
-teacher_ids_2006 <- LEGIT_TEACHERS_2006$STIDSTD
+# creating a 2006 flag to distinguish between teachers and non-teachers
+teacher_ids_2006 <- teachers_2006$STIDSTD
 LSAY2006_teachflag <- 
   LSAY2006 |> 
   mutate(teacher = if_else(STIDSTD %in% teacher_ids_2006, T, F))
 
+# getting the average and standard deviation of both groups
 Rrepest::Rrepest(data = LSAY2006_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
-
 ```
 
 ```{r}
+# seeing teachers who are proficient and not proficient
 LSAY2006_proficiency <- 
   LSAY2006_teachflag |> 
   mutate(across(PV1MATH:PV5MATH,
                 ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
                 .names = "{col}proficient"))
-
+# getting the percentage and standard error of both groups who are proficient and not
 Rrepest::Rrepest(data = LSAY2006_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
