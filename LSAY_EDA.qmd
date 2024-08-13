@@ -441,18 +441,6 @@ selected_columns <- c('STIDSTD', 'LBC089', 'LCC088', 'LDC088', 'LEC088', 'LFC088
 teacher_jobs_2009 <- teacher_jobs_2009[, selected_columns]
 ```
 
-What did they study?
-
-| Code  | Field                            |
-|-------|----------------------------------|
-| 90701 | Psychology                       |
-| 70199 | Teacher Education, n.e.c.        |
-| 79999 | Education, n.e.c.                |
-| 90503 | Children's Services              |
-| 60501 | Pharmacy                         |
-| 70103 | Teacher Education: Primary       |
-| 70105 | Teacher Education: Secondary     |
-| 61799 | Rehabilitation Therapies, n.e.c. |
 
 
 ```{r}
@@ -477,21 +465,20 @@ aos_2009 <- kable(aos_2009, caption = "Field of Education Codes 2009", align = "
 aos_2009
 ```
 
-
 ## Plausible values for 2009
 
 ```{r}
 # Extracting the unique teacher IDs
 teacher_ids_2009 <- LEGIT_TEACHERS_2009$STIDSTD
-
 ```
 
 ```{r}
-
+# creating a flag to distinguish between teachers and non-teachers
 LSAY2009_teachflag <- 
   LSAY2009 |> 
   mutate(teacher = if_else(STIDSTD %in% teacher_ids_2009, T, F))
 
+# using rrepest package to calculate mean and standard deviation
 Rrepest::Rrepest(data = LSAY2009_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
@@ -502,17 +489,20 @@ Rrepest::Rrepest(data = LSAY2009_teachflag,
 ```
 
 ```{r}
+
+# distinguishing between proficient and non-proficient for both groups
 LSAY2009_proficiency <- 
   LSAY2009_teachflag |> 
   mutate(across(PV1MATH:PV5MATH,
                 ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
                 .names = "{col}proficient"))
 
+# percentage above proficiency for both groups
 Rrepest::Rrepest(data = LSAY2009_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
-        cm.weights = c(paste0("w_fstr",1:80)), # Our replicate weights have different names to those in PISA 2015 
+        cm.weights = c(paste0("w_fstr",1:80)), 
         tabl = T)
 
 ```
