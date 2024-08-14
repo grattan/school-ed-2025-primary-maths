@@ -3,6 +3,7 @@
 ##              School Education Program, June 2024             ''
 ##                          Dan Petrie                          ''
 ##''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+setwd("C:/Users/PETRIE/OneDrive - The University of Melbourne/Documents/GitHub/school-ed-2025-primary-maths")
 
 source("R/00-setup.R")
 
