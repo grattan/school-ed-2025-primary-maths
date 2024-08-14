@@ -3,7 +3,6 @@
 ##              School Education Program, June 2024             ''
 ##                          Dan Petrie                          ''
 ##''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-setwd("C:/Users/PETRIE/OneDrive - The University of Melbourne/Documents/GitHub/school-ed-2025-primary-maths")
 
 source("R/00-setup.R")
 
@@ -52,6 +51,8 @@ naplan_numeracy_eyl <-
 head(naplan_numeracy_eyl$numeracy_eyl)
 head(naplan_numeracy_eyl$numeracy_eyl_lower) # Some NA values for confidence. Down to too few participants
 head(naplan_numeracy_eyl$numeracy_eyl_upper)
+
+#For the project preview pack, Jordana will want to understand the magnitude of improvement at Year 5. Here is some code which does that. We'll eventually want to add little callouts to the charts which show how many months of improvement (for those states, like Qld here there has been improvement).
 
 # 3.2. Understand magnitude of improvement
 
