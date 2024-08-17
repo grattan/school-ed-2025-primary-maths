@@ -28,10 +28,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-r-
 
-      - name: Restore R library
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: Rscript -e 'renv::restore()'
-
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
