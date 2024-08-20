@@ -4,22 +4,22 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## PISA ANALYSIS
 
 ```{r}
 library(haven)
 library(tidyverse)
 library(dplyr)
 # reading sav file
-PISA2000 <- read_sav("CY01_AUS_PISA2000_StdQ_Achieve_and_SchQ_forPublic_Release.sav")
-PISA2003 <- read_sav("CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
-PISA2006 <- read_sav("CY03_AUS_PISA2006_StdQAchieve andSchQ_forPublicRelease.sav")
-PISA2009_1 <- read_sav("PISA2009_Sch__StdQ/PISA2009_ScQ_AUS_release.sav") #need to check
-PISA2009_2 <- read_sav("PISA2009_Sch__StdQ/PISA2009_StQ_AUS_release.sav") #need to check, has math vals
-PISA2012 <- read_sav("PISA2012_StdQ_AUS.sav")
-PISA2015 <- read_sav("CY6_MS_AUS_PISA2015_StudentandAchievementforPublicRelease.sav")
-PISA2018 <- read_sav("CY7_MS_AUS_PISA2018_StudentandAchievement_PublicRelease.sav")
-PISA2022 <- read_sav("CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.sav")
+PISA2000 <- read_sav("data/CY01_AUS_PISA2000_StdQ_Achieve_and_SchQ_forPublic_Release.sav")
+PISA2003 <- read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
+PISA2006 <- read_sav("data/CY03_AUS_PISA2006_StdQAchieve andSchQ_forPublicRelease.sav")
+#PISA2009_1 <- read_sav("data/PISA2009_ScQ_AUS_release.sav") #need to check
+#PISA2009_2 <- read_sav("data/PISA2009_StQ_AUS_release.sav") #need to check, has math vals
+PISA2012 <- read_sav("data/PISA2012_StdQ_AUS.sav")
+PISA2015 <- read_sav("data/CY6_MS_AUS_PISA2015_StudentandAchievementforPublicRelease.sav")
+PISA2018 <- read_sav("data/CY7_MS_AUS_PISA2018_StudentandAchievement_PublicRelease.sav")
+PISA2022 <- read_sav("data/CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.sav")
 
 
 ```
@@ -49,7 +49,7 @@ PISA2003_Y10 <- PISA2003 %>% filter(ST01Q01 == 10)
 PISA2006_Y10 <- PISA2006 %>% filter(ST01Q01 == 10)
 
 # taking all the year 10s out of PISA 2009
-PISA2009_2_Y10 <- PISA2009_2 %>% filter(ST01Q01 == 10)
+#PISA2009_2_Y10 <- PISA2009_2 %>% filter(ST01Q01 == 10)
 
 # taking all the year 10s out of PISA 2012
 PISA2012_Y10 <- PISA2012 %>% filter(ST01Q01 == 10)
@@ -94,10 +94,10 @@ Rrepest(data = PISA2006_Y10,
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fstr", 1:80)))
 #2009
-Rrepest(data = PISA2009_2_Y10, 
-        svy = "PISA",
-        est = est(c("mean", "std"), "pv@math"),
-        cm.weights = c(paste0("w_fstr", 1:80)))
+#Rrepest(data = PISA2009_2_Y10, 
+      # svy = "PISA",
+      #  est = est(c("mean", "std"), "pv@math"),
+      #  cm.weights = c(paste0("w_fstr", 1:80)))
 
 #2012
 Rrepest(data = PISA2012_Y10, 
