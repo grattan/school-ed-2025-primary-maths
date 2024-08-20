@@ -1,0 +1,130 @@
+---
+title: "PISA"
+format: html
+editor: visual
+---
+
+## Quarto
+
+```{r}
+library(haven)
+library(tidyverse)
+library(dplyr)
+# reading sav file
+PISA2000 <- read_sav("CY01_AUS_PISA2000_StdQ_Achieve_and_SchQ_forPublic_Release.sav")
+PISA2003 <- read_sav("CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
+PISA2006 <- read_sav("CY03_AUS_PISA2006_StdQAchieve andSchQ_forPublicRelease.sav")
+PISA2009_1 <- read_sav("PISA2009_Sch__StdQ/PISA2009_ScQ_AUS_release.sav") #need to check
+PISA2009_2 <- read_sav("PISA2009_Sch__StdQ/PISA2009_StQ_AUS_release.sav") #need to check, has math vals
+PISA2012 <- read_sav("PISA2012_StdQ_AUS.sav")
+PISA2015 <- read_sav("CY6_MS_AUS_PISA2015_StudentandAchievementforPublicRelease.sav")
+PISA2018 <- read_sav("CY7_MS_AUS_PISA2018_StudentandAchievement_PublicRelease.sav")
+PISA2022 <- read_sav("CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.sav")
+
+
+```
+
+Monday: PISA 
+
+**Download PISA data from ACER website and save to shared folder (2 hr)**
+
+DONE the first
+
+**Import each dataset (1 hr)**
+
+DONE, except 2015 which didn't download.
+
+**Filter for Year 10s (1hr) **
+
+Looking for variable ST001D01T: 10
+
+```{r}
+# taking all the year 10s out of PISA 2000
+PISA2000_Y10 <- PISA2000 %>% filter(st02q01 == 10)
+
+# taking all the year 10s out of PISA 2003
+PISA2003_Y10 <- PISA2003 %>% filter(ST01Q01 == 10)
+
+# taking all the year 10s out of PISA 2006
+PISA2006_Y10 <- PISA2006 %>% filter(ST01Q01 == 10)
+
+# taking all the year 10s out of PISA 2009
+PISA2009_2_Y10 <- PISA2009_2 %>% filter(ST01Q01 == 10)
+
+# taking all the year 10s out of PISA 2012
+PISA2012_Y10 <- PISA2012 %>% filter(ST01Q01 == 10)
+
+PISA_2015_Y10 <- PISA2015 %>% filter(ST001D01T == 10)
+
+# taking all the year 10s out of PISA 2018
+PISA2018_Y10 <- PISA2018 %>% filter(ST001D01T == 10)
+
+# taking all the year 10s out of PISA 2022
+PISA2022_Y10 <- PISA2022 %>% filter(ST001D01T == 10)
+
+# cleaning names
+
+PISA2018_Y10 <- janitor::clean_names(PISA2018_Y10)
+PISA_2015_Y10 <- janitor::clean_names(PISA_2015_Y10)
+PISA2022_Y10 <- janitor::clean_names(PISA2022_Y10)
+
+```
+
+
+Get Mean + Confidence Interval for each year in literacy and numeracy (1 hr) 
+
+```{r}
+library(Rrepest)
+library(intsvy)
+
+# Average Maths Scores for Y10s Across the Years
+#2000
+Rrepest(data = PISA2000_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+Rrepest(data = PISA2003_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+Rrepest(data = PISA2006_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+Rrepest(data = PISA2009_2_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+Rrepest(data = PISA2012_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+Rrepest(data = PISA_2015_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+Rrepest(data = PISA2018_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+Rrepest(data = PISA2022_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+
+```
+
+
+
+Combine rows (0.5 hr) 
+
+Create national line charts for Y10 literacy and numeracy (2 hr) 
