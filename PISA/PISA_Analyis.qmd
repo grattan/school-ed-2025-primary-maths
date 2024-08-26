@@ -174,8 +174,82 @@ ggplot(all_means, aes(x = Year, y = `b.mean.pv@math`)) +
 ```
 
 
-## Creating dataframe for
+## Creating dataframe for year 10 literacy
 
+```{r}
+# Average Literacy Scores for Y10s Across the Years
+#2000
+readmeans_2000 <- Rrepest(data = PISA2000_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+readmeans_2003 <- Rrepest(data = PISA2003_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+readmeans_2006 <- Rrepest(data = PISA2006_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+readmeans_2009 <- Rrepest(data = PISA2009_2_Y10, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+readmeans_2012 <- Rrepest(data = PISA2012_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+readmeans_2015 <- Rrepest(data = PISA_2015_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+readmeans_2018 <- Rrepest(data = PISA2018_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+readmeans_2022 <- Rrepest(data = PISA2022_Y10, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+```
+
+```{r}
+# Add Year column
+readmeans_2000$Year <- 2000
+readmeans_2003$Year <- 2003
+readmeans_2006$Year <- 2006
+readmeans_2009$Year <- 2009
+readmeans_2012$Year <- 2012
+readmeans_2015$Year <- 2015
+readmeans_2018$Year <- 2018
+readmeans_2022$Year <- 2022
+
+all_readmeans <- rbind(
+  readmeans_2000,
+  readmeans_2003,
+  readmeans_2006,
+  readmeans_2009,
+  readmeans_2012,
+  readmeans_2015,
+  readmeans_2018,
+  readmeans_2022
+)
+
+
+all_readmeans$CI_Lower <- all_readmeans$`b.mean.pv@read` - 1.96 * all_readmeans$`se.mean.pv@read`
+all_readmeans$CI_Upper <- all_readmeans$`b.mean.pv@read` + 1.96 * all_readmeans$`se.mean.pv@read`
+
+PISA_readmeans <- all_readmeans[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+```
 
 Create national line charts for Y10 literacy and numeracy (2 hr) 
 
@@ -183,7 +257,7 @@ Create national line charts for Y10 literacy and numeracy (2 hr)
 ```{r}
 
 # Plotting means and confidence intervals for year 10s across the years
-yr10scores_ci <- ggplot(all_means, aes(x = Year, y = `b.mean.pv@math`)) +
+yr10scores_ci <- ggplot(PISA_means, aes(x = Year, y = `b.mean.pv@math`)) +
   geom_point() +
   geom_line() +  
   geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
@@ -204,9 +278,30 @@ yr10scores_ci +
 
 ```
  
-OR
-
 ```{r}
 
+
+year10_readscores <- ggplot(PISA_readmeans, aes(x = Year, y = `b.mean.pv@read`)) +
+  geom_point() +
+  geom_line() +  
+  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
+  scale_x_continuous(breaks = PISA_readmeans$Year) + 
+  geom_label(aes(label = round(`b.mean.pv@read`, 1)), vjust = 0.75, size = 3) +
+  labs(title = "Year 10's literacy scores show an overall decrease over time",
+       subtitle = glue("{colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years"),
+       x = "Year", y = "Mean Literacy Score") +
+  theme_minimal()
+
+year10_readscores +
+  theme_grattan(chart_type = "line") +
+  grattan_colour_manual(2, faded_level = 2) +
+  theme(axis.line = element_line(colour = "grey80")) +
+  grattan_y_continuous() +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
+  annotate("text", x = 2020, y = 511, label = "1 Year Delay Due to COVID-19", size = 5, color = "darkgrey", hjust = 0.5)
+
+
+
 ```
+
 
