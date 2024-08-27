@@ -397,9 +397,6 @@ genpop_PISA_read_means <- genpop_read_all_means[, c("Year", ".", "b.mean.pv@read
 ```
 
 
-
-
-
 Create national line charts for Y10 literacy and numeracy (2 hr) 
 - version take numbers out
 - 1.8 annotation decline represents 'decrease of this much'
@@ -486,7 +483,137 @@ yr10litscores_ci +
   theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
   annotate(geom = "rect", xmin = 2018, xmax = 2022, ymin = -Inf, ymax = Inf, 
            fill = "lightgrey", alpha = 0.2, color = NA) + 
-  annotate("text", x = 2020, y = 500, label = "1 Year Delay Due to COVID-19", 
+  annotate("text", x = 2020, y = 510, label = "1 Year Delay Due to COVID-19", 
            size = 4, color = "black", angle = 90, hjust = 0.5) 
 ```
+# Making charts now filtering just for each state and territory and for the Catholics (National, Victoria and NSW)
+
+(May need to doule check)
+1 - NSW
+2 - VIC
+3- QLD
+4- SA
+5- WA
+6 - TAS
+7 - NT
+8 - ACT
+
+PISA 2012 seems to only have 'STRATUM' instead of STATE - would have to filter for the states using this variable. View [page 9](https://www.oecd.org/content/dam/oecd/en/data/datasets/pisa/pisa-2012-datasets/main-survey/codebooks/Codebook%20for%20student%20questionnaire%20data%20file.pdf)
+
+```{r}
+# Making charts just for Victoria vs General population - Maths
+# DATA Pre-processing:
+# taking all the year 10s out of PISA 2000
+PISA2000_vic <- PISA2000 %>% filter(State == 2)
+
+# taking all the year 10s out of PISA 2003
+PISA2003_vic <- PISA2003 %>% filter(State == 2)
+
+# taking all the year 10s out of PISA 2006
+PISA2006_vic <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 2)
+
+# taking all the year 10s out of PISA 2009
+PISA2009_2_vic <- PISA2009_2 %>% filter(STATE == 2)
+
+# taking all the year 10s out of PISA 2012
+PISA2012_vic <- PISA2012 %>% filter(STRATUM %in% c('AUS0307', 'AUS0308', 'AUS0309')) #For VICTORIAN schools
+
+PISA_2015_vic <- PISA2015 %>% filter(State == 2)
+
+# taking all the year 10s out of PISA 2018
+PISA2018_vic <- PISA2018 %>% filter(State == 2)
+
+# taking all the year 10s out of PISA 2022
+PISA2022_vic <- PISA2022 %>% filter(State == 2)
+
+# cleaning names
+
+PISA2018_vic <- janitor::clean_names(PISA2018_vic)
+PISA_2015_vic <- janitor::clean_names(PISA_2015_vic)
+PISA2022_vic <- janitor::clean_names(PISA2022_vic)
+
+
+
+```
+
+Problems: finding states for 2012 - have to use STRATUM variable instead
+
+```{r}
+
+# Average Maths Scores for Y10s Across the Years
+#2000
+vic_mathmeans_2000 <- Rrepest(data = PISA2000_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+vic_mathmeans_2003 <- Rrepest(data = PISA2003_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+vic_mathmeans_2006 <- Rrepest(data = PISA2006_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+vic_mathmeans_2009 <- Rrepest(data = PISA2009_2_vic, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+vic_mathmeans_2012 <- Rrepest(data = PISA2012_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+vic_mathmeans_2015 <- Rrepest(data = PISA_2015_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+vic_mathmeans_2018 <- Rrepest(data = PISA2018_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+vic_mathmeans_2022 <- Rrepest(data = PISA2022_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+vic_mathmeans_2000$Year <- 2000
+vic_mathmeans_2003$Year <- 2003
+vic_mathmeans_2006$Year <- 2006
+vic_mathmeans_2009$Year <- 2009
+vic_mathmeans_2012$Year <- 2012
+vic_mathmeans_2015$Year <- 2015
+vic_mathmeans_2018$Year <- 2018
+vic_mathmeans_2022$Year <- 2022
+
+vic_math_means <- rbind(
+  vic_mathmeans_2000,
+  vic_mathmeans_2003,
+  vic_mathmeans_2006,
+  vic_mathmeans_2009,
+  vic_mathmeans_2012,
+  vic_mathmeans_2015,
+  vic_mathmeans_2018,
+  vic_mathmeans_2022
+)
+
+
+vic_math_means$CI_Lower <- vic_math_means$`b.mean.pv@math` - 1.96 * vic_math_means$`se.mean.pv@math`
+vic_math_means$CI_Upper <- vic_math_means$`b.mean.pv@math` + 1.96 * vic_math_means$`se.mean.pv@math`
+
+vic_PISA_mathmeans <- vic_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+
+
+```
+
+
+
 
