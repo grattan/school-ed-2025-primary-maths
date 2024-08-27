@@ -125,13 +125,39 @@ means_2022 <- Rrepest(data = PISA2022_Y10,
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fsturwt", 1:80)))
 
+# making dataframe for year 10 math
+# Add Year column
+means_2000$Year <- 2000
+means_2003$Year <- 2003
+means_2006$Year <- 2006
+means_2009$Year <- 2009
+means_2012$Year <- 2012
+means_2015$Year <- 2015
+means_2018$Year <- 2018
+means_2022$Year <- 2022
 
+all_means <- rbind(
+  means_2000,
+  means_2003,
+  means_2006,
+  means_2009,
+  means_2012,
+  means_2015,
+  means_2018,
+  means_2022
+)
+
+
+all_means$CI_Lower <- all_means$`b.mean.pv@math` - 1.96 * all_means$`se.mean.pv@math`
+all_means$CI_Upper <- all_means$`b.mean.pv@math` + 1.96 * all_means$`se.mean.pv@math`
+
+PISA_means <- all_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
 
 
 ```
 
 ```{r}
-# Creating mean dataframe and confidence intervals for the general public in the dataset
+# Creating math mean dataframe and confidence intervals for the general public in the dataset
 #2000
 genpop_means_2000 <- Rrepest(data = PISA2000, 
         svy = "PISA",
@@ -207,38 +233,6 @@ genpop_PISA_means <- genpop_all_means[, c("Year", ".", "b.mean.pv@math", "se.mea
 
 
 
-
-Combine rows (0.5 hr) 
-
-```{r}
-# Add Year column
-means_2000$Year <- 2000
-means_2003$Year <- 2003
-means_2006$Year <- 2006
-means_2009$Year <- 2009
-means_2012$Year <- 2012
-means_2015$Year <- 2015
-means_2018$Year <- 2018
-means_2022$Year <- 2022
-
-all_means <- rbind(
-  means_2000,
-  means_2003,
-  means_2006,
-  means_2009,
-  means_2012,
-  means_2015,
-  means_2018,
-  means_2022
-)
-
-
-all_means$CI_Lower <- all_means$`b.mean.pv@math` - 1.96 * all_means$`se.mean.pv@math`
-all_means$CI_Upper <- all_means$`b.mean.pv@math` + 1.96 * all_means$`se.mean.pv@math`
-
-PISA_means <- all_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
-
-```
 
 ```{r}
 # first version without the years formatting
@@ -328,6 +322,84 @@ all_readmeans$CI_Upper <- all_readmeans$`b.mean.pv@read` + 1.96 * all_readmeans$
 PISA_readmeans <- all_readmeans[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
 ```
 
+```{r}
+# creating dataframe for literacy for general population
+# Creating math mean dataframe and confidence intervals for the general public in the dataset
+#2000
+genpop_read_means_2000 <- Rrepest(data = PISA2000, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+genpop_read_means_2003 <- Rrepest(data = PISA2003, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+genpop_read_means_2006 <- Rrepest(data = PISA2006, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+genpop_read_means_2009 <- Rrepest(data = PISA2009_2, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+genpop_read_means_2012 <- Rrepest(data = PISA2012, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+genpop_read_means_2015 <- Rrepest(data = PISA2015, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+genpop_read_means_2018 <- Rrepest(data = PISA2018, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+genpop_read_means_2022 <- Rrepest(data = PISA2022, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+genpop_read_means_2000$Year <- 2000
+genpop_read_means_2003$Year <- 2003
+genpop_read_means_2006$Year <- 2006
+genpop_read_means_2009$Year <- 2009
+genpop_read_means_2012$Year <- 2012
+genpop_read_means_2015$Year <- 2015
+genpop_read_means_2018$Year <- 2018
+genpop_read_means_2022$Year <- 2022
+
+genpop_read_all_means <- rbind(
+  genpop_read_means_2000,
+  genpop_read_means_2003,
+  genpop_read_means_2006,
+  genpop_read_means_2009,
+  genpop_read_means_2012,
+  genpop_read_means_2015,
+  genpop_read_means_2018,
+  genpop_read_means_2022
+)
+
+genpop_read_all_means$CI_Lower <- genpop_read_all_means$`b.mean.pv@read` - 1.96 * genpop_read_all_means$`se.mean.pv@read`
+genpop_read_all_means$CI_Upper <- genpop_read_all_means$`b.mean.pv@read` + 1.96 * genpop_read_all_means$`se.mean.pv@read`
+
+genpop_PISA_read_means <- genpop_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+
+
+
+
 Create national line charts for Y10 literacy and numeracy (2 hr) 
 - version take numbers out
 - 1.8 annotation decline represents 'decrease of this much'
@@ -337,7 +409,7 @@ Create national line charts for Y10 literacy and numeracy (2 hr)
 
 
 ```{r}
-
+# chart for year 10 numeracy w/ general population
 yr10scores_ci <- ggplot(PISA_means, aes(x = Year, y = `b.mean.pv@math`)) +
   geom_point() +
   geom_line(data = subset(PISA_means, Year <= 2018)) +  
@@ -373,10 +445,48 @@ yr10scores_ci +
   annotate("text", x = 2020, y = 500, label = "1 Year Delay Due to COVID-19", 
            size = 4, color = "black", angle = 90, hjust = 0.5) +
   # arrow and annotation
-  annotate("segment", x = 2006, xend = 2004, y = 530, yend = 526, 
-           arrow = arrow(length = unit(0.3, "cm")), color = "darkred", size = 0.5) +
+  #annotate("segment", x = 2006, xend = 2004, y = 530, yend = 526, 
+           #arrow = arrow(length = unit(0.3, "cm")), color = "darkred", size = 0.5) +
   annotate("text", x = 2006.2, y = 531, label = "PISA Population Average", 
            hjust = 0, color = "darkred", size = 4)
 
+```
+
+```{r}
+# chart for year 10 literacy w/ general population
+yr10litscores_ci <- ggplot(PISA_readmeans, aes(x = Year, y = `b.mean.pv@read`)) +
+  geom_point() +
+  geom_line(data = subset(PISA_readmeans, Year <= 2018)) +  
+  geom_line(data = subset(PISA_readmeans, Year >= 2022)) +  
+  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0) + 
+  scale_x_continuous(breaks = all_readmeans$Year) + 
+  labs(title = "Year 10's literacy scores have been declining over the years",
+       subtitle = glue("Average {colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years"),
+       x = "Year") +
+  theme_minimal()
+
+#overlapping, adding points/amending error bars to match grattan style
+yr10litscores_ci +
+  geom_line(data = subset(genpop_PISA_read_means, Year <= 2018), 
+            aes(x = Year, y = `b.mean.pv@read`), 
+            color = "darkred", linetype = "solid", size = 1, alpha = 0.7) +  
+  geom_point(data = subset(genpop_PISA_read_means, Year <= 2018), 
+             aes(x = Year, y = `b.mean.pv@read`), 
+             color = "darkred", size = 2, alpha = 0.7) + 
+  geom_point(data = subset(genpop_PISA_read_means, Year == 2022), 
+             aes(x = Year, y = `b.mean.pv@read`), 
+             color = "darkred", size = 2, alpha = 0.7) +  
+  geom_point(data = subset(PISA_readmeans, Year == 2022), 
+             aes(x = Year, y = `b.mean.pv@read`), 
+             color = "orange", size = 2, alpha = 0.7) + 
+  theme_grattan(chart_type = "line") +
+  grattan_colour_manual(2, faded_level = 2) +
+  theme(axis.line = element_line(colour = "grey80")) +
+  grattan_y_continuous() +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
+  annotate(geom = "rect", xmin = 2018, xmax = 2022, ymin = -Inf, ymax = Inf, 
+           fill = "lightgrey", alpha = 0.2, color = NA) + 
+  annotate("text", x = 2020, y = 500, label = "1 Year Delay Due to COVID-19", 
+           size = 4, color = "black", angle = 90, hjust = 0.5) 
 ```
 
