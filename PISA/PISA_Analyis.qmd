@@ -82,7 +82,6 @@ Get Mean + Confidence Interval for each year in literacy and numeracy (1 hr)
 
 ```{r}
 
-
 # Average Maths Scores for Y10s Across the Years
 #2000
 means_2000 <- Rrepest(data = PISA2000_Y10, 
@@ -130,6 +129,84 @@ means_2022 <- Rrepest(data = PISA2022_Y10,
 
 
 ```
+
+```{r}
+# Creating mean dataframe and confidence intervals for the general public in the dataset
+#2000
+genpop_means_2000 <- Rrepest(data = PISA2000, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+genpop_means_2003 <- Rrepest(data = PISA2003, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+genpop_means_2006 <- Rrepest(data = PISA2006, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+genpop_means_2009 <- Rrepest(data = PISA2009_2, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+genpop_means_2012 <- Rrepest(data = PISA2012, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+genpop_means_2015 <- Rrepest(data = PISA2015, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+genpop_means_2018 <- Rrepest(data = PISA2018, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+genpop_means_2022 <- Rrepest(data = PISA2022, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+genpop_means_2000$Year <- 2000
+genpop_means_2003$Year <- 2003
+genpop_means_2006$Year <- 2006
+genpop_means_2009$Year <- 2009
+genpop_means_2012$Year <- 2012
+genpop_means_2015$Year <- 2015
+genpop_means_2018$Year <- 2018
+genpop_means_2022$Year <- 2022
+
+genpop_all_means <- rbind(
+  genpop_means_2000,
+  genpop_means_2003,
+  genpop_means_2006,
+  genpop_means_2009,
+  genpop_means_2012,
+  genpop_means_2015,
+  genpop_means_2018,
+  genpop_means_2022
+)
+
+genpop_all_means$CI_Lower <- genpop_all_means$`b.mean.pv@math` - 1.96 * genpop_all_means$`se.mean.pv@math`
+genpop_all_means$CI_Upper <- genpop_all_means$`b.mean.pv@math` + 1.96 * genpop_all_means$`se.mean.pv@math`
+
+genpop_PISA_means <- genpop_all_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+
+
+```
+
+
+
+
 
 Combine rows (0.5 hr) 
 
@@ -252,60 +329,53 @@ PISA_readmeans <- all_readmeans[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@r
 ```
 
 Create national line charts for Y10 literacy and numeracy (2 hr) 
+- version take numbers out
+- 1.8 annotation decline represents 'decrease of this much'
+- decline is however many years of learning: most re
+- check into 2018 - 2022 delay, pisa sitting (2018 and 2022 pisa gap) timing of 2022 test
+- all students vs year 10 only
 
 
 ```{r}
+# creating plot for year 10 math relative to general population
 
-# Plotting means and confidence intervals for year 10s across the years
 yr10scores_ci <- ggplot(PISA_means, aes(x = Year, y = `b.mean.pv@math`)) +
   geom_point() +
-  geom_line() +  
-  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
+  geom_line(data = subset(PISA_means, Year <= 2018)) +  
+  geom_line(data = subset(PISA_means, Year >= 2022)) +  
+  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0) + 
   scale_x_continuous(breaks = all_means$Year) + 
-  geom_label(aes(label = round(`b.mean.pv@math`, 1)), vjust = 0.75, size = 3) +
   labs(title = "Year 10's math scores have been declining over the years",
-       subtitle = glue("{colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years"),
+       subtitle = glue("Average {colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years"),
        x = "Year", y = "Mean Math Score") +
   theme_minimal()
 
 yr10scores_ci +
+  geom_line(data = subset(genpop_PISA_means, Year <= 2018), 
+            aes(x = Year, y = `b.mean.pv@math`), 
+            color = "darkred", linetype = "solid", size = 1, alpha = 0.7) +  
+  geom_point(data = subset(genpop_PISA_means, Year <= 2018), 
+             aes(x = Year, y = `b.mean.pv@math`), 
+             color = "darkred", size = 2, alpha = 0.7) +  
+  geom_point(data = subset(genpop_PISA_means, Year == 2022), 
+             aes(x = Year, y = `b.mean.pv@math`), 
+             color = "darkred", size = 2, alpha = 0.7) +  
+  geom_point(data = subset(PISA_means, Year == 2022), 
+             aes(x = Year, y = `b.mean.pv@math`), 
+             color = "orange", size = 2, alpha = 0.7) + 
   theme_grattan(chart_type = "line") +
   grattan_colour_manual(2, faded_level = 2) +
   theme(axis.line = element_line(colour = "grey80")) +
   grattan_y_continuous() +
   theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
-  annotate("text", x = 2020, y = 502, label = "1 Year Delay Due to COVID-19", size = 5, color = "darkgrey", hjust = 0.5)
+  annotate(geom = "rect", xmin = 2018, xmax = 2022, ymin = -Inf, ymax = Inf, 
+           fill = "lightgrey", alpha = 0.2, color = NA) + 
+  annotate("text", x = 2020, y = 500, label = "1 Year Delay Due to COVID-19", 
+           size = 4, color = "black", angle = 90, hjust = 0.5)
 
 ```
- 
 ```{r}
-
-
-year10_readscores <- ggplot(PISA_readmeans, aes(x = Year, y = `b.mean.pv@read`)) +
-  geom_point() +
-  geom_line() +  
-  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
-  scale_x_continuous(breaks = PISA_readmeans$Year) + 
-  geom_label(aes(label = round(`b.mean.pv@read`, 1)), vjust = 0.75, size = 3) +
-  labs(title = "Year 10's literacy scores show an overall decrease over time",
-       subtitle = glue("{colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years"),
-       x = "Year", y = "Mean Literacy Score") +
-  theme_minimal()
-
-year10_readscores +
-  theme_grattan(chart_type = "line") +
-  grattan_colour_manual(2, faded_level = 2) +
-  theme(axis.line = element_line(colour = "grey80")) +
-  grattan_y_continuous() +
-  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
-  annotate("text", x = 2020, y = 511, label = "1 Year Delay Due to COVID-19", size = 5, color = "darkgrey", hjust = 0.5)
-
-
-
-```
-#Repeat for each state and territory and for the Catholics (National, Victoria and NSW) (7 hr)
-
-```{r}
+# Creating plot for literacy scores for year 10s relative to general population
 
 ```
 
