@@ -337,7 +337,6 @@ Create national line charts for Y10 literacy and numeracy (2 hr)
 
 
 ```{r}
-# creating plot for year 10 math relative to general population
 
 yr10scores_ci <- ggplot(PISA_means, aes(x = Year, y = `b.mean.pv@math`)) +
   geom_point() +
@@ -350,13 +349,14 @@ yr10scores_ci <- ggplot(PISA_means, aes(x = Year, y = `b.mean.pv@math`)) +
        x = "Year", y = "Mean Math Score") +
   theme_minimal()
 
+#overlapping, adding points/amending error bars to match grattan style
 yr10scores_ci +
   geom_line(data = subset(genpop_PISA_means, Year <= 2018), 
             aes(x = Year, y = `b.mean.pv@math`), 
             color = "darkred", linetype = "solid", size = 1, alpha = 0.7) +  
   geom_point(data = subset(genpop_PISA_means, Year <= 2018), 
              aes(x = Year, y = `b.mean.pv@math`), 
-             color = "darkred", size = 2, alpha = 0.7) +  
+             color = "darkred", size = 2, alpha = 0.7) + 
   geom_point(data = subset(genpop_PISA_means, Year == 2022), 
              aes(x = Year, y = `b.mean.pv@math`), 
              color = "darkred", size = 2, alpha = 0.7) +  
@@ -371,11 +371,12 @@ yr10scores_ci +
   annotate(geom = "rect", xmin = 2018, xmax = 2022, ymin = -Inf, ymax = Inf, 
            fill = "lightgrey", alpha = 0.2, color = NA) + 
   annotate("text", x = 2020, y = 500, label = "1 Year Delay Due to COVID-19", 
-           size = 4, color = "black", angle = 90, hjust = 0.5)
-
-```
-```{r}
-# Creating plot for literacy scores for year 10s relative to general population
+           size = 4, color = "black", angle = 90, hjust = 0.5) +
+  # arrow and annotation
+  annotate("segment", x = 2006, xend = 2004, y = 530, yend = 526, 
+           arrow = arrow(length = unit(0.3, "cm")), color = "darkred", size = 0.5) +
+  annotate("text", x = 2006.2, y = 531, label = "PISA Population Average", 
+           hjust = 0, color = "darkred", size = 4)
 
 ```
 
