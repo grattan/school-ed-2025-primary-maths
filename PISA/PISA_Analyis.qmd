@@ -505,31 +505,30 @@ PISA 2012 seems to only have 'STRATUM' instead of STATE - would have to filter f
 ```{r}
 # Making charts just for Victoria vs General population - Maths
 # DATA Pre-processing:
-# taking all the year 10s out of PISA 2000
+# taking all the VIC out of PISA 2000
 PISA2000_vic <- PISA2000 %>% filter(State == 2)
 
-# taking all the year 10s out of PISA 2003
+# taking all the VIC out of PISA 2003
 PISA2003_vic <- PISA2003 %>% filter(State == 2)
 
-# taking all the year 10s out of PISA 2006
+# taking all the VIC out of PISA 2006
 PISA2006_vic <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 2)
 
-# taking all the year 10s out of PISA 2009
+# taking all the VIC out of PISA 2009
 PISA2009_2_vic <- PISA2009_2 %>% filter(STATE == 2)
 
-# taking all the year 10s out of PISA 2012
+# taking all the VIC out of PISA 2012
 PISA2012_vic <- PISA2012 %>% filter(STRATUM %in% c('AUS0307', 'AUS0308', 'AUS0309')) #For VICTORIAN schools
 
 PISA_2015_vic <- PISA2015 %>% filter(State == 2)
 
-# taking all the year 10s out of PISA 2018
+# taking all the VIC out of PISA 2018
 PISA2018_vic <- PISA2018 %>% filter(State == 2)
 
-# taking all the year 10s out of PISA 2022
+# taking all the VIC out of PISA 2022
 PISA2022_vic <- PISA2022 %>% filter(State == 2)
 
 # cleaning names
-
 PISA2018_vic <- janitor::clean_names(PISA2018_vic)
 PISA_2015_vic <- janitor::clean_names(PISA_2015_vic)
 PISA2022_vic <- janitor::clean_names(PISA2022_vic)
@@ -1307,7 +1306,7 @@ ggplot(all_states_math, aes(x = Year, y = `b.mean.pv@math`, color = STATE)) +
   geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
   scale_x_continuous(breaks = unique(all_states_math$Year), expand = expansion(mult = c(0.05, 0.05))) +
   facet_wrap(~STATE, scales = "fixed") +  
-  labs(title = "Year 10 Mathematics Scores by State",
+  labs(title = "Mathematics Scores by State",
        x = "Year",
        y = "Mathematics Score") +
   theme_minimal() +
@@ -1318,5 +1317,624 @@ ggplot(all_states_math, aes(x = Year, y = `b.mean.pv@math`, color = STATE)) +
 
 # STATES LITERACY SCORES
 
+VICTORIA
+```{r}
+#2000
+vic_read_means_2000 <- Rrepest(data = PISA2000_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+vic_read_means_2003 <- Rrepest(data = PISA2003_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+vic_read_means_2006 <- Rrepest(data = PISA2006_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+vic_read_means_2009 <- Rrepest(data = PISA2009_2_vic, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
 
+#2012
+vic_read_means_2012 <- Rrepest(data = PISA2012_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+vic_read_means_2015 <- Rrepest(data = PISA_2015_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+vic_read_means_2018 <- Rrepest(data = PISA2018_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+vic_read_means_2022 <- Rrepest(data = PISA2022_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+vic_read_means_2000$Year <- 2000
+vic_read_means_2003$Year <- 2003
+vic_read_means_2006$Year <- 2006
+vic_read_means_2009$Year <- 2009
+vic_read_means_2012$Year <- 2012
+vic_read_means_2015$Year <- 2015
+vic_read_means_2018$Year <- 2018
+vic_read_means_2022$Year <- 2022
+
+vic_read_all_means <- rbind(
+  vic_read_means_2000,
+  vic_read_means_2003,
+  vic_read_means_2006,
+  vic_read_means_2009,
+  vic_read_means_2012,
+  vic_read_means_2015,
+  vic_read_means_2018,
+  vic_read_means_2022
+)
+
+vic_read_all_means$CI_Lower <- vic_read_all_means$`b.mean.pv@read` - 1.96 * vic_read_all_means$`se.mean.pv@read`
+vic_read_all_means$CI_Upper <- vic_read_all_means$`b.mean.pv@read` + 1.96 * vic_read_all_means$`se.mean.pv@read`
+
+vic_PISA_read_means <- vic_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+NSW
+
+```{r}
+#2000
+nsw_read_means_2000 <- Rrepest(data = PISA2000_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+nsw_read_means_2003 <- Rrepest(data = PISA2003_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+nsw_read_means_2006 <- Rrepest(data = PISA2006_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+nsw_read_means_2009 <- Rrepest(data = PISA2009_2_nsw, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+nsw_read_means_2012 <- Rrepest(data = PISA2012_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+nsw_read_means_2015 <- Rrepest(data = PISA_2015_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+nsw_read_means_2018 <- Rrepest(data = PISA2018_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+nsw_read_means_2022 <- Rrepest(data = PISA2022_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+nsw_read_means_2000$Year <- 2000
+nsw_read_means_2003$Year <- 2003
+nsw_read_means_2006$Year <- 2006
+nsw_read_means_2009$Year <- 2009
+nsw_read_means_2012$Year <- 2012
+nsw_read_means_2015$Year <- 2015
+nsw_read_means_2018$Year <- 2018
+nsw_read_means_2022$Year <- 2022
+
+nsw_read_all_means <- rbind(
+  nsw_read_means_2000,
+  nsw_read_means_2003,
+  nsw_read_means_2006,
+  nsw_read_means_2009,
+  nsw_read_means_2012,
+  nsw_read_means_2015,
+  nsw_read_means_2018,
+  nsw_read_means_2022
+)
+
+nsw_read_all_means$CI_Lower <- nsw_read_all_means$`b.mean.pv@read` - 1.96 * nsw_read_all_means$`se.mean.pv@read`
+nsw_read_all_means$CI_Upper <- nsw_read_all_means$`b.mean.pv@read` + 1.96 * nsw_read_all_means$`se.mean.pv@read`
+
+nsw_PISA_read_means <- nsw_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+for ACT
+
+```{r}
+#2000
+act_read_means_2000 <- Rrepest(data = PISA2000_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+act_read_means_2003 <- Rrepest(data = PISA2003_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+act_read_means_2006 <- Rrepest(data = PISA2006_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+act_read_means_2009 <- Rrepest(data = PISA2009_2_act, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+act_read_means_2012 <- Rrepest(data = PISA2012_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+act_read_means_2015 <- Rrepest(data = PISA2015_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+act_read_means_2018 <- Rrepest(data = PISA2018_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+act_read_means_2022 <- Rrepest(data = PISA2022_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+act_read_means_2000$Year <- 2000
+act_read_means_2003$Year <- 2003
+act_read_means_2006$Year <- 2006
+act_read_means_2009$Year <- 2009
+act_read_means_2012$Year <- 2012
+act_read_means_2015$Year <- 2015
+act_read_means_2018$Year <- 2018
+act_read_means_2022$Year <- 2022
+
+act_read_all_means <- rbind(
+  act_read_means_2000,
+  act_read_means_2003,
+  act_read_means_2006,
+  act_read_means_2009,
+  act_read_means_2012,
+  act_read_means_2015,
+  act_read_means_2018,
+  act_read_means_2022
+)
+
+act_read_all_means$CI_Lower <- act_read_all_means$`b.mean.pv@read` - 1.96 * act_read_all_means$`se.mean.pv@read`
+act_read_all_means$CI_Upper <- act_read_all_means$`b.mean.pv@read` + 1.96 * act_read_all_means$`se.mean.pv@read`
+
+act_PISA_read_means <- act_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+for QLD
+```{r}
+#2000
+qld_read_means_2000 <- Rrepest(data = PISA2000_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+qld_read_means_2003 <- Rrepest(data = PISA2003_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+qld_read_means_2006 <- Rrepest(data = PISA2006_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+qld_read_means_2009 <- Rrepest(data = PISA2009_2_qld, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+qld_read_means_2012 <- Rrepest(data = PISA2012_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+qld_read_means_2015 <- Rrepest(data = PISA_2015_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+qld_read_means_2018 <- Rrepest(data = PISA2018_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+qld_read_means_2022 <- Rrepest(data = PISA2022_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+qld_read_means_2000$Year <- 2000
+qld_read_means_2003$Year <- 2003
+qld_read_means_2006$Year <- 2006
+qld_read_means_2009$Year <- 2009
+qld_read_means_2012$Year <- 2012
+qld_read_means_2015$Year <- 2015
+qld_read_means_2018$Year <- 2018
+qld_read_means_2022$Year <- 2022
+
+qld_read_all_means <- rbind(
+  qld_read_means_2000,
+  qld_read_means_2003,
+  qld_read_means_2006,
+  qld_read_means_2009,
+  qld_read_means_2012,
+  qld_read_means_2015,
+  qld_read_means_2018,
+  qld_read_means_2022
+)
+
+qld_read_all_means$CI_Lower <- qld_read_all_means$`b.mean.pv@read` - 1.96 * qld_read_all_means$`se.mean.pv@read`
+qld_read_all_means$CI_Upper <- qld_read_all_means$`b.mean.pv@read` + 1.96 * qld_read_all_means$`se.mean.pv@read`
+
+qld_PISA_read_means <- qld_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+```{r}
+#2000
+nt_read_means_2000 <- Rrepest(data = PISA2000_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+nt_read_means_2003 <- Rrepest(data = PISA2003_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+nt_read_means_2006 <- Rrepest(data = PISA2006_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+nt_read_means_2009 <- Rrepest(data = PISA2009_2_nt, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+nt_read_means_2012 <- Rrepest(data = PISA2012_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+nt_read_means_2015 <- Rrepest(data = PISA_2015_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+nt_read_means_2018 <- Rrepest(data = PISA2018_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+nt_read_means_2022 <- Rrepest(data = PISA2022_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+nt_read_means_2000$Year <- 2000
+nt_read_means_2003$Year <- 2003
+nt_read_means_2006$Year <- 2006
+nt_read_means_2009$Year <- 2009
+nt_read_means_2012$Year <- 2012
+nt_read_means_2015$Year <- 2015
+nt_read_means_2018$Year <- 2018
+nt_read_means_2022$Year <- 2022
+
+nt_read_all_means <- rbind(
+  nt_read_means_2000,
+  nt_read_means_2003,
+  nt_read_means_2006,
+  nt_read_means_2009,
+  nt_read_means_2012,
+  nt_read_means_2015,
+  nt_read_means_2018,
+  nt_read_means_2022
+)
+
+nt_read_all_means$CI_Lower <- nt_read_all_means$`b.mean.pv@read` - 1.96 * nt_read_all_means$`se.mean.pv@read`
+nt_read_all_means$CI_Upper <- nt_read_all_means$`b.mean.pv@read` + 1.96 * nt_read_all_means$`se.mean.pv@read`
+
+nt_PISA_read_means <- nt_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+
+```{r}
+#2000
+sa_read_means_2000 <- Rrepest(data = PISA2000_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+sa_read_means_2003 <- Rrepest(data = PISA2003_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+sa_read_means_2006 <- Rrepest(data = PISA2006_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+sa_read_means_2009 <- Rrepest(data = PISA2009_2_sa, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+sa_read_means_2012 <- Rrepest(data = PISA2012_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+sa_read_means_2015 <- Rrepest(data = PISA_2015_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+sa_read_means_2018 <- Rrepest(data = PISA2018_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+sa_read_means_2022 <- Rrepest(data = PISA2022_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+sa_read_means_2000$Year <- 2000
+sa_read_means_2003$Year <- 2003
+sa_read_means_2006$Year <- 2006
+sa_read_means_2009$Year <- 2009
+sa_read_means_2012$Year <- 2012
+sa_read_means_2015$Year <- 2015
+sa_read_means_2018$Year <- 2018
+sa_read_means_2022$Year <- 2022
+
+sa_read_all_means <- rbind(
+  sa_read_means_2000,
+  sa_read_means_2003,
+  sa_read_means_2006,
+  sa_read_means_2009,
+  sa_read_means_2012,
+  sa_read_means_2015,
+  sa_read_means_2018,
+  sa_read_means_2022
+)
+
+sa_read_all_means$CI_Lower <- sa_read_all_means$`b.mean.pv@read` - 1.96 * sa_read_all_means$`se.mean.pv@read`
+sa_read_all_means$CI_Upper <- sa_read_all_means$`b.mean.pv@read` + 1.96 * sa_read_all_means$`se.mean.pv@read`
+
+sa_PISA_read_means <- sa_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+```{r}
+#2000
+wa_read_means_2000 <- Rrepest(data = PISA2000_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+wa_read_means_2003 <- Rrepest(data = PISA2003_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+wa_read_means_2006 <- Rrepest(data = PISA2006_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+wa_read_means_2009 <- Rrepest(data = PISA2009_2_wa, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+wa_read_means_2012 <- Rrepest(data = PISA2012_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+wa_read_means_2015 <- Rrepest(data = PISA_2015_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+wa_read_means_2018 <- Rrepest(data = PISA2018_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+wa_read_means_2022 <- Rrepest(data = PISA2022_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+wa_read_means_2000$Year <- 2000
+wa_read_means_2003$Year <- 2003
+wa_read_means_2006$Year <- 2006
+wa_read_means_2009$Year <- 2009
+wa_read_means_2012$Year <- 2012
+wa_read_means_2015$Year <- 2015
+wa_read_means_2018$Year <- 2018
+wa_read_means_2022$Year <- 2022
+
+wa_read_all_means <- rbind(
+  wa_read_means_2000,
+  wa_read_means_2003,
+  wa_read_means_2006,
+  wa_read_means_2009,
+  wa_read_means_2012,
+  wa_read_means_2015,
+  wa_read_means_2018,
+  wa_read_means_2022
+)
+
+wa_read_all_means$CI_Lower <- wa_read_all_means$`b.mean.pv@read` - 1.96 * wa_read_all_means$`se.mean.pv@read`
+wa_read_all_means$CI_Upper <- wa_read_all_means$`b.mean.pv@read` + 1.96 * wa_read_all_means$`se.mean.pv@read`
+
+wa_PISA_read_means <- wa_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+```{r}
+#2000
+tas_read_means_2000 <- Rrepest(data = PISA2000_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+tas_read_means_2003 <- Rrepest(data = PISA2003_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+tas_read_means_2006 <- Rrepest(data = PISA2006_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+tas_read_means_2009 <- Rrepest(data = PISA2009_2_tas, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@read"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+tas_read_means_2012 <- Rrepest(data = PISA2012_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+tas_read_means_2015 <- Rrepest(data = PISA_2015_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+tas_read_means_2018 <- Rrepest(data = PISA2018_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+tas_read_means_2022 <- Rrepest(data = PISA2022_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@read"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+#combing the dataframes for gen pop avg and conf int
+#adding year column
+tas_read_means_2000$Year <- 2000
+tas_read_means_2003$Year <- 2003
+tas_read_means_2006$Year <- 2006
+tas_read_means_2009$Year <- 2009
+tas_read_means_2012$Year <- 2012
+tas_read_means_2015$Year <- 2015
+tas_read_means_2018$Year <- 2018
+tas_read_means_2022$Year <- 2022
+
+tas_read_all_means <- rbind(
+  tas_read_means_2000,
+  tas_read_means_2003,
+  tas_read_means_2006,
+  tas_read_means_2009,
+  tas_read_means_2012,
+  tas_read_means_2015,
+  tas_read_means_2018,
+  tas_read_means_2022
+)
+
+tas_read_all_means$CI_Lower <- tas_read_all_means$`b.mean.pv@read` - 1.96 * tas_read_all_means$`se.mean.pv@read`
+tas_read_all_means$CI_Upper <- tas_read_all_means$`b.mean.pv@read` + 1.96 * tas_read_all_means$`se.mean.pv@read`
+
+tas_PISA_read_means <- tas_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
+
+```
+
+
+
+```{r}
+nsw_PISA_read_means <- nsw_PISA_read_means %>% mutate(STATE = "NSW")
+qld_PISA_read_means <- qld_PISA_read_means %>% mutate(STATE = "QLD")
+sa_PISA_read_means <- sa_PISA_read_means %>% mutate(STATE = "SA")
+wa_PISA_read_means <- wa_PISA_read_means %>% mutate(STATE = "WA")
+tas_PISA_read_means <- tas_PISA_read_means %>% mutate(STATE = "TAS")
+nt_PISA_read_means <- nt_PISA_read_means %>% mutate(STATE = "NT")
+act_PISA_read_means <- act_PISA_read_means %>% mutate(STATE = "ACT")
+
+# Combining all dataframes into one
+all_states_read <- rbind(
+  nsw_PISA_read_means,
+  qld_PISA_read_means,
+  sa_PISA_read_means,
+  wa_PISA_read_means,
+  tas_PISA_read_means,
+  nt_PISA_read_means,
+  act_PISA_read_means
+)
+
+all_states_read$Year <- as.numeric(as.character(all_states_read$Year))
+
+ggplot(all_states_read, aes(x = Year, y = `b.mean.pv@read`, color = STATE)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
+  scale_x_continuous(breaks = unique(all_states_read$Year), expand = expansion(mult = c(0.05, 0.05))) +
+  facet_wrap(~STATE, scales = "fixed") +  
+  labs(title = "Year 10 Reading Scores by State",
+       x = "Year",
+       y = "Reading Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 1, size = 7))
+
+```
 
