@@ -413,9 +413,8 @@ yr10scores_ci <- ggplot(PISA_means, aes(x = Year, y = `b.mean.pv@math`)) +
   geom_line(data = subset(PISA_means, Year >= 2022)) +  
   geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0) + 
   scale_x_continuous(breaks = all_means$Year) + 
-  labs(title = "Year 10's math scores have been declining over the years",
-       subtitle = glue("Average {colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years"),
-       x = "Year", y = "Mean Math Score") +
+  labs(title = "Year 10's mathematics scores have been declining over the years",
+       subtitle = glue("Average {colour_text('#FF0000','PISA scores')} and {colour_text(grattan_orange, 'confidence intervals')} for year 10s across the years")) +
   theme_minimal()
 
 #overlapping, adding points/amending error bars to match grattan style
@@ -497,6 +496,9 @@ yr10litscores_ci +
 6 - TAS
 7 - NT
 8 - ACT
+
+
+## FOR VICTORIA 
 
 PISA 2012 seems to only have 'STRATUM' instead of STATE - would have to filter for the states using this variable. View [page 9](https://www.oecd.org/content/dam/oecd/en/data/datasets/pisa/pisa-2012-datasets/main-survey/codebooks/Codebook%20for%20student%20questionnaire%20data%20file.pdf)
 
@@ -614,6 +616,707 @@ vic_PISA_mathmeans <- vic_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean
 
 ```
 
+
+## FOR NSW
+
+
+```{r}
+# Making charts just for NSW vs General population - Maths
+# DATA Pre-processing:
+# taking all the NSW students/schools out of PISA 2000
+PISA2000_nsw <- PISA2000 %>% filter(State == 1)
+
+# taking all the year 10s out of PISA 2003
+PISA2003_nsw <- PISA2003 %>% filter(State == 1)
+
+# taking all the year 10s out of PISA 2006
+PISA2006_nsw <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 1)
+
+# taking all the year 10s out of PISA 2009
+PISA2009_2_nsw <- PISA2009_2 %>% filter(STATE == 1)
+
+# taking all the year 10s out of PISA 2012
+PISA2012_nsw <- PISA2012 %>% filter(STRATUM %in% c('AUS0204', 'AUS0205', 'AUS0206')) #For NSW schools
+
+PISA_2015_nsw <- PISA2015 %>% filter(State == 1)
+
+# taking all the year 10s out of PISA 2018
+PISA2018_nsw <- PISA2018 %>% filter(State == 1)
+
+# taking all the year 10s out of PISA 2022
+PISA2022_nsw <- PISA2022 %>% filter(State == 1)
+
+# cleaning names
+
+PISA2018_nsw <- janitor::clean_names(PISA2018_nsw)
+PISA_2015_nsw <- janitor::clean_names(PISA_2015_nsw)
+PISA2022_nsw <- janitor::clean_names(PISA2022_nsw)
+
+
+```
+
+```{r}
+# Average Maths Scores for Y10s Across the Years
+#2000
+nsw_mathmeans_2000 <- Rrepest(data = PISA2000_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+nsw_mathmeans_2003 <- Rrepest(data = PISA2003_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+nsw_mathmeans_2006 <- Rrepest(data = PISA2006_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+nsw_mathmeans_2009 <- Rrepest(data = PISA2009_2_nsw, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+nsw_mathmeans_2012 <- Rrepest(data = PISA2012_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+nsw_mathmeans_2015 <- Rrepest(data = PISA_2015_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+nsw_mathmeans_2018 <- Rrepest(data = PISA2018_nsw, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+nsw_mathmeans_2022 <- Rrepest(data = PISA2022_vic, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+nsw_mathmeans_2000$Year <- 2000
+nsw_mathmeans_2003$Year <- 2003
+nsw_mathmeans_2006$Year <- 2006
+nsw_mathmeans_2009$Year <- 2009
+nsw_mathmeans_2012$Year <- 2012
+nsw_mathmeans_2015$Year <- 2015
+nsw_mathmeans_2018$Year <- 2018
+nsw_mathmeans_2022$Year <- 2022
+
+nsw_math_means <- rbind(
+  nsw_mathmeans_2000,
+  nsw_mathmeans_2003,
+  nsw_mathmeans_2006,
+  nsw_mathmeans_2009,
+  nsw_mathmeans_2012,
+  nsw_mathmeans_2015,
+  nsw_mathmeans_2018,
+  nsw_mathmeans_2022
+)
+
+
+nsw_math_means$CI_Lower <- nsw_math_means$`b.mean.pv@math` - 1.96 * nsw_math_means$`se.mean.pv@math`
+nsw_math_means$CI_Upper <- nsw_math_means$`b.mean.pv@math` + 1.96 * nsw_math_means$`se.mean.pv@math`
+
+nsw_PISA_mathmeans <- nsw_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+
+```
+
+# FOR QLD - 3
+
+```{r}
+
+# Making charts just for QLD vs General population - Maths
+# DATA Pre-processing:
+# taking all the NSW students/schools out of PISA 2000
+PISA2000_qld <- PISA2000 %>% filter(State == 3)
+PISA2003_qld <- PISA2003 %>% filter(State == 3)
+PISA2006_qld <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 3)
+PISA2009_2_qld <- PISA2009_2 %>% filter(STATE == 3)
+PISA2012_qld <- PISA2012 %>% filter(STRATUM %in% c('AUS0410', 'AUS0411', 'AUS0412')) #For NSW schools
+PISA_2015_qld <- PISA2015 %>% filter(State == 3)
+PISA2018_qld <- PISA2018 %>% filter(State == 3)
+PISA2022_qld <- PISA2022 %>% filter(State == 3)
+# cleaning names
+PISA2018_qld <- janitor::clean_names(PISA2018_qld)
+PISA_2015_qld <- janitor::clean_names(PISA_2015_qld)
+PISA2022_qld <- janitor::clean_names(PISA2022_qld)
+
+
+#2000
+qld_mathmeans_2000 <- Rrepest(data = PISA2000_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+qld_mathmeans_2003 <- Rrepest(data = PISA2003_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+qld_mathmeans_2006 <- Rrepest(data = PISA2006_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+qld_mathmeans_2009 <- Rrepest(data = PISA2009_2_qld, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+qld_mathmeans_2012 <- Rrepest(data = PISA2012_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+qld_mathmeans_2015 <- Rrepest(data = PISA_2015_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+qld_mathmeans_2018 <- Rrepest(data = PISA2018_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+qld_mathmeans_2022 <- Rrepest(data = PISA2022_qld, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+qld_mathmeans_2000$Year <- 2000
+qld_mathmeans_2003$Year <- 2003
+qld_mathmeans_2006$Year <- 2006
+qld_mathmeans_2009$Year <- 2009
+qld_mathmeans_2012$Year <- 2012
+qld_mathmeans_2015$Year <- 2015
+qld_mathmeans_2018$Year <- 2018
+qld_mathmeans_2022$Year <- 2022
+
+qld_math_means <- rbind(
+  qld_mathmeans_2000,
+  qld_mathmeans_2003,
+  qld_mathmeans_2006,
+  qld_mathmeans_2009,
+  qld_mathmeans_2012,
+  qld_mathmeans_2015,
+  qld_mathmeans_2018,
+  qld_mathmeans_2022
+)
+
+
+qld_math_means$CI_Lower <- qld_math_means$`b.mean.pv@math` - 1.96 * qld_math_means$`se.mean.pv@math`
+qld_math_means$CI_Upper <- qld_math_means$`b.mean.pv@math` + 1.96 * qld_math_means$`se.mean.pv@math`
+
+qld_PISA_mathmeans <- qld_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+
+```
+
+4- SA
+
+```{r}
+
+# Making charts just for QLD vs General population - Maths
+# DATA Pre-processing:
+# taking all the NSW students/schools out of PISA 2000
+PISA2000_sa <- PISA2000 %>% filter(State == 4)
+PISA2003_sa <- PISA2003 %>% filter(State == 4)
+PISA2006_sa <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 4)
+PISA2009_2_sa <- PISA2009_2 %>% filter(STATE == 4)
+PISA2012_sa <- PISA2012 %>% filter(STRATUM %in% c('AUS0513', 'AUS0514', 'AUS0515')) #For NSW schools
+PISA_2015_sa <- PISA2015 %>% filter(State == 4)
+PISA2018_sa <- PISA2018 %>% filter(State == 4)
+PISA2022_sa <- PISA2022 %>% filter(State == 4)
+# cleaning names
+PISA2018_sa <- janitor::clean_names(PISA2018_sa)
+PISA_2015_sa <- janitor::clean_names(PISA_2015_sa)
+PISA2022_sa <- janitor::clean_names(PISA2022_sa)
+
+
+#2000
+sa_mathmeans_2000 <- Rrepest(data = PISA2000_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+sa_mathmeans_2003 <- Rrepest(data = PISA2003_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+sa_mathmeans_2006 <- Rrepest(data = PISA2006_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+sa_mathmeans_2009 <- Rrepest(data = PISA2009_2_sa, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+sa_mathmeans_2012 <- Rrepest(data = PISA2012_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+sa_mathmeans_2015 <- Rrepest(data = PISA_2015_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+sa_mathmeans_2018 <- Rrepest(data = PISA2018_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+sa_mathmeans_2022 <- Rrepest(data = PISA2022_sa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+sa_mathmeans_2000$Year <- 2000
+sa_mathmeans_2003$Year <- 2003
+sa_mathmeans_2006$Year <- 2006
+sa_mathmeans_2009$Year <- 2009
+sa_mathmeans_2012$Year <- 2012
+sa_mathmeans_2015$Year <- 2015
+sa_mathmeans_2018$Year <- 2018
+sa_mathmeans_2022$Year <- 2022
+
+sa_math_means <- rbind(
+  sa_mathmeans_2000,
+  sa_mathmeans_2003,
+  sa_mathmeans_2006,
+  sa_mathmeans_2009,
+  sa_mathmeans_2012,
+  sa_mathmeans_2015,
+  sa_mathmeans_2018,
+  sa_mathmeans_2022
+)
+
+
+sa_math_means$CI_Lower <- sa_math_means$`b.mean.pv@math` - 1.96 * sa_math_means$`se.mean.pv@math`
+sa_math_means$CI_Upper <- sa_math_means$`b.mean.pv@math` + 1.96 * sa_math_means$`se.mean.pv@math`
+
+sa_PISA_mathmeans <- sa_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+
+```
+
+
+5- WA
+
+```{r}
+PISA2000_wa <- PISA2000 %>% filter(State == 5)
+PISA2003_wa <- PISA2003 %>% filter(State == 5)
+PISA2006_wa <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 5)
+PISA2009_2_wa <- PISA2009_2 %>% filter(STATE == 5)
+PISA2012_wa <- PISA2012 %>% filter(STRATUM %in% c('AUS0616', 'AUS0617', 'AUS0618')) #For WA schools
+PISA_2015_wa <- PISA2015 %>% filter(State == 5)
+PISA2018_wa <- PISA2018 %>% filter(State == 5)
+PISA2022_wa <- PISA2022 %>% filter(State == 5)
+# cleaning names
+PISA2018_wa <- janitor::clean_names(PISA2018_wa)
+PISA_2015_wa <- janitor::clean_names(PISA_2015_wa)
+PISA2022_wa <- janitor::clean_names(PISA2022_wa)
+
+
+#2000
+wa_mathmeans_2000 <- Rrepest(data = PISA2000_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+wa_mathmeans_2003 <- Rrepest(data = PISA2003_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+wa_mathmeans_2006 <- Rrepest(data = PISA2006_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+wa_mathmeans_2009 <- Rrepest(data = PISA2009_2_wa, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+wa_mathmeans_2012 <- Rrepest(data = PISA2012_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+wa_mathmeans_2015 <- Rrepest(data = PISA_2015_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+wa_mathmeans_2018 <- Rrepest(data = PISA2018_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+wa_mathmeans_2022 <- Rrepest(data = PISA2022_wa, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+wa_mathmeans_2000$Year <- 2000
+wa_mathmeans_2003$Year <- 2003
+wa_mathmeans_2006$Year <- 2006
+wa_mathmeans_2009$Year <- 2009
+wa_mathmeans_2012$Year <- 2012
+wa_mathmeans_2015$Year <- 2015
+wa_mathmeans_2018$Year <- 2018
+wa_mathmeans_2022$Year <- 2022
+
+wa_math_means <- rbind(
+  wa_mathmeans_2000,
+  wa_mathmeans_2003,
+  wa_mathmeans_2006,
+  wa_mathmeans_2009,
+  wa_mathmeans_2012,
+  wa_mathmeans_2015,
+  wa_mathmeans_2018,
+  wa_mathmeans_2022
+)
+
+
+wa_math_means$CI_Lower <- wa_math_means$`b.mean.pv@math` - 1.96 * wa_math_means$`se.mean.pv@math`
+wa_math_means$CI_Upper <- wa_math_means$`b.mean.pv@math` + 1.96 * wa_math_means$`se.mean.pv@math`
+
+wa_PISA_mathmeans <- wa_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+```
+
+6 - TAS
+
+```{r}
+PISA2000_tas <- PISA2000 %>% filter(State == 6)
+PISA2003_tas <- PISA2003 %>% filter(State == 6)
+PISA2006_tas <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 6)
+PISA2009_2_tas <- PISA2009_2 %>% filter(STATE == 6)
+PISA2012_tas <- PISA2012 %>% filter(STRATUM %in% c('AUS0719', 'AUS0720', 'AUS0721')) #For TAS schools
+PISA_2015_tas <- PISA2015 %>% filter(State == 6)
+PISA2018_tas <- PISA2018 %>% filter(State == 6)
+PISA2022_tas <- PISA2022 %>% filter(State == 6)
+# cleaning names
+PISA2018_tas <- janitor::clean_names(PISA2018_tas)
+PISA_2015_tas <- janitor::clean_names(PISA_2015_tas)
+PISA2022_tas <- janitor::clean_names(PISA2022_tas)
+
+
+#2000
+tas_mathmeans_2000 <- Rrepest(data = PISA2000_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+tas_mathmeans_2003 <- Rrepest(data = PISA2003_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+tas_mathmeans_2006 <- Rrepest(data = PISA2006_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+tas_mathmeans_2009 <- Rrepest(data = PISA2009_2_tas, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+tas_mathmeans_2012 <- Rrepest(data = PISA2012_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+tas_mathmeans_2015 <- Rrepest(data = PISA_2015_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+tas_mathmeans_2018 <- Rrepest(data = PISA2018_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+tas_mathmeans_2022 <- Rrepest(data = PISA2022_tas, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+tas_mathmeans_2000$Year <- 2000
+tas_mathmeans_2003$Year <- 2003
+tas_mathmeans_2006$Year <- 2006
+tas_mathmeans_2009$Year <- 2009
+tas_mathmeans_2012$Year <- 2012
+tas_mathmeans_2015$Year <- 2015
+tas_mathmeans_2018$Year <- 2018
+tas_mathmeans_2022$Year <- 2022
+
+tas_math_means <- rbind(
+  tas_mathmeans_2000,
+  tas_mathmeans_2003,
+  tas_mathmeans_2006,
+  tas_mathmeans_2009,
+  tas_mathmeans_2012,
+  tas_mathmeans_2015,
+  tas_mathmeans_2018,
+  tas_mathmeans_2022
+)
+
+
+tas_math_means$CI_Lower <- tas_math_means$`b.mean.pv@math` - 1.96 * tas_math_means$`se.mean.pv@math`
+tas_math_means$CI_Upper <- tas_math_means$`b.mean.pv@math` + 1.96 * tas_math_means$`se.mean.pv@math`
+
+tas_PISA_mathmeans <- tas_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+```
+
+7 - NT
+
+```{r}
+PISA2000_nt <- PISA2000 %>% filter(State == 7)
+PISA2003_nt <- PISA2003 %>% filter(State == 7)
+PISA2006_nt <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 7)
+PISA2009_2_nt <- PISA2009_2 %>% filter(STATE == 7)
+PISA2012_nt <- PISA2012 %>% filter(STRATUM %in% c('AUS0822', 'AUS0823', 'AUS0824')) #For TAS schools
+PISA_2015_nt <- PISA2015 %>% filter(State == 7)
+PISA2018_nt <- PISA2018 %>% filter(State == 7)
+PISA2022_nt <- PISA2022 %>% filter(State == 7)
+# cleaning names
+PISA2018_nt <- janitor::clean_names(PISA2018_nt)
+PISA_2015_nt <- janitor::clean_names(PISA_2015_nt)
+PISA2022_nt <- janitor::clean_names(PISA2022_nt)
+
+
+#2000
+nt_mathmeans_2000 <- Rrepest(data = PISA2000_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2003
+nt_mathmeans_2003 <- Rrepest(data = PISA2003_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2006
+nt_mathmeans_2006 <- Rrepest(data = PISA2006_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2009
+nt_mathmeans_2009 <- Rrepest(data = PISA2009_2_nt, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+#2012
+nt_mathmeans_2012 <- Rrepest(data = PISA2012_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+#2015
+nt_mathmeans_2015 <- Rrepest(data = PISA_2015_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+#2018
+nt_mathmeans_2018 <- Rrepest(data = PISA2018_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+#2022
+nt_mathmeans_2022 <- Rrepest(data = PISA2022_nt, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# making dataframe for year 10 math
+# Add Year column
+nt_mathmeans_2000$Year <- 2000
+nt_mathmeans_2003$Year <- 2003
+nt_mathmeans_2006$Year <- 2006
+nt_mathmeans_2009$Year <- 2009
+nt_mathmeans_2012$Year <- 2012
+nt_mathmeans_2015$Year <- 2015
+nt_mathmeans_2018$Year <- 2018
+nt_mathmeans_2022$Year <- 2022
+
+nt_math_means <- rbind(
+  nt_mathmeans_2000,
+  nt_mathmeans_2003,
+  nt_mathmeans_2006,
+  nt_mathmeans_2009,
+  nt_mathmeans_2012,
+  nt_mathmeans_2015,
+  nt_mathmeans_2018,
+  nt_mathmeans_2022
+)
+
+
+nt_math_means$CI_Lower <- nt_math_means$`b.mean.pv@math` - 1.96 * nt_math_means$`se.mean.pv@math`
+nt_math_means$CI_Upper <- nt_math_means$`b.mean.pv@math` + 1.96 * nt_math_means$`se.mean.pv@math`
+
+nt_PISA_mathmeans <- nt_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+```
+
+
+8 - ACT
+
+```{r}
+# Filtering data for ACT (State = 8)
+PISA2000_act <- PISA2000 %>% filter(State == 8)
+PISA2003_act <- PISA2003 %>% filter(State == 8)
+PISA2006_act <- PISA2006 %>% filter(as.numeric(as_factor(State)) == 8)
+PISA2009_2_act <- PISA2009_2 %>% filter(STATE == 8)
+PISA2012_act <- PISA2012 %>% filter(STRATUM %in% c('AUS0101', 'AUS0102', 'AUS0103')) #For ACT schools
+PISA2015_act <- PISA2015 %>% filter(State == 8)
+PISA2018_act <- PISA2018 %>% filter(State == 8)
+PISA2022_act <- PISA2022 %>% filter(State == 8)
+
+# Cleaning names
+PISA2018_act <- janitor::clean_names(PISA2018_act)
+PISA2015_act <- janitor::clean_names(PISA2015_act)
+PISA2022_act <- janitor::clean_names(PISA2022_act)
+
+# Calculating average Maths scores for ACT
+
+# 2000
+act_mathmeans_2000 <- Rrepest(data = PISA2000_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+# 2003
+act_mathmeans_2003 <- Rrepest(data = PISA2003_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+# 2006
+act_mathmeans_2006 <- Rrepest(data = PISA2006_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+# 2009
+act_mathmeans_2009 <- Rrepest(data = PISA2009_2_act, 
+       svy = "PISA",
+       est = est(c("mean", "std"), "pv@math"),
+       cm.weights = c(paste0("w_fstr", 1:80)))
+
+# 2012
+act_mathmeans_2012 <- Rrepest(data = PISA2012_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fstr", 1:80)))
+# 2015
+act_mathmeans_2015 <- Rrepest(data = PISA2015_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt",1:80)))
+# 2018
+act_mathmeans_2018 <- Rrepest(data = PISA2018_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+# 2022
+act_mathmeans_2022 <- Rrepest(data = PISA2022_act, 
+        svy = "PISA",
+        est = est(c("mean", "std"), "pv@math"),
+        cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+# Making dataframe for Year 10 math scores
+# Add Year column
+act_mathmeans_2000$Year <- 2000
+act_mathmeans_2003$Year <- 2003
+act_mathmeans_2006$Year <- 2006
+act_mathmeans_2009$Year <- 2009
+act_mathmeans_2012$Year <- 2012
+act_mathmeans_2015$Year <- 2015
+act_mathmeans_2018$Year <- 2018
+act_mathmeans_2022$Year <- 2022
+
+# Combine the data
+act_math_means <- rbind(
+  act_mathmeans_2000,
+  act_mathmeans_2003,
+  act_mathmeans_2006,
+  act_mathmeans_2009,
+  act_mathmeans_2012,
+  act_mathmeans_2015,
+  act_mathmeans_2018,
+  act_mathmeans_2022
+)
+
+# Calculate Confidence Intervals
+act_math_means$CI_Lower <- act_math_means$`b.mean.pv@math` - 1.96 * act_math_means$`se.mean.pv@math`
+act_math_means$CI_Upper <- act_math_means$`b.mean.pv@math` + 1.96 * act_math_means$`se.mean.pv@math`
+
+# Select the relevant columns
+act_PISA_mathmeans <- act_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
+
+```
+
+```{r}
+#Creating a chart for the states and mathematics
+# Combining all the dataframes
+# Adding a 'STATE' column to each dataframe
+nsw_PISA_mathmeans <- nsw_PISA_mathmeans %>% mutate(STATE = "NSW")
+qld_PISA_mathmeans <- qld_PISA_mathmeans %>% mutate(STATE = "QLD")
+sa_PISA_mathmeans <- sa_PISA_mathmeans %>% mutate(STATE = "SA")
+wa_PISA_mathmeans <- wa_PISA_mathmeans %>% mutate(STATE = "WA")
+tas_PISA_mathmeans <- tas_PISA_mathmeans %>% mutate(STATE = "TAS")
+nt_PISA_mathmeans <- nt_PISA_mathmeans %>% mutate(STATE = "NT")
+act_PISA_mathmeans <- act_PISA_mathmeans %>% mutate(STATE = "ACT")
+
+# Combining all dataframes into one
+all_states_math <- rbind(
+  nsw_PISA_mathmeans,
+  qld_PISA_mathmeans,
+  sa_PISA_mathmeans,
+  wa_PISA_mathmeans,
+  tas_PISA_mathmeans,
+  nt_PISA_mathmeans,
+  act_PISA_mathmeans
+)
+
+
+all_states_math$Year <- as.numeric(as.character(all_states_math$Year))
+
+ggplot(all_states_math, aes(x = Year, y = `b.mean.pv@math`, color = STATE)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
+  scale_x_continuous(breaks = unique(all_states_math$Year), expand = expansion(mult = c(0.05, 0.05))) +
+  facet_wrap(~STATE, scales = "fixed") +  
+  labs(title = "Year 10 Mathematics Scores by State",
+       x = "Year",
+       y = "Mathematics Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 1, size=7))
+
+```
+
+
+# STATES LITERACY SCORES
 
 
 
