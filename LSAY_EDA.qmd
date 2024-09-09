@@ -1268,6 +1268,9 @@ Get pooled percentage of teachers at each proficiency level (used a weighted ave
 Create a column graph from the above 
 
 ```{r}
+
+# Double check weighted average approach
+
 proficiency2003 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2003_teachflag)
 
 proficiency2006 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2006_teachflag)
@@ -1283,60 +1286,6 @@ n_teachers_2006 <- sum(LSAY2006_teachflag$teacher == TRUE)
 n_teachers_2009 <- sum(LSAY2009_teachflag$teacher == TRUE)
 n_teachers_2015 <- sum(LSAY2015_teachflag$teacher == TRUE)
 
-
-total_teachers <- n_teachers_2003 + n_teachers_2006 + n_teachers_2009 + n_teachers_2015
-
-# Calculate weights for each year
-weight_2003 <- n_teachers_2003 / total_teachers
-weight_2006 <- n_teachers_2006 / total_teachers
-weight_2009 <- n_teachers_2009 / total_teachers
-weight_2015 <- n_teachers_2015 / total_teachers
-
-
-teachers_2003 <- proficiency2003 %>%
-  filter(teacher == TRUE) %>%
-  mutate(Weighted_Percentage_2003 = Percentage * weight_2003) %>%
-  select(Benchmarks, Weighted_Percentage_2003)
-
-teachers_2006 <- proficiency2006 %>%
-  filter(teacher == TRUE) %>%
-  mutate(Weighted_Percentage_2006 = Percentage * weight_2006) %>%
-  select(Benchmarks, Weighted_Percentage_2006)
-
-teachers_2009 <- proficiency2009 %>%
-  filter(teacher == TRUE) %>%
-  mutate(Weighted_Percentage_2009 = Percentage * weight_2009) %>%
-  select(Benchmarks, Weighted_Percentage_2009)
-
-teachers_2015 <- proficiency2015 %>%
-  filter(teacher == TRUE) %>%
-  mutate(Weighted_Percentage_2015 = Percentage * weight_2015) %>%
-  select(Benchmarks, Weighted_Percentage_2015)
-
-combined_teachers <- teachers_2003 %>%
-  left_join(teachers_2006, by = "Benchmarks") %>%
-  left_join(teachers_2009, by = "Benchmarks") %>%
-  left_join(teachers_2015, by = "Benchmarks")
-
-long_teachers <- combined_teachers %>%
-  pivot_longer(cols = starts_with("Weighted_Percentage"), 
-               names_to = "Year", 
-               values_to = "Weighted_Percentage")
-
-long_teachers$Year <- gsub("Weighted_Percentage_", "", long_teachers$Year)
-
-long_teachers$Benchmarks <- factor(long_teachers$Benchmarks, 
-                                   levels = c("<= 358", "(358, 420]", "(420, 482]", 
-                                              "(482, 545]", "(545, 607]", 
-                                              "(607, 669]", "> 669"))
-
-
-ggplot(long_teachers, aes(x = Benchmarks, y = Weighted_Percentage, fill = Year)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Weighted Percentage of Teachers by Proficiency Level Across Years",
-       x = "Proficiency Benchmarks", 
-       y = "Weighted Percentage") +
-  theme_minimal()
 
 ```
 
