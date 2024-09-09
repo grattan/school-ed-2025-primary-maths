@@ -211,7 +211,6 @@ pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", 
 pisa_state
 ```
 
-
 ```{r}
 # Getting the IDs of the teachers
 teacher_ids_y03 <- unique_teachers_y03$STIDSTD
@@ -227,7 +226,6 @@ Rrepest::Rrepest(data = LSAY2003_teachflag,
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
 ```
-
 
 ```{r}
 # creating columns to indicate if teacher was proficient or not
@@ -252,8 +250,7 @@ Rrepest::Rrepest(data = LSAY2003_proficiency,
 
 Looking for variables linked with the question: "What is your main area of study or training in this (apprenticeship/traineeship/course)?"
 
-* LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088
-
+-   LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088
 
 ```{r}
 
@@ -390,8 +387,7 @@ Rrepest::Rrepest(data = LSAY2006_proficiency,
 
 ## How many people in the 2009 cohort studied teaching?
 
-"What is your main area of study or training in this (apprenceship/traineeship/course)?"
-* LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088
+"What is your main area of study or training in this (apprenceship/traineeship/course)?" \* LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088
 
 Then filtering for ASCED code `70103` (Teacher Education: Primary)
 
@@ -443,8 +439,6 @@ teacher_jobs_2009 <- LSAY2009[LSAY2009$STIDSTD %in% teachers_2009$STIDSTD, ]
 selected_columns <- c('STIDSTD', 'LBC089', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
 teacher_jobs_2009 <- teacher_jobs_2009[, selected_columns]
 ```
-
-
 
 ```{r}
 aos_2009 <- data.frame(
@@ -514,8 +508,7 @@ Rrepest::Rrepest(data = LSAY2009_proficiency,
 
 ## How many people in the 2015 cohort studied teaching?
 
-"What is your main area of study or training in this (apprenceship/traineeship/course)?"
-* LCC088, LDC088, LEC088, LFC088, LGC088, LHC088
+"What is your main area of study or training in this (apprenceship/traineeship/course)?" \* LCC088, LDC088, LEC088, LFC088, LGC088, LHC088
 
 ```{r}
 
@@ -539,8 +532,7 @@ studying_teachers_2015
 
 ## How many teachers in the 2015 cohort?
 
-Looking for code `2412` in variables related to the question: "What kind of work do you do in this job?"
-LCD022, LDD022, LED022, LFD025, LGD022, LHD022
+Looking for code `2412` in variables related to the question: "What kind of work do you do in this job?" LCD022, LDD022, LED022, LFD025, LGD022, LHD022
 
 ```{r}
 
@@ -839,9 +831,6 @@ base_chart_2015 +
 ```
 
 ```{r}
-library(ggplot2)
-library(ggdist)
-library(dplyr)
 
 
 data_2003 <- data_2003 |> 
@@ -860,22 +849,6 @@ data_2015 <- data_2015 |>
   #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
   mutate(Year = 2015)
 
-# Combine datasets
-data_combined <- bind_rows(data_2003, data_2006, data_2009, data_2015)
-
-
-print(head(data_combined))
-
-
-
-data_combined <- data_combined %>%
-  mutate(teacher = as.factor(teacher))
-
-
-data_combined |> 
-  ggplot(aes(y= teacher, xdist = dist_normal(Score,))) +
-  stat_interval() +
-  scale_color_brewer()
 
 
 ```
@@ -1052,7 +1025,6 @@ professionals <- Rrepest::Rrepest(
 
 ```
 
-
 ```{r}
 professionals_vis <- professionals %>%
   rename(
@@ -1087,10 +1059,6 @@ profession_visualisation +
   theme(axis.line = element_line(colour = "grey80"))
 
 ```
-
-
-
-
 
 https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs \* how to show standard error/explain simply
 
@@ -1293,37 +1261,84 @@ pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSA
 pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2015_teachflag)
 ```
 
+# WEIGHTED AVERAGE ACROSS THE YEARS
+
+Get pooled percentage of teachers at each proficiency level (used a weighted average, given the teacher number does vary by PISA year)
+
+Create a column graph from the above 
+
 ```{r}
-# getting the sample of 'true' teachers extracted.
-sample_sizes_2003 <- LSAY2003_teachflag %>%
-  group_by(teacher) %>%
-  summarize(n = n())
+proficiency2003 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2003_teachflag)
 
-sample_sizes_2006 <- LSAY2006_teachflag %>%
-  group_by(teacher) %>%
-  summarize(n = n())
+proficiency2006 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2006_teachflag)
 
-sample_sizes_2009 <- LSAY2009_teachflag %>%
-  group_by(teacher) %>%
-  summarize(n = n())
+proficiency2009 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2009_teachflag)
 
-sample_sizes_2015 <- LSAY2015_teachflag %>%
-  group_by(teacher) %>%
-  summarize(n = n())
+proficiency2015 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2015_teachflag)
 
-# soft code the percentages
-percentages <- c(84.05, 85.01, 86.99, 73.89)
-sample_sizes <- c(sample_sizes_2003$n, sample_sizes_2006$n, sample_sizes_2009$n, sample_sizes_2015$n)
+#number of teachers
 
-proportions <- percentages / 100
+n_teachers_2003 <- sum(LSAY2003_teachflag$teacher == TRUE)
+n_teachers_2006 <- sum(LSAY2006_teachflag$teacher == TRUE)
+n_teachers_2009 <- sum(LSAY2009_teachflag$teacher == TRUE)
+n_teachers_2015 <- sum(LSAY2015_teachflag$teacher == TRUE)
 
-abovprof <- proportions * sample_sizes
 
-total_abovprof <- sum(abovprof)
-total_sample_size <- sum(sample_sizes)
+total_teachers <- n_teachers_2003 + n_teachers_2006 + n_teachers_2009 + n_teachers_2015
 
-pooled_proportion <- total_abovprof / total_sample_size
+# Calculate weights for each year
+weight_2003 <- n_teachers_2003 / total_teachers
+weight_2006 <- n_teachers_2006 / total_teachers
+weight_2009 <- n_teachers_2009 / total_teachers
+weight_2015 <- n_teachers_2015 / total_teachers
 
-pooled_percentage <- pooled_proportion * 100
+
+teachers_2003 <- proficiency2003 %>%
+  filter(teacher == TRUE) %>%
+  mutate(Weighted_Percentage_2003 = Percentage * weight_2003) %>%
+  select(Benchmarks, Weighted_Percentage_2003)
+
+teachers_2006 <- proficiency2006 %>%
+  filter(teacher == TRUE) %>%
+  mutate(Weighted_Percentage_2006 = Percentage * weight_2006) %>%
+  select(Benchmarks, Weighted_Percentage_2006)
+
+teachers_2009 <- proficiency2009 %>%
+  filter(teacher == TRUE) %>%
+  mutate(Weighted_Percentage_2009 = Percentage * weight_2009) %>%
+  select(Benchmarks, Weighted_Percentage_2009)
+
+teachers_2015 <- proficiency2015 %>%
+  filter(teacher == TRUE) %>%
+  mutate(Weighted_Percentage_2015 = Percentage * weight_2015) %>%
+  select(Benchmarks, Weighted_Percentage_2015)
+
+combined_teachers <- teachers_2003 %>%
+  left_join(teachers_2006, by = "Benchmarks") %>%
+  left_join(teachers_2009, by = "Benchmarks") %>%
+  left_join(teachers_2015, by = "Benchmarks")
+
+long_teachers <- combined_teachers %>%
+  pivot_longer(cols = starts_with("Weighted_Percentage"), 
+               names_to = "Year", 
+               values_to = "Weighted_Percentage")
+
+long_teachers$Year <- gsub("Weighted_Percentage_", "", long_teachers$Year)
+
+long_teachers$Benchmarks <- factor(long_teachers$Benchmarks, 
+                                   levels = c("<= 358", "(358, 420]", "(420, 482]", 
+                                              "(482, 545]", "(545, 607]", 
+                                              "(607, 669]", "> 669"))
+
+
+ggplot(long_teachers, aes(x = Benchmarks, y = Weighted_Percentage, fill = Year)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Weighted Percentage of Teachers by Proficiency Level Across Years",
+       x = "Proficiency Benchmarks", 
+       y = "Weighted Percentage") +
+  theme_minimal()
 
 ```
+
+
+
