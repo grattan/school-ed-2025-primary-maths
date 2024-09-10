@@ -235,7 +235,7 @@ LSAY2003_proficiency <-
                 ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
                 .names = "{col}proficient"))
 # finding percentage and standard error of teachers and non-teachers proficient in math
-Rrepest::Rrepest(data = LSAY2003_proficiency,
+LSAY2003_agprof <- Rrepest::Rrepest(data = LSAY2003_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
@@ -374,12 +374,12 @@ LSAY2006_proficiency <-
                 ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
                 .names = "{col}proficient"))
 # getting the percentage and standard error of both groups who are proficient and not
-Rrepest::Rrepest(data = LSAY2006_proficiency,
+LSAY2006_agprof <- Rrepest::Rrepest(data = LSAY2006_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
         cm.weights = c(paste0("w_fstr",1:80)), 
-        tabl = T)
+        tabl = F)
 
 ```
 
@@ -495,12 +495,12 @@ LSAY2009_proficiency <-
                 .names = "{col}proficient"))
 
 # percentage above proficiency for both groups
-Rrepest::Rrepest(data = LSAY2009_proficiency,
+LSAY2009_agprof <- Rrepest::Rrepest(data = LSAY2009_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
         cm.weights = c(paste0("w_fstr",1:80)), 
-        tabl = T)
+        tabl = F)
 
 ```
 
@@ -600,12 +600,12 @@ LSAY2015_proficiency <-
                 .names = "{col}proficient"))
 
 # finding percentage and standard error of both groups proficient and non-proficient in math
-Rrepest::Rrepest(data = LSAY2015_proficiency,
+LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
         svy = "PISA",
         est = est("freq","pv@mathproficient"),
         by = "teacher",
         cm.weights = c(paste0("w_fsturwt",1:80)), 
-        tabl = T)
+        tabl = F)
 
 
 ```
@@ -1252,42 +1252,286 @@ grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
 
 ```
 
-### Pooled figure of teachers above proficiency across the years
 
-```{r}
-pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2003_teachflag)
-pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2006_teachflag)
-pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2009_teachflag)
-pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=482, by="teacher", data=LSAY2015_teachflag)
-```
 
 # WEIGHTED AVERAGE ACROSS THE YEARS
 
-Get pooled percentage of teachers at each proficiency level (used a weighted average, given the teacher number does vary by PISA year)
 
-Create a column graph from the above 
+Get the aggregate percentage of teachers who are proficient overtime. 
+Nice to have: Compare this to all non-teachers and other professionals.
 
 ```{r}
+# adding years to the df
+LSAY2003_agprof <- LSAY2003_agprof %>%
+  mutate(Year = 2003)
+LSAY2006_agprof <- LSAY2006_agprof %>%
+  mutate(Year = 2006)
+LSAY2009_agprof <- LSAY2009_agprof %>%
+  mutate(Year = 2009)
+LSAY2015_agprof <- LSAY2015_agprof %>%
+  mutate(Year = 2015)
 
-# Double check weighted average approach
+#joining all these dataframes together
+LSAY_agprof <- bind_rows(LSAY2003_agprof, LSAY2006_agprof, LSAY2009_agprof, LSAY2015_agprof)
 
-proficiency2003 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2003_teachflag)
+#dropping last two columns
+LSAY_agprof <- LSAY_agprof %>%
+  select(-c("b.pv@mathproficient.NA", "se.pv@mathproficient.NA"))
+# rearranging so year column is at the start
+LSAY_agprof <- LSAY_agprof %>%
+  select(Year, everything())
 
-proficiency2006 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2006_teachflag)
-
-proficiency2009 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2009_teachflag)
-
-proficiency2015 <- pisa.ben.pv(pvlabel=paste0("PV",1:5,"MATH"), cutoff = mathcut, by="teacher", atlevel = TRUE, data=LSAY2015_teachflag)
-
-#number of teachers
-
+# getting all the n_teachers
 n_teachers_2003 <- sum(LSAY2003_teachflag$teacher == TRUE)
 n_teachers_2006 <- sum(LSAY2006_teachflag$teacher == TRUE)
 n_teachers_2009 <- sum(LSAY2009_teachflag$teacher == TRUE)
 n_teachers_2015 <- sum(LSAY2015_teachflag$teacher == TRUE)
 
+# non-teachers
+n_normal_2003 <- sum(LSAY2003_teachflag$teacher == FALSE)
+n_normal_2006 <- sum(LSAY2006_teachflag$teacher == FALSE)
+n_normal_2009 <- sum(LSAY2009_teachflag$teacher == FALSE)
+n_normal_2015 <- sum(LSAY2015_teachflag$teacher == FALSE)
+
+# finding weighted average of proficient teacher = TRUE
+LSAY_agprof_t <- LSAY_agprof %>%
+  filter(teacher == TRUE) %>%
+  #adding a column for n = teachers 'n_teachers_2003' for each year
+  mutate(n_teachers = case_when(
+    Year == 2003 ~ n_teachers_2003,
+    Year == 2006 ~ n_teachers_2006,
+    Year == 2009 ~ n_teachers_2009,
+    Year == 2015 ~ n_teachers_2015
+  )) 
+
+# creating a weighted average proficiency for each year
+# getting sum of all teacher samples
+total_teachers <- sum(LSAY_agprof_t$n_teachers)
+
+LSAY_agprof_t <- LSAY_agprof_t %>%
+  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_teachers) / total_teachers)
+
+
+LSAY_agprof_nt <- LSAY_agprof %>%
+  filter(teacher == FALSE) %>%
+  #adding a column for n = teachers 'n_teachers_2003' for each year
+  mutate(n_normal = case_when(
+    Year == 2003 ~ n_normal_2003,
+    Year == 2006 ~ n_normal_2006,
+    Year == 2009 ~ n_normal_2009,
+    Year == 2015 ~ n_normal_2015
+  )) 
+
+total_non_teachers <- sum(LSAY_agprof_nt$n_normal)
+
+LSAY_agprof_nt <- LSAY_agprof_nt %>%
+  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_normal) / total_non_teachers)
+
+total_proficient_nt <- sum(LSAY_agprof_nt$weighted_prof)
+total_proficient_t <- sum(LSAY_agprof_t$weighted_prof)
+
+# creating a bar chat for the weighted average proficiency over time for teacher vs non-teacher
+
+t_nt_agprof <- bind_rows(LSAY_agprof_t, LSAY_agprof_nt)
+
+total_weighted_prof <- t_nt_agprof %>%
+  group_by(teacher) %>%
+  summarise(total_weighted_prof = sum(weighted_prof, na.rm = TRUE))
+
+# changing TRUE, FALSE to TEACHER and NON-TEACHER
+total_weighted_prof$teacher <- ifelse(total_weighted_prof$teacher == TRUE, "Teacher", "Non-Teacher")
 
 ```
 
+Proficient / non-proficient chart for teachers, non teachers and professionals - bar chart
+- ONLY FOR PROFICIENT/MEETING PROFICIENCY
+
+```{r}
+
+total_agg_prof <- ggplot(total_weighted_prof, aes(x = teacher, y = total_weighted_prof, fill = teacher)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  labs(title = "Teachers tend to have higher proficiency in mathematics compared to non-teachers over time",
+       subtitle = "Weighted average proficiency in PISA mathematics for teachers and non-teachers over time",
+       x = "Teacher", y = "Percentage Weighted Proficiency",
+       caption = "Source: Longitudinal Surveys of Australian Youth: 2003, 2006, 2009 and 2015 Cohort") +
+  theme_minimal() +
+  coord_flip() 
+
+total_agg_prof +
+  theme_grattan(chart_type = "bar") +
+  grattan_y_continuous() +
+  grattan_colour_manual(2)
+
+```
+
+
+Another chart showing distributions for teacher non teacher across proficiency levels
+* potential chart for other professionals (nice to have)
+
+```{r}
+# creating flags for each professional to get proficiency scores
+#2003
+LSAY2003_profession_flag <- LSAY2003 %>%
+  mutate(LKD029 = as.character(LKD029)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 'Teacher',
+    startsWith(LKD029, '253') ~ 'Medical Practitioners',
+    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
+    startsWith(LKD029, '271') ~ 'Legal Professionals',
+    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
+    startsWith(LKD029, '233') ~ 'Engineering Professionals',
+    TRUE ~ 'Other'
+  ))
+
+professionals_2003 <- Rrepest::Rrepest(
+  data = LSAY2003_profession_flag,
+  svy = "PISA",
+  est = est(c("mean","std"),"pv@math"),
+  by = c("profession"),
+  cm.weights = c(paste0("w_fstr", 1:80)),
+  tabl = FALSE
+)
+
+# getting the sample sizes for each profession group
+sample_sizes2003 <- LSAY2003_profession_flag %>% 
+  count(profession, name = "sample_size")
+
+# joining the sample size to the professionals_2003
+professionals_2003 <- professionals_2003 %>%
+  left_join(sample_sizes2003, by = "profession")
+
+# adding a year column as the second variable
+professionals_2003 <- professionals_2003 %>%
+  mutate(Year = 2003) %>%
+  select(Year, everything())
+
+```
+
+
+
+
+
+
+
+```{r}
+
+# 2006
+LSAY2006_profession_flag <- LSAY2006 %>%
+  mutate(LKD029 = as.character(LKD029)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 'Teacher',
+    startsWith(LKD029, '253') ~ 'Medical Practitioners',
+    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
+    startsWith(LKD029, '271') ~ 'Legal Professionals',
+    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
+    startsWith(LKD029, '233') ~ 'Engineering Professionals',
+    TRUE ~ 'Other'
+  ))
+
+professionals_2006 <- Rrepest::Rrepest(
+  data = LSAY2006_profession_flag,
+  svy = "PISA",
+  est = est(c("mean","std"),"pv@math"),
+  by = c("profession"),
+  cm.weights = c(paste0("w_fstr", 1:80)),
+  tabl = FALSE
+)
+
+# getting the sample sizes for each profession group
+sample_sizes2006 <- LSAY2006_profession_flag %>% 
+  count(profession, name = "sample_size") 
+
+professionals_2006 <- left_join(sample_sizes2006, by = "profession") %>%
+  mutate(Year = 2006) %>%
+  select(Year, everything())
+
+
+
+```
+
+```{r}
+#2009
+LSAY2009_profession_flag <- LSAY2009 %>%
+  mutate(LKD029 = as.character(LKD029)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 'Teacher',
+    startsWith(LKD029, '253') ~ 'Medical Practitioners',
+    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
+    startsWith(LKD029, '271') ~ 'Legal Professionals',
+    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
+    startsWith(LKD029, '233') ~ 'Engineering Professionals',
+    TRUE ~ 'Other'
+  ))
+
+professionals_2009 <- Rrepest::Rrepest(
+  data = LSAY2009_profession_flag,
+  svy = "PISA",
+  est = est(c("mean","std"),"pv@math"),
+  by = c("profession"),
+  cm.weights = c(paste0("w_fstr", 1:80)),
+  tabl = FALSE
+)
+
+sample_sizes2009 <- LSAY2009_profession_flag %>% 
+  count(profession, name = "sample_size") 
+
+professionals_2009 %>%
+  left_join(sample_sizes2009, by = "profession") %>%
+  mutate(Year = 2009) %>%
+  select(Year, everything())
+
+
+```
+
+
+```{r}
+
+#2015
+
+LSAY2015_profession_flag <- LSAY2015 %>%
+  mutate(LHD022 = as.character(LHD022)) %>%
+  mutate(profession = case_when(
+    LHD022 == '2412' ~ 'Teacher',
+    startsWith(LHD022, '253') ~ 'Medical Practitioners',
+    startsWith(LHD022, '254') ~ 'Midwifery and Nursing Professionals',
+    startsWith(LHD022, '271') ~ 'Legal Professionals',
+    startsWith(LHD022, '221') ~ 'Accounts Auditors and Company Secretaries',
+    startsWith(LHD022, '233') ~ 'Engineering Professionals',
+    TRUE ~ 'Other'
+  )) 
+
+professionals_2015 <- Rrepest::Rrepest(
+  data = LSAY2015_profession_flag,
+  svy = "PISA",
+  est = est(c("mean","std"),"pv@math"),
+  by = c("profession"),
+  cm.weights = c(paste0("w_fsturwt",1:80)),
+  tabl = FALSE
+)
+
+sample_sizes2015 <- LSAY2015_profession_flag %>% 
+  count(profession, name = "sample_size") 
+
+professionals_2015 %>%
+  left_join(sample_sizes2015, by = "profession") %>%
+  mutate(Year = 2015) %>%
+  select(Year, everything())
+
+```
+
+```{r}
+# joining all the dataframes together
+professionals_all <- bind_rows(professionals_2003, professionals_2006, professionals_2009, professionals_2015)
+```
+
+
+
+
+* box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
+
+```{r}
+pisa.per.pv(pvlabel= paste0("PV",1:5,"MATH"),
+per=c(10, 25, 75, 90), data= LSAY2003)
+```
 
 
