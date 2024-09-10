@@ -1,0 +1,113 @@
+---
+title: "Analysis of UAC data"
+output:
+  bookdown::html_document2:
+    css: .formatting/grattan-style.css
+    theme: lumen
+    highlight: pygments
+    toc: yes
+    toc_depth: 2
+    toc_float: no
+    number_sections: yes
+    df_print: kable
+---
+
+```{r logo, echo=FALSE}
+# This adds the grattan logo to the document (cute)
+htmltools::img(src = knitr::image_uri(file.path(".formatting", "logo", "GrattanLogo_left.png")), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px; height:8%;')
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE)
+
+source("R/00-setup.R") 
+
+rebuild_data <- FALSE
+```
+
+# Import data
+
+```{r}
+file_path_course_information <- "data/UAC courses reference data - ua15 to ua24.xlsx"
+
+data_frame_course_information <- file_path_course_information |> 
+  excel_sheets() |> 
+  # Filter out 2024 and 2015 just for simplicity of common structure across sheets
+  # Use all years in final analysis
+  setdiff(c("2024", "2015")) |> 
+  set_names() |> 
+  map(read_excel, path = file_path_course_information) |> 
+  list_rbind()
+
+file_path_school_leaver_results <- "data/UAC data for Grattan Institute - 2015 to 2024.xlsx"
+
+data_frame_school_leaver_results <- file_path_school_leaver_results |> 
+  excel_sheets() |> 
+  setdiff("Notes") |> 
+  set_names() |> 
+  map(read_excel, path = file_path_school_leaver_results, col_types = "text") |> 
+  list_rbind()
+
+```
+
+## List of degrees
+
+```{r}
+
+# From the course description
+search_terms <- c("educat|teach|school")
+
+data_frame_course_information <- 
+  data_frame_course_information |> 
+  mutate(teaching_degree = 
+           if_else(
+             grepl(search_terms,
+                   course_desc_short,
+                   ignore.case = TRUE
+           ), 
+           T, 
+           F)
+  )
+
+course_names <- 
+  filter(data_frame_course_information, 
+       teaching_degree) |> 
+  pull(course_desc_short) |> 
+  unique()
+
+write.csv(course_names, "data/course_names.csv")
+
+# From the teacher data
+enrolled_counts <- 
+  data_frame_school_leaver_results |> 
+  filter(enrolment_status == "E") |> 
+  count(course_desc_short) |> 
+  arrange(-n)
+
+data_frame_school_leaver_results |> 
+  filter(enrolment_status == "E") |> 
+  count(hsc_year) |> 
+  plot()
+
+
+write.csv(enrolled_counts, "data/course_by_enrolment.csv")
+
+```
+
+# Participation
+
+```{r}
+data_frame_school_leaver_results |> 
+  # Need to filter just for primary
+  # Need to compare to general population
+  filter(enrolment_status == "E") |> 
+  select(ends_with("band")) |> 
+  summarise(across(everything(), ~sum(!is.na(.))/n()))
+
+```
+
