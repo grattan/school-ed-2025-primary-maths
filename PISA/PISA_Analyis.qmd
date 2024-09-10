@@ -31,7 +31,7 @@ PISA2022 <- read_sav("data/CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.
 
 ```
 
-Monday: PISA 
+Monday: PISA
 
 **Download PISA data from ACER website and save to shared folder (2 hr)**
 
@@ -41,7 +41,7 @@ DONE the first
 
 DONE, except 2015 which didn't download.
 
-**Filter for Year 10s (1hr) **
+**Filter for Year 10s (1hr)**
 
 Looking for variable ST001D01T: 10
 
@@ -77,8 +77,7 @@ PISA2022_Y10 <- janitor::clean_names(PISA2022_Y10)
 
 ```
 
-
-Get Mean + Confidence Interval for each year in literacy and numeracy (1 hr) 
+Get Mean + Confidence Interval for each year in literacy and numeracy (1 hr)
 
 ```{r}
 
@@ -230,10 +229,6 @@ genpop_PISA_means <- genpop_all_means[, c("Year", ".", "b.mean.pv@math", "se.mea
 
 ```
 
-
-
-
-
 ```{r}
 # first version without the years formatting
 ggplot(all_means, aes(x = Year, y = `b.mean.pv@math`)) +
@@ -243,7 +238,6 @@ ggplot(all_means, aes(x = Year, y = `b.mean.pv@math`)) +
        x = "Year", y = "Mean Math Score") +
   theme_minimal()
 ```
-
 
 ## Creating dataframe for year 10 literacy
 
@@ -396,14 +390,7 @@ genpop_PISA_read_means <- genpop_read_all_means[, c("Year", ".", "b.mean.pv@read
 
 ```
 
-
-Create national line charts for Y10 literacy and numeracy (2 hr) 
-- version take numbers out
-- 1.8 annotation decline represents 'decrease of this much'
-- decline is however many years of learning: most re
-- check into 2018 - 2022 delay, pisa sitting (2018 and 2022 pisa gap) timing of 2022 test
-- all students vs year 10 only
-
+Create national line charts for Y10 literacy and numeracy (2 hr) - version take numbers out - 1.8 annotation decline represents 'decrease of this much' - decline is however many years of learning: most re - check into 2018 - 2022 delay, pisa sitting (2018 and 2022 pisa gap) timing of 2022 test - all students vs year 10 only
 
 ```{r}
 # chart for year 10 numeracy w/ general population
@@ -485,20 +472,12 @@ yr10litscores_ci +
   annotate("text", x = 2020, y = 510, label = "1 Year Delay Due to COVID-19", 
            size = 4, color = "black", angle = 90, hjust = 0.5) 
 ```
+
 # Making charts now filtering just for each state and territory and for the Catholics (National, Victoria and NSW)
 
-(May need to doule check)
-1 - NSW
-2 - VIC
-3- QLD
-4- SA
-5- WA
-6 - TAS
-7 - NT
-8 - ACT
+(May need to doule check) 1 - NSW 2 - VIC 3- QLD 4- SA 5- WA 6 - TAS 7 - NT 8 - ACT
 
-
-## FOR VICTORIA 
+## FOR VICTORIA
 
 PISA 2012 seems to only have 'STRATUM' instead of STATE - would have to filter for the states using this variable. View [page 9](https://www.oecd.org/content/dam/oecd/en/data/datasets/pisa/pisa-2012-datasets/main-survey/codebooks/Codebook%20for%20student%20questionnaire%20data%20file.pdf)
 
@@ -615,9 +594,7 @@ vic_PISA_mathmeans <- vic_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean
 
 ```
 
-
 ## FOR NSW
-
 
 ```{r}
 # Making charts just for NSW vs General population - Maths
@@ -914,7 +891,6 @@ sa_PISA_mathmeans <- sa_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.p
 
 ```
 
-
 5- WA
 
 ```{r}
@@ -1179,7 +1155,6 @@ nt_math_means$CI_Upper <- nt_math_means$`b.mean.pv@math` + 1.96 * nt_math_means$
 nt_PISA_mathmeans <- nt_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
 ```
 
-
 8 - ACT
 
 ```{r}
@@ -1314,10 +1289,10 @@ ggplot(all_states_math, aes(x = Year, y = `b.mean.pv@math`, color = STATE)) +
 
 ```
 
-
 # STATES LITERACY SCORES
 
 VICTORIA
+
 ```{r}
 #2000
 vic_read_means_2000 <- Rrepest(data = PISA2000_vic, 
@@ -1539,6 +1514,7 @@ act_PISA_read_means <- act_read_all_means[, c("Year", ".", "b.mean.pv@read", "se
 ```
 
 for QLD
+
 ```{r}
 #2000
 qld_read_means_2000 <- Rrepest(data = PISA2000_qld, 
@@ -1682,7 +1658,6 @@ nt_read_all_means$CI_Upper <- nt_read_all_means$`b.mean.pv@read` + 1.96 * nt_rea
 nt_PISA_read_means <- nt_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
 
 ```
-
 
 ```{r}
 #2000
@@ -1900,8 +1875,6 @@ tas_PISA_read_means <- tas_read_all_means[, c("Year", ".", "b.mean.pv@read", "se
 
 ```
 
-
-
 ```{r}
 nsw_PISA_read_means <- nsw_PISA_read_means %>% mutate(STATE = "NSW")
 qld_PISA_read_means <- qld_PISA_read_means %>% mutate(STATE = "QLD")
@@ -1910,6 +1883,7 @@ wa_PISA_read_means <- wa_PISA_read_means %>% mutate(STATE = "WA")
 tas_PISA_read_means <- tas_PISA_read_means %>% mutate(STATE = "TAS")
 nt_PISA_read_means <- nt_PISA_read_means %>% mutate(STATE = "NT")
 act_PISA_read_means <- act_PISA_read_means %>% mutate(STATE = "ACT")
+#adding victoria
 
 # Combining all dataframes into one
 all_states_read <- rbind(
@@ -1937,4 +1911,3 @@ ggplot(all_states_read, aes(x = Year, y = `b.mean.pv@read`, color = STATE)) +
   theme(axis.text.x = element_text(angle = 25, hjust = 1, size = 7))
 
 ```
-
