@@ -229,16 +229,6 @@ genpop_PISA_means <- genpop_all_means[, c("Year", ".", "b.mean.pv@math", "se.mea
 
 ```
 
-```{r}
-# first version without the years formatting
-ggplot(all_means, aes(x = Year, y = `b.mean.pv@math`)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = CI_Lower, ymax = CI_Upper), width = 0.2) +
-  labs(title = "Mean Math Scores Over Years with 95% Confidence Intervals",
-       x = "Year", y = "Mean Math Score") +
-  theme_minimal()
-```
-
 ## Creating dataframe for year 10 literacy
 
 ```{r}
