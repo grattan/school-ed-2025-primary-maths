@@ -1252,13 +1252,9 @@ grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
 
 ```
 
-
-
 # WEIGHTED AVERAGE ACROSS THE YEARS
 
-
-Get the aggregate percentage of teachers who are proficient overtime. 
-Nice to have: Compare this to all non-teachers and other professionals.
+Get the aggregate percentage of teachers who are proficient overtime. Nice to have: Compare this to all non-teachers and other professionals.
 
 ```{r}
 # adding years to the df
@@ -1343,8 +1339,7 @@ total_weighted_prof$teacher <- ifelse(total_weighted_prof$teacher == TRUE, "Teac
 
 ```
 
-Proficient / non-proficient chart for teachers, non teachers and professionals - bar chart
-- ONLY FOR PROFICIENT/MEETING PROFICIENCY
+Proficient / non-proficient chart for teachers, non teachers and professionals - bar chart - ONLY FOR PROFICIENT/MEETING PROFICIENCY
 
 ```{r}
 
@@ -1364,9 +1359,7 @@ total_agg_prof +
 
 ```
 
-
-Another chart showing distributions for teacher non teacher across proficiency levels
-* potential chart for other professionals (nice to have)
+Another chart showing distributions for teacher non teacher across proficiency levels \* potential chart for other professionals (nice to have)
 
 ```{r}
 # creating flags for each professional to get proficiency scores
@@ -1386,7 +1379,7 @@ LSAY2003_profession_flag <- LSAY2003 %>%
 professionals_2003 <- Rrepest::Rrepest(
   data = LSAY2003_profession_flag,
   svy = "PISA",
-  est = est(c("mean","std"),"pv@math"),
+  est = est("freq","pv@math"),
   by = c("profession"),
   cm.weights = c(paste0("w_fstr", 1:80)),
   tabl = FALSE
@@ -1406,12 +1399,6 @@ professionals_2003 <- professionals_2003 %>%
   select(Year, everything())
 
 ```
-
-
-
-
-
-
 
 ```{r}
 
@@ -1439,14 +1426,16 @@ professionals_2006 <- Rrepest::Rrepest(
 
 # getting the sample sizes for each profession group
 sample_sizes2006 <- LSAY2006_profession_flag %>% 
-  count(profession, name = "sample_size") 
+  count(profession, name = "sample_size")
 
-professionals_2006 <- left_join(sample_sizes2006, by = "profession") %>%
+# joining the sample size to the professionals_2003
+professionals_2006 <- professionals_2006 %>%
+  left_join(sample_sizes2003, by = "profession")
+
+# adding a year column as the second variable
+professionals_2006 <- professionals_2006 %>%
   mutate(Year = 2006) %>%
   select(Year, everything())
-
-
-
 ```
 
 ```{r}
@@ -1472,17 +1461,20 @@ professionals_2009 <- Rrepest::Rrepest(
   tabl = FALSE
 )
 
+# getting the sample sizes for each profession group
 sample_sizes2009 <- LSAY2009_profession_flag %>% 
-  count(profession, name = "sample_size") 
+  count(profession, name = "sample_size")
 
-professionals_2009 %>%
-  left_join(sample_sizes2009, by = "profession") %>%
+# joining the sample size to the professionals_2003
+professionals_2009 <- professionals_2009 %>%
+  left_join(sample_sizes2009, by = "profession")
+
+# adding a year column as the second variable
+professionals_2009 <- professionals_2009 %>%
   mutate(Year = 2009) %>%
   select(Year, everything())
 
-
 ```
-
 
 ```{r}
 
@@ -1509,11 +1501,16 @@ professionals_2015 <- Rrepest::Rrepest(
   tabl = FALSE
 )
 
+# getting the sample sizes for each profession group
 sample_sizes2015 <- LSAY2015_profession_flag %>% 
-  count(profession, name = "sample_size") 
+  count(profession, name = "sample_size")
 
-professionals_2015 %>%
-  left_join(sample_sizes2015, by = "profession") %>%
+# joining the sample size to the professionals_2003
+professionals_2015 <- professionals_2015 %>%
+  left_join(sample_sizes2015, by = "profession")
+
+# adding a year column as the second variable
+professionals_2015 <- professionals_2015 %>%
   mutate(Year = 2015) %>%
   select(Year, everything())
 
@@ -1522,16 +1519,21 @@ professionals_2015 %>%
 ```{r}
 # joining all the dataframes together
 professionals_all <- bind_rows(professionals_2003, professionals_2006, professionals_2009, professionals_2015)
+
+# creating weighted average proficiency for each year
+
+professionals_aggprof <- professionals_all %>%
+  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_normal) / total_non_teachers)
+
 ```
 
 
 
 
-* box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
+
+-   box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
 
 ```{r}
 pisa.per.pv(pvlabel= paste0("PV",1:5,"MATH"),
 per=c(10, 25, 75, 90), data= LSAY2003)
 ```
-
-
