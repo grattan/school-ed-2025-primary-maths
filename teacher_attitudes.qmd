@@ -137,7 +137,8 @@ teacher_anxiety_df <- clean_survey |>
   pivot_longer(everything(), names_to = "question", values_to = "response") |> 
   group_by(question) |> 
   summarise(mean = mean(response, na.rm = T), 
-            se = sd(response, na.rm = T)  / sqrt(sum(!is.na(response)))) |> 
+            se = sd(response, na.rm = T)  / sqrt(sum(!is.na(response))),
+            n = sum(!is.na(response))) |> 
   mutate(label = teacher_anxiety_labels)
 
 teacher_anxiety_df |> 
@@ -156,6 +157,5 @@ teacher_anxiety_df |>
   labs(title = "A minority of teachers feel anxious about teaching maths",
        subtitle = "Percent of teachers who agree or strongly agree (with 90 per cent confidence interval)",
        x = NULL, y = NULL,
-       caption = glue("Notes: Total responses to statements varied by statement between {min(teacher_confidence_df$n) |> comma()} and {max(teacher_confidence_df$n) |>  comma()}. {source_caption}"))
-
+       caption = glue("Notes: Total responses to statements varied by statement between {min(teacher_anxiety_df$n) |> comma()} and {max(teacher_anxiety_df$n) |>  comma()}. {source_caption}"))
 ```
