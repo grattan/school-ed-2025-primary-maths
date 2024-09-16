@@ -17,6 +17,7 @@ library(officer)
 library(ggtext)
 library(Rrepest)
 library(intsvy)
+library(EdSurvey) #install.packages("EdSurvey")
 # reading sav file
 PISA2000 <- read_sav("data/CY01_AUS_PISA2000_StdQ_Achieve_and_SchQ_forPublic_Release.sav")
 PISA2003 <- read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
@@ -28,7 +29,16 @@ PISA2015 <- read_sav("data/CY6_MS_AUS_PISA2015_StudentandAchievementforPublicRel
 PISA2018 <- read_sav("data/CY7_MS_AUS_PISA2018_StudentandAchievement_PublicRelease.sav")
 PISA2022 <- read_sav("data/CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.sav")
 
+# alternative #1
+# options(HTTPUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0")
+# downloadPISA(root = "~/", years = c(2003, 2006, 2009, 2012, 2015, 2018))
+# pisa2003 <- readPISA(path = "data/PISA/2000", database = "INT", countries = "aus", cognitive = "score")
 
+# alternative #2
+# PISA_2003_alternative <-  pisa.select.merge(folder = "data/",
+#                                             student.file ="CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav",
+#                                             student = c("ST01Q01"),
+#                                             countries = c("AUS"))
 ```
 
 Monday: PISA
@@ -83,46 +93,111 @@ Get Mean + Confidence Interval for each year in literacy and numeracy (1 hr)
 
 # Average Maths Scores for Y10s Across the Years
 #2000
+# PISA did not test maths in 2000. I can't quite understand why this is here.
+# Looks like maths was tested in 2000, but that data shouldn't be used as it wasn't a major domain until 2003. 
 means_2000 <- Rrepest(data = PISA2000_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fstr", 1:80)))
 #2003
-means_2003 <- Rrepest(data = PISA2003_Y10, 
+# The mean values here are different to those reported by ACER here. https://www.acer.org/au/discover/article/the-effect-of-year-level-on-pisa-achievement.
+means_2003 <- Rrepest(data = PISA2003, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
-        cm.weights = c(paste0("w_fstr", 1:80)))
+        cm.weights = c(paste0("w_fstr", 1:80)),
+        by = "ST01Q01")
+
+names(PISA2003) <- toupper(names(PISA2003))
+
+# PISA2003 <- 
+#   PISA2003 |> 
+#   mutate(grade_category = case_when(
+#     ST01Q01 == 10 ~ '10',
+#     between(ST01Q01, 7, 9) ~ '<10',
+#     between(ST01Q01, 11, 12) ~ '>10',
+#     TRUE ~ NA
+#   ))
+
+# Values slightly different from Ainley
+means_2003_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:5, "MATH"),
+  by = "ST01Q01",
+  data = PISA2003
+)
+
 #2006
 means_2006 <- Rrepest(data = PISA2006_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
-        cm.weights = c(paste0("w_fstr", 1:80)))
+        cm.weights = c(paste0("w_fstr", 1:80))
+        )
+
+means_2006_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:5, "MATH"),
+  by = "ST01Q01",
+  data = PISA2006
+)
+
 #2009
 means_2009 <- Rrepest(data = PISA2009_2_Y10, 
        svy = "PISA",
        est = est(c("mean", "std"), "pv@math"),
        cm.weights = c(paste0("w_fstr", 1:80)))
 
+means_2009_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:5, "MATH"),
+  by = "ST01Q01",
+  data = PISA2009_2
+)
+
 #2012
 means_2012 <- Rrepest(data = PISA2012_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
+        by = "ST001D01T",
         cm.weights = c(paste0("w_fstr", 1:80)))
+
+means_2012_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:5, "MATH"),
+  by = "ST01Q01",
+  data = PISA2012
+)
+
 #2015
 means_2015 <- Rrepest(data = PISA_2015_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fsturwt",1:80)))
+
+means_2015_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:10, "MATH"),
+  by = "ST001D01T",
+  data = PISA2015
+)
+
 #2018
 means_2018 <- Rrepest(data = PISA2018_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+means_2018_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:10, "MATH"),
+  by = "ST001D01T",
+  data = PISA2018
+)
+
 #2022
 means_2022 <- Rrepest(data = PISA2022_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+means_2022_new <- pisa.mean.pv(
+  pvlabel = paste0("PV", 1:10, "MATH"),
+  by = "ST001D01T",
+  data = PISA2022
+)
 
 # making dataframe for year 10 math
 # Add Year column
@@ -135,6 +210,15 @@ means_2015$Year <- 2015
 means_2018$Year <- 2018
 means_2022$Year <- 2022
 
+# Add Year column
+means_2003_new$Year <- 2003
+means_2006_new$Year <- 2006
+means_2009_new$Year <- 2009
+means_2012_new$Year <- 2012
+means_2015_new$Year <- 2015
+means_2018_new$Year <- 2018
+means_2022_new$Year <- 2022
+
 all_means <- rbind(
   means_2000,
   means_2003,
@@ -146,9 +230,20 @@ all_means <- rbind(
   means_2022
 )
 
+all_means_new <- bind_rows(
+  means_2003_new,
+  means_2006_new,
+  means_2009_new,
+  means_2012_new,
+  means_2015_new,
+  means_2018_new,
+  means_2022_new, 
+)
 
 all_means$CI_Lower <- all_means$`b.mean.pv@math` - 1.96 * all_means$`se.mean.pv@math`
 all_means$CI_Upper <- all_means$`b.mean.pv@math` + 1.96 * all_means$`se.mean.pv@math`
+all_means_new$CI_Lower <- all_means_new$Mean - 1.96 * all_means_new$s.e.
+all_means_new$CI_Upper <- all_means_new$Mean + 1.96 * all_means_new$s.e.
 
 PISA_means <- all_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
 
@@ -422,6 +517,45 @@ yr10scores_ci +
            #arrow = arrow(length = unit(0.3, "cm")), color = "darkred", size = 0.5) +
   annotate("text", x = 2006.2, y = 531, label = "PISA Population Average", 
            hjust = 0, color = "darkred", size = 4)
+
+# chart for year 10 numeracy (Nick's version)
+yr10scores_ci_new <- 
+  all_means_new |> 
+  filter(ST01Q01 == 10 | ST001D01T == 10) |> 
+  mutate(gap = (max(Mean) - min(Mean))/20*12) |> 
+  ggplot(aes(x = Year, y = Mean)) +
+  geom_ribbon(aes(ymin = CI_Lower, ymax = CI_Upper), 
+              fill = grattan_orange_alpha, 
+              color = NA) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = unique(all_means_new$Year)) + 
+  labs(title = "Year 10's mathematics scores have been declining over the years",
+       subtitle = glue("Average Australian Year 10 PISA score in Mathematical Literacy and 95 per cent confidence interval"),
+       x = NULL) +
+  theme_grattan() +
+  grattan_y_continuous() +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
+  geom_curve(aes(x = 2019, 
+                   y = 507, 
+                   xend = 2022, 
+                   yend = min(Mean)+2),
+             curvature = -0.3,
+ arrow = grattan_arrow(),
+ colour = grattan_grey_title) +
+  geom_richtext(data = . %>% last(), 
+                aes(label = glue("<i>Year 10s in 2022<br>were about <b>{round(gap)} months<br>of learning</b> behind<br> their 2003 peers</i>"), 
+                    x = 2015, 
+                    y = 500),
+                vjust = -.5, 
+                hjust = "left",
+                colour = grattan_grey_title,
+                label.colour = NA,
+                size = 18/.pt) 
+
+
+grattan_save_all(filename = "atlas/pisa_2003_2022_y10_maths.pdf")
+
 
 ```
 
