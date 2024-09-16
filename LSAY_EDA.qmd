@@ -240,7 +240,7 @@ LSAY2003_agprof <- Rrepest::Rrepest(data = LSAY2003_proficiency,
         est = est("freq","pv@mathproficient"),
         by = "teacher",
         cm.weights = c(paste0("w_fstr",1:80)), 
-        tabl = T)
+        tabl = F)
 
 ```
 
@@ -610,45 +610,7 @@ LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
 
 ```
 
-## Quantiles Across the Years
 
-```{r}
-#2003
-mathcut <- c(358, 420, 482, 545, 607, 669)
-
-data_2003 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher", per = c(10, 25, 75, 90))
-
-data <- pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2003_teachflag)
-```
-
-```{r}
-# BOXPLOT FOR 2003
-
-data_2003_summary <- data_2003 %>%
-  group_by(teacher) %>%
-  summarize(
-    ymin = min(Score),
-    lower = Score[Percentiles == 25],
-    middle = median(Score),
-    upper = Score[Percentiles == 75],
-    ymax = max(Score)
-  )
-
-ggplot(data_2003_summary, aes(x = as.factor(teacher))) +
-  geom_boxplot(fill = 'orange', color = "black",
-    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
-    stat = "identity"
-  ) +
-  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
-  theme_minimal() +
-  labs(title = "Distribution of PISA Math Scores - 2003",
-       x = "Teacher",
-       y = "Score") +
-  theme(legend.position = "none") +
-  coord_flip()
-
-
-```
 
 ```{r}
 # 2006
@@ -657,34 +619,7 @@ data_2006 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_te
 pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2006_teachflag)
 ```
 
-```{r}
-# BOXPLOT FOR 2006
 
-data_2006_summary <- data_2006 %>%
-  group_by(teacher) %>%
-  summarize(
-    ymin = min(Score),
-    lower = Score[Percentiles == 25],
-    middle = median(Score),
-    upper = Score[Percentiles == 75],
-    ymax = max(Score)
-  )
-
-ggplot(data_2006_summary, aes(x = as.factor(teacher))) +
-  geom_boxplot(fill = 'orange', color = "black",
-    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
-    stat = "identity"
-  ) +
-  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
-  theme_minimal() +
-  labs(title = "Distribution of PISA Math Scores - 2006",
-       x = "Teacher",
-       y = "Score") +
-  theme(legend.position = "none") +
-  coord_flip()
-
-
-```
 
 ```{r}
 data_2006 <- data_2006 |>
@@ -713,35 +648,6 @@ base_chart +
 data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
 pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2009_teachflag)
-```
-
-```{r}
-# BOXPLOT FOR 2009
-
-data_2009_summary <- data_2009 %>%
-  group_by(teacher) %>%
-  summarize(
-    ymin = min(Score),
-    lower = Score[Percentiles == 25],
-    middle = median(Score),
-    upper = Score[Percentiles == 75],
-    ymax = max(Score)
-  )
-
-ggplot(data_2009_summary, aes(x = as.factor(teacher))) +
-  geom_boxplot(fill = 'orange', color = "black",
-    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
-    stat = "identity"
-  ) +
-  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
-  theme_minimal() +
-  labs(title = "Distribution of PISA Math Scores - 2009",
-       x = "Teacher",
-       y = "Score") +
-  theme(legend.position = "none") +
-  coord_flip()
-
-
 ```
 
 ```{r}
@@ -777,36 +683,7 @@ pisa.ben.pv(pvlabel= paste0("PV", 1:10, "MATH"), cutoff= mathcut, by="teacher", 
 
 ```
 
-```{r}
-library(ggplot2)
 
-# BOXPLOT FOR 2015
-
-data_2015_summary <- data_2015 %>%
-  group_by(teacher) %>%
-  summarize(
-    ymin = min(Score),
-    lower = Score[Percentiles == 25],
-    middle = median(Score),
-    upper = Score[Percentiles == 75],
-    ymax = max(Score)
-  )
-
-ggplot(data_2015_summary, aes(x = as.factor(teacher))) +
-  geom_boxplot(fill = 'orange', color = "black",
-    aes(ymin = ymin, lower = lower, middle = middle, upper = upper, ymax = ymax),
-    stat = "identity"
-  ) +
-  geom_hline(yintercept = 482, color = "red", linetype = "dashed", size = 1) +
-  theme_minimal() +
-  labs(title = "Distribution of PISA Math Scores - 2015",
-       x = "Teacher",
-       y = "Score") +
-  theme(legend.position = "none") +
-  coord_flip()
-
-
-```
 
 ```{r}
 data_2015 <- data_2015 |>
@@ -1376,14 +1253,24 @@ LSAY2003_profession_flag <- LSAY2003 %>%
     TRUE ~ 'Other'
   ))
 
+# this seems to be too computationally heavy because of the 6 professional groups
 professionals_2003 <- Rrepest::Rrepest(
   data = LSAY2003_profession_flag,
   svy = "PISA",
-  est = est("freq","pv@math"),
+  est = est(c("mean","std"),"pv@math"),
   by = c("profession"),
   cm.weights = c(paste0("w_fstr", 1:80)),
   tabl = FALSE
 )
+
+
+LSAY2003_profession_flag <- LSAY2003 %>%
+  mutate(LKD029 = as.character(LKD029)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 'Teacher',
+    startsWith(LKD029, '253') ~ 'Medical Practitioners',
+    TRUE ~ 'Other'  # Limit to just a couple of groups for testing
+  ))
 
 # getting the sample sizes for each profession group
 sample_sizes2003 <- LSAY2003_profession_flag %>% 
@@ -1399,6 +1286,7 @@ professionals_2003 <- professionals_2003 %>%
   select(Year, everything())
 
 ```
+
 
 ```{r}
 
@@ -1521,19 +1409,260 @@ professionals_2015 <- professionals_2015 %>%
 professionals_all <- bind_rows(professionals_2003, professionals_2006, professionals_2009, professionals_2015)
 
 # creating weighted average proficiency for each year
+# getting total sample size
+total_sample <- sum(LSAY_agprof_nt$sample_size)
 
 professionals_aggprof <- professionals_all %>%
-  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_normal) / total_non_teachers)
+  mutate(weighted_prof = (`b.mean.pv@math` * sample_size) / total_sample)
 
 ```
 
 
+```{r}
+# adding years to the df
+professionals2003_agprof <- professionals_2003 %>%
+  mutate(Year = 2003)
+professionals2006_agprof <- professionals_2006 %>%
+  mutate(Year = 2006)
+professionals2009_agprof <- professionals_2009 %>%
+  mutate(Year = 2009)
+professionals2015_agprof <- professionals_2015 %>%
+  mutate(Year = 2015)
 
+#joining all these dataframes together
+professionals_agprof <- bind_rows(professionals2003_agprof, professionals2006_agprof, professionals2009_agprof, professionals2015_agprof)
+
+#dropping last two columns
+LSAY_agprof <- professionals_agprof %>%
+  select(-c("b.std.pv@math", "se.std.pv@math"))
+# rearranging so year column is at the start
+LSAY_agprof <- LSAY_agprof %>%
+  select(Year, everything())
+
+# getting all the n_accounts/auditors/company secretaries
+n_accounts_2003 <- sum(LSAY2003_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
+n_accounts_2006 <- sum(LSAY2006_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
+n_accounts_2009 <- sum(LSAY2009_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
+n_accounts_2015 <- sum(LSAY2015_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
+
+# engineering professionals
+n_eng_2003 <- sum(LSAY2003_profession_flag$profession == 'Engineering Professionals')
+n_eng_2006 <- sum(LSAY2006_profession_flag$profession == 'Engineering Professionals')
+n_eng_2009 <- sum(LSAY2009_profession_flag$profession == 'Engineering Professionals')
+n_eng_2015 <- sum(LSAY2015_profession_flag$profession == 'Engineering Professionals')
+
+# legal professionals
+n_legal_2003 <- sum(LSAY2003_profession_flag$profession == 'Legal Professionals')
+n_legal_2006 <- sum(LSAY2006_profession_flag$profession == 'Legal Professionals')
+n_legal_2009 <- sum(LSAY2009_profession_flag$profession == 'Legal Professionals')
+n_legal_2015 <- sum(LSAY2015_profession_flag$profession == 'Legal Professionals')
+
+# medical practitioners
+n_medical_2003 <- sum(LSAY2003_profession_flag$profession == 'Medical Practitioners')
+n_medical_2006 <- sum(LSAY2006_profession_flag$profession == 'Medical Practitioners')
+n_medical_2009 <- sum(LSAY2009_profession_flag$profession == 'Medical Practitioners')
+n_medical_2015 <- sum(LSAY2015_profession_flag$profession == 'Medical Practitioners')
+
+# Midwifery and Nursing Professionals
+n_midwifery_2003 <- sum(LSAY2003_profession_flag$profession == 'Midwifery and Nursing Professionals')
+n_midwifery_2006 <- sum(LSAY2006_profession_flag$profession == 'Midwifery and Nursing Professionals')
+n_midwifery_2009 <- sum(LSAY2009_profession_flag$profession == 'Midwifery and Nursing Professionals')
+n_midwifery_2015 <- sum(LSAY2015_profession_flag$profession == 'Midwifery and Nursing Professionals')
+
+# Other
+n_other_2003 <- sum(LSAY2003_profession_flag$profession == 'Other')
+n_other_2006 <- sum(LSAY2006_profession_flag$profession == 'Other')
+n_other_2009 <- sum(LSAY2009_profession_flag$profession == 'Other')
+n_other_2015 <- sum(LSAY2015_profession_flag$profession == 'Other')
+
+# finding weighted average of someone in the accounts auditors & companies sec profession
+LSAY_agprof_ac <- LSAY_agprof %>%
+  filter(profession == 'Accounts Auditors and Company Secretaries') %>%
+  #adding a column for n = teachers 'n_teachers_2003' for each year
+  mutate(n_accounts = case_when(
+    Year == 2003 ~ n_accounts_2003,
+    Year == 2006 ~ n_accounts_2006,
+    Year == 2009 ~ n_accounts_2009,
+    Year == 2015 ~ n_accounts_2015
+  )) 
+
+# creating a weighted average proficiency for each year
+# getting sum of all teacher samples
+total_accounts <- sum(LSAY_agprof_ac$n_accounts)
+
+LSAY_agprof_ac <- LSAY_agprof_ac %>%
+  mutate(weighted_prof = (`b.mean.pv@math` * n_accounts) / total_teachers)
+
+
+LSAY_agprof_nt <- LSAY_agprof %>%
+  filter(teacher == FALSE) %>%
+  #adding a column for n = teachers 'n_teachers_2003' for each year
+  mutate(n_normal = case_when(
+    Year == 2003 ~ n_normal_2003,
+    Year == 2006 ~ n_normal_2006,
+    Year == 2009 ~ n_normal_2009,
+    Year == 2015 ~ n_normal_2015
+  )) 
+
+total_non_teachers <- sum(LSAY_agprof_nt$n_normal)
+
+LSAY_agprof_nt <- LSAY_agprof_nt %>%
+  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_normal) / total_non_teachers)
+
+total_proficient_nt <- sum(LSAY_agprof_nt$weighted_prof)
+total_proficient_t <- sum(LSAY_agprof_t$weighted_prof)
+
+# creating a bar chat for the weighted average proficiency over time for teacher vs non-teacher
+
+t_nt_agprof <- bind_rows(LSAY_agprof_t, LSAY_agprof_nt)
+
+total_weighted_prof <- t_nt_agprof %>%
+  group_by(teacher) %>%
+  summarise(total_weighted_prof = sum(weighted_prof, na.rm = TRUE))
+
+# changing TRUE, FALSE to TEACHER and NON-TEACHER
+total_weighted_prof$teacher <- ifelse(total_weighted_prof$teacher == TRUE, "Teacher", "Non-Teacher")
+
+```
 
 
 -   box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
 
 ```{r}
-pisa.per.pv(pvlabel= paste0("PV",1:5,"MATH"),
-per=c(10, 25, 75, 90), data= LSAY2003)
+
+boxplot_stats <- function(data, year) {
+  # filter data for teachers
+  filtered_data <- data[data$teacher == TRUE, ]
+  
+  boxplot_data <- pisa.per.pv(
+    pvlabel = paste0("PV", 1:5, "MATH"), 
+    per = c(25, 50, 75), 
+    data = LSAY2003_teachflag,
+    by = teacher
+  )
+  
+  Q1 <- boxplot_data$Score[boxplot_data$Percentiles == 25]
+  Q2 <- boxplot_data$Score[boxplot_data$Percentiles == 50]
+  Q3 <- boxplot_data$Score[boxplot_data$Percentiles == 75]
+  IQR <- Q3 - Q1
+  
+  # calc whiskers
+  lower_whisker <- Q1 - 1.5 * IQR
+  upper_whisker <- Q3 + 1.5 * IQR
+  
+  # creating df from summary stats
+  boxplot_summary <- data.frame(
+    Year = year,
+    Q1 = Q1,
+    Q2 = Q2,
+    Q3 = Q3,
+    IQR = IQR,
+    Upper_whisker = upper_whisker,
+    Lower_whisker = lower_whisker
+  )
+  
+  return(boxplot_summary)
+}
+
+# compute boxplots for each year
+boxplot_2003 <- compute_boxplot_stats(LSAY2003_teachflag, 2003)
+boxplot_2006 <- compute_boxplot_stats(LSAY2006_teachflag, 2006)
+boxplot_2009 <- compute_boxplot_stats(LSAY2009_teachflag, 2009)
+boxplot_2015 <- compute_boxplot_stats(LSAY2015_teachflag, 2015)
+
+# combine the dfs
+pisa_boxplot_stats <- rbind(boxplot_2003, boxplot_2006, boxplot_2009, boxplot_2015)
+
+
+pisa_boxplot_stats
+
+
 ```
+
+```{r}
+boxplot_stats <- function(data, year, is_teacher) {
+
+  filtered_data <- data[data$teacher == is_teacher, ]
+  
+  boxplot_data <- pisa.per.pv(
+    pvlabel = paste0("PV", 1:5, "MATH"), 
+    per = c(10, 25, 50, 75, 90), 
+    data = filtered_data
+  )
+  
+  Q1 <- boxplot_data$Score[boxplot_data$Percentiles == 25]
+  Q2 <- boxplot_data$Score[boxplot_data$Percentiles == 50]
+  Q3 <- boxplot_data$Score[boxplot_data$Percentiles == 75]
+  IQR <- Q3 - Q1
+  
+  # calc whiskers
+  lower_whisker <- 
+  upper_whisker <- 
+  
+  # creating df from summary stats
+  boxplot_summary <- data.frame(
+    Year = year,
+    Q1 = Q1,
+    Q2 = Q2,
+    Q3 = Q3,
+    IQR = IQR,
+    Upper_whisker = upper_whisker,
+    Lower_whisker = lower_whisker
+  )
+  
+  return(boxplot_summary)
+}
+
+# For teachers
+boxplot_2003_teachers <- boxplot_stats(LSAY2003_teachflag, 2003, TRUE)
+boxplot_2006_teachers <- boxplot_stats(LSAY2006_teachflag, 2006, TRUE)
+boxplot_2009_teachers <- boxplot_stats(LSAY2009_teachflag, 2009, TRUE)
+boxplot_2015_teachers <- boxplot_stats(LSAY2015_teachflag, 2015, TRUE)
+# binding together and adding column TEACHER
+pisa_boxplot_stats <- rbind(boxplot_2003_teachers, boxplot_2006_teachers, boxplot_2009_teachers, boxplot_2015_teachers) %>%
+  mutate(teacher = TRUE)
+
+# For non-teachers
+boxplot_2003_nonteachers <- boxplot_stats(LSAY2003_teachflag, 2003, FALSE)
+boxplot_2006_nonteachers <- boxplot_stats(LSAY2006_teachflag, 2006, FALSE)
+boxplot_2009_nonteachers <- boxplot_stats(LSAY2009_teachflag, 2009, FALSE)
+boxplot_2015_nonteachers <- boxplot_stats(LSAY2015_teachflag, 2015, FALSE)
+# binding together and adding column TEACHER = FALSE
+pisa_boxplot_stats_nt <- rbind(boxplot_2003_nonteachers, boxplot_2006_nonteachers, boxplot_2009_nonteachers, boxplot_2015_nonteachers) %>%
+  mutate(teacher = FALSE)
+
+# binding together
+pisa_boxplot_stats <- rbind(pisa_boxplot_stats, pisa_boxplot_stats_nt)
+
+
+```
+
+```{r}
+teacher_fact <- ggplot(pisa_boxplot_stats, aes(x = factor(Year), ymin = Lower_whisker, lower = Q1, middle = Q2, upper = Q3, ymax = Upper_whisker)) +
+  geom_boxplot(stat = "identity") +
+  facet_wrap(~ teacher) +
+  labs(x = "Year", y = "Scores", title = "Boxplot of Scores Faceted by Teacher Status") +
+  theme_minimal() +
+  coord_flip()
+
+teacher_fact +
+  theme_grattan(chart_type = "normal") +
+  grattan_y_continuous() +
+  grattan_colour_manual(2)
+```
+facet by year ^
+
+```{r}
+non_teacher_boxplot <- ggplot(pisa_boxplot_stats, aes(x = as.factor(Year))) +
+  geom_boxplot(aes(ymin = Lower_whisker,lower = Q1, middle = Q2, upper = Q3, ymax = Upper_whisker), stat = "identity") +
+  theme_minimal() +
+  labs(title = "Boxplot of Math Scores by Year", x = "Year", y = "Score") + coord_flip()
+
+non_teacher_boxplot +
+  theme_grattan(chart_type = "normal") +
+  grattan_y_continuous() +
+  grattan_colour_manual(1)
+
+```
+
+
