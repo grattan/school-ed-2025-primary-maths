@@ -156,14 +156,26 @@ fields
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
-We begin by checking that our analysis is working correctly by calculating the mean maths performance in each state in PISA 2003, and checking our numbers accord with those reported in Table 3.3, page. 81 by ACER [here](https://www.acer.org/files/PISA_screen.pdf).
+We begin by checking that our analysis is working correctly by calculating the mean maths performance in each state in PISA 2003, and checking our numbers accord with those reported in Table 3.3, page. 81 by ACER [here](https://www.acer.org/files/PISA_screen.pdf). Our numbers are different, which is because there is a mismatch between the national sample and the LSAY sample.
 
 ```{r}
 # using intsvy package to calculate average scores for each state
 library(intsvy)
-pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "STATEID", data = LSAY2003) %>%
+pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), 
+                           by = "STATEID", 
+                           data = LSAY2003) %>%
   mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"), .before = everything()) |> 
   select(-STATEID)
+
+# Comparing to entire PISA dataset
+pisa_2003 <- haven::read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
+
+# Need to rename to uppercase, because intsvy::pisa.mean.pv requires capitals.
+names(pisa_2003) <- toupper(names(pisa_2003))
+
+pisa_state_total <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), 
+                           by = "STATE", 
+                           data = pisa_2003)
 
  pisa_state <- kbl(pisa_state, caption = "Average Math Performance Across States") %>%
   kable_paper() %>%
