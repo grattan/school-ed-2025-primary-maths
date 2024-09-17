@@ -1231,294 +1231,7 @@ total_agg_prof +
 
 ```
 
-Another chart showing distributions for teacher non teacher across proficiency levels \* potential chart for other professionals (nice to have)
 
-```{r}
-# creating flags for each professional to get proficiency scores
-#2003
-LSAY2003_profession_flag <- LSAY2003 %>%
-  mutate(LKD029 = as.character(LKD029)) %>%
-  mutate(profession = case_when(
-    LKD029 == '2412' ~ 'Teacher',
-    startsWith(LKD029, '253') ~ 'Medical Practitioners',
-    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
-    startsWith(LKD029, '271') ~ 'Legal Professionals',
-    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
-    startsWith(LKD029, '233') ~ 'Engineering Professionals',
-    TRUE ~ 'Other'
-  ))
-
-# this seems to be too computationally heavy because of the 6 professional groups
-professionals_2003 <- Rrepest::Rrepest(
-  data = LSAY2003_profession_flag,
-  svy = "PISA",
-  est = est(c("mean","std"),"pv@math"),
-  by = c("profession"),
-  cm.weights = c(paste0("w_fstr", 1:80)),
-  tabl = FALSE
-)
-
-
-LSAY2003_profession_flag <- LSAY2003 %>%
-  mutate(LKD029 = as.character(LKD029)) %>%
-  mutate(profession = case_when(
-    LKD029 == '2412' ~ 'Teacher',
-    startsWith(LKD029, '253') ~ 'Medical Practitioners',
-    TRUE ~ 'Other'  # Limit to just a couple of groups for testing
-  ))
-
-# getting the sample sizes for each profession group
-sample_sizes2003 <- LSAY2003_profession_flag %>% 
-  count(profession, name = "sample_size")
-
-# joining the sample size to the professionals_2003
-professionals_2003 <- professionals_2003 %>%
-  left_join(sample_sizes2003, by = "profession")
-
-# adding a year column as the second variable
-professionals_2003 <- professionals_2003 %>%
-  mutate(Year = 2003) %>%
-  select(Year, everything())
-
-```
-
-
-```{r}
-
-# 2006
-LSAY2006_profession_flag <- LSAY2006 %>%
-  mutate(LKD029 = as.character(LKD029)) %>%
-  mutate(profession = case_when(
-    LKD029 == '2412' ~ 'Teacher',
-    startsWith(LKD029, '253') ~ 'Medical Practitioners',
-    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
-    startsWith(LKD029, '271') ~ 'Legal Professionals',
-    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
-    startsWith(LKD029, '233') ~ 'Engineering Professionals',
-    TRUE ~ 'Other'
-  ))
-
-professionals_2006 <- Rrepest::Rrepest(
-  data = LSAY2006_profession_flag,
-  svy = "PISA",
-  est = est(c("mean","std"),"pv@math"),
-  by = c("profession"),
-  cm.weights = c(paste0("w_fstr", 1:80)),
-  tabl = FALSE
-)
-
-# getting the sample sizes for each profession group
-sample_sizes2006 <- LSAY2006_profession_flag %>% 
-  count(profession, name = "sample_size")
-
-# joining the sample size to the professionals_2003
-professionals_2006 <- professionals_2006 %>%
-  left_join(sample_sizes2003, by = "profession")
-
-# adding a year column as the second variable
-professionals_2006 <- professionals_2006 %>%
-  mutate(Year = 2006) %>%
-  select(Year, everything())
-```
-
-```{r}
-#2009
-LSAY2009_profession_flag <- LSAY2009 %>%
-  mutate(LKD029 = as.character(LKD029)) %>%
-  mutate(profession = case_when(
-    LKD029 == '2412' ~ 'Teacher',
-    startsWith(LKD029, '253') ~ 'Medical Practitioners',
-    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
-    startsWith(LKD029, '271') ~ 'Legal Professionals',
-    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
-    startsWith(LKD029, '233') ~ 'Engineering Professionals',
-    TRUE ~ 'Other'
-  ))
-
-professionals_2009 <- Rrepest::Rrepest(
-  data = LSAY2009_profession_flag,
-  svy = "PISA",
-  est = est(c("mean","std"),"pv@math"),
-  by = c("profession"),
-  cm.weights = c(paste0("w_fstr", 1:80)),
-  tabl = FALSE
-)
-
-# getting the sample sizes for each profession group
-sample_sizes2009 <- LSAY2009_profession_flag %>% 
-  count(profession, name = "sample_size")
-
-# joining the sample size to the professionals_2003
-professionals_2009 <- professionals_2009 %>%
-  left_join(sample_sizes2009, by = "profession")
-
-# adding a year column as the second variable
-professionals_2009 <- professionals_2009 %>%
-  mutate(Year = 2009) %>%
-  select(Year, everything())
-
-```
-
-```{r}
-
-#2015
-
-LSAY2015_profession_flag <- LSAY2015 %>%
-  mutate(LHD022 = as.character(LHD022)) %>%
-  mutate(profession = case_when(
-    LHD022 == '2412' ~ 'Teacher',
-    startsWith(LHD022, '253') ~ 'Medical Practitioners',
-    startsWith(LHD022, '254') ~ 'Midwifery and Nursing Professionals',
-    startsWith(LHD022, '271') ~ 'Legal Professionals',
-    startsWith(LHD022, '221') ~ 'Accounts Auditors and Company Secretaries',
-    startsWith(LHD022, '233') ~ 'Engineering Professionals',
-    TRUE ~ 'Other'
-  )) 
-
-professionals_2015 <- Rrepest::Rrepest(
-  data = LSAY2015_profession_flag,
-  svy = "PISA",
-  est = est(c("mean","std"),"pv@math"),
-  by = c("profession"),
-  cm.weights = c(paste0("w_fsturwt",1:80)),
-  tabl = FALSE
-)
-
-# getting the sample sizes for each profession group
-sample_sizes2015 <- LSAY2015_profession_flag %>% 
-  count(profession, name = "sample_size")
-
-# joining the sample size to the professionals_2003
-professionals_2015 <- professionals_2015 %>%
-  left_join(sample_sizes2015, by = "profession")
-
-# adding a year column as the second variable
-professionals_2015 <- professionals_2015 %>%
-  mutate(Year = 2015) %>%
-  select(Year, everything())
-
-```
-
-```{r}
-# joining all the dataframes together
-professionals_all <- bind_rows(professionals_2003, professionals_2006, professionals_2009, professionals_2015)
-
-# creating weighted average proficiency for each year
-# getting total sample size
-total_sample <- sum(LSAY_agprof_nt$sample_size)
-
-professionals_aggprof <- professionals_all %>%
-  mutate(weighted_prof = (`b.mean.pv@math` * sample_size) / total_sample)
-
-```
-
-
-```{r}
-# adding years to the df
-professionals2003_agprof <- professionals_2003 %>%
-  mutate(Year = 2003)
-professionals2006_agprof <- professionals_2006 %>%
-  mutate(Year = 2006)
-professionals2009_agprof <- professionals_2009 %>%
-  mutate(Year = 2009)
-professionals2015_agprof <- professionals_2015 %>%
-  mutate(Year = 2015)
-
-#joining all these dataframes together
-professionals_agprof <- bind_rows(professionals2003_agprof, professionals2006_agprof, professionals2009_agprof, professionals2015_agprof)
-
-#dropping last two columns
-LSAY_agprof <- professionals_agprof %>%
-  select(-c("b.std.pv@math", "se.std.pv@math"))
-# rearranging so year column is at the start
-LSAY_agprof <- LSAY_agprof %>%
-  select(Year, everything())
-
-# getting all the n_accounts/auditors/company secretaries
-n_accounts_2003 <- sum(LSAY2003_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
-n_accounts_2006 <- sum(LSAY2006_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
-n_accounts_2009 <- sum(LSAY2009_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
-n_accounts_2015 <- sum(LSAY2015_profession_flag$profession == 'Accounts Auditors and Company Secretaries')
-
-# engineering professionals
-n_eng_2003 <- sum(LSAY2003_profession_flag$profession == 'Engineering Professionals')
-n_eng_2006 <- sum(LSAY2006_profession_flag$profession == 'Engineering Professionals')
-n_eng_2009 <- sum(LSAY2009_profession_flag$profession == 'Engineering Professionals')
-n_eng_2015 <- sum(LSAY2015_profession_flag$profession == 'Engineering Professionals')
-
-# legal professionals
-n_legal_2003 <- sum(LSAY2003_profession_flag$profession == 'Legal Professionals')
-n_legal_2006 <- sum(LSAY2006_profession_flag$profession == 'Legal Professionals')
-n_legal_2009 <- sum(LSAY2009_profession_flag$profession == 'Legal Professionals')
-n_legal_2015 <- sum(LSAY2015_profession_flag$profession == 'Legal Professionals')
-
-# medical practitioners
-n_medical_2003 <- sum(LSAY2003_profession_flag$profession == 'Medical Practitioners')
-n_medical_2006 <- sum(LSAY2006_profession_flag$profession == 'Medical Practitioners')
-n_medical_2009 <- sum(LSAY2009_profession_flag$profession == 'Medical Practitioners')
-n_medical_2015 <- sum(LSAY2015_profession_flag$profession == 'Medical Practitioners')
-
-# Midwifery and Nursing Professionals
-n_midwifery_2003 <- sum(LSAY2003_profession_flag$profession == 'Midwifery and Nursing Professionals')
-n_midwifery_2006 <- sum(LSAY2006_profession_flag$profession == 'Midwifery and Nursing Professionals')
-n_midwifery_2009 <- sum(LSAY2009_profession_flag$profession == 'Midwifery and Nursing Professionals')
-n_midwifery_2015 <- sum(LSAY2015_profession_flag$profession == 'Midwifery and Nursing Professionals')
-
-# Other
-n_other_2003 <- sum(LSAY2003_profession_flag$profession == 'Other')
-n_other_2006 <- sum(LSAY2006_profession_flag$profession == 'Other')
-n_other_2009 <- sum(LSAY2009_profession_flag$profession == 'Other')
-n_other_2015 <- sum(LSAY2015_profession_flag$profession == 'Other')
-
-# finding weighted average of someone in the accounts auditors & companies sec profession
-LSAY_agprof_ac <- LSAY_agprof %>%
-  filter(profession == 'Accounts Auditors and Company Secretaries') %>%
-  #adding a column for n = teachers 'n_teachers_2003' for each year
-  mutate(n_accounts = case_when(
-    Year == 2003 ~ n_accounts_2003,
-    Year == 2006 ~ n_accounts_2006,
-    Year == 2009 ~ n_accounts_2009,
-    Year == 2015 ~ n_accounts_2015
-  )) 
-
-# creating a weighted average proficiency for each year
-# getting sum of all teacher samples
-total_accounts <- sum(LSAY_agprof_ac$n_accounts)
-
-LSAY_agprof_ac <- LSAY_agprof_ac %>%
-  mutate(weighted_prof = (`b.mean.pv@math` * n_accounts) / total_teachers)
-
-
-LSAY_agprof_nt <- LSAY_agprof %>%
-  filter(teacher == FALSE) %>%
-  #adding a column for n = teachers 'n_teachers_2003' for each year
-  mutate(n_normal = case_when(
-    Year == 2003 ~ n_normal_2003,
-    Year == 2006 ~ n_normal_2006,
-    Year == 2009 ~ n_normal_2009,
-    Year == 2015 ~ n_normal_2015
-  )) 
-
-total_non_teachers <- sum(LSAY_agprof_nt$n_normal)
-
-LSAY_agprof_nt <- LSAY_agprof_nt %>%
-  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_normal) / total_non_teachers)
-
-total_proficient_nt <- sum(LSAY_agprof_nt$weighted_prof)
-total_proficient_t <- sum(LSAY_agprof_t$weighted_prof)
-
-# creating a bar chat for the weighted average proficiency over time for teacher vs non-teacher
-
-t_nt_agprof <- bind_rows(LSAY_agprof_t, LSAY_agprof_nt)
-
-total_weighted_prof <- t_nt_agprof %>%
-  group_by(teacher) %>%
-  summarise(total_weighted_prof = sum(weighted_prof, na.rm = TRUE))
-
-# changing TRUE, FALSE to TEACHER and NON-TEACHER
-total_weighted_prof$teacher <- ifelse(total_weighted_prof$teacher == TRUE, "Teacher", "Non-Teacher")
-
-```
 
 
 -   box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
@@ -1597,5 +1310,25 @@ teacher_fact +
 facet by year ^
 
 
+```{r}
+teacher_fact <- ggplot(pisa_boxplot_stats, 
+                       aes(x = teacher, 
+                           ymin = Lower_whisker, lower = Q1, 
+                           middle = Q2, upper = Q3, ymax = Upper_whisker)) +
+  geom_boxplot(stat = "identity") +
+  facet_grid(Year ~ .) +  
+  labs(x = "Teacher Status", y = "Scores", title = "Teachers tend to perform better than non-teachers across the years", subtitle = "Distribution of Australian Year 10 PISA scores in Mathematical Literacy") +
+  scale_x_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher")) +  
+  theme_minimal() +
+  coord_flip()
+
+
+teacher_fact +
+  theme_grattan(chart_type = "normal") +
+  grattan_y_continuous() +
+  grattan_colour_manual(2)
+
+
+```
 
 
