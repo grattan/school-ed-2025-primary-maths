@@ -612,12 +612,7 @@ LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
 
 
 
-```{r}
-# 2006
-data_2006 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
-pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2006_teachflag)
-```
 
 
 
@@ -647,7 +642,7 @@ base_chart +
 # 2009
 data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
 
-pisa.ben.pv(pvlabel= paste0("PV", 1:5, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2009_teachflag)
+
 ```
 
 ```{r}
@@ -1596,8 +1591,8 @@ boxplot_stats <- function(data, year, is_teacher) {
   IQR <- Q3 - Q1
   
   # calc whiskers
-  lower_whisker <- 
-  upper_whisker <- 
+  lower_whisker <- boxplot_data$Score[boxplot_data$Percentiles == 10]
+  upper_whisker <- boxplot_data$Score[boxplot_data$Percentiles == 90]
   
   # creating df from summary stats
   boxplot_summary <- data.frame(
