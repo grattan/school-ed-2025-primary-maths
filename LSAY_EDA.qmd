@@ -195,19 +195,23 @@ LSAY2003_teachflag <-
 table(LSAY2003_teachflag$teacher)
 
 # using rrepest package to calculate mean and standard deviation
-Rrepest::Rrepest(data = LSAY2003_teachflag,
+pisa2003_avg_and_mean <- 
+  Rrepest::Rrepest(data = LSAY2003_teachflag,
         svy = "PISA",
-        est = est(c("mean","std", "n"),"pv@math"),
+        est = est(c("mean","std"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
 
+pisa2003_avg_and_mean
+
+# Visualise distributions
 ggplot(data = data.frame(x = c(-0, 1000)), 
        aes(x)) +
   stat_function(fun = dnorm, 
-                n = 144, args = list(mean = 554, sd = 64.8)) +
+                n = 144, args = list(mean = pisa2003_avg_and_mean$body$dataset$`pv@math..mean..B`[2], sd = pisa2003_avg_and_mean$body$dataset$`pv@math..std..B`[2])) +
   stat_function(fun = dnorm, 
-                n = 10226, args = list(mean = 530.3, sd = 92.9), 
+                n = 10226, args = list(mean = pisa2003_avg_and_mean$body$dataset$`pv@math..mean..B`[1], sd = pisa2003_avg_and_mean$body$dataset$`pv@math..std..B`[1]), 
                 color = grattan_red) +
   scale_y_continuous_grattan() +
   theme_grattan() +
@@ -216,6 +220,7 @@ ggplot(data = data.frame(x = c(-0, 1000)),
        notes = "Note: Assumes a normal distribution, which may not be true given the small counts", 
        x = "PISA scale score in Mathematics") +
   theme(plot.subtitle = element_markdown())
+
 ```
 
 ```{r}
