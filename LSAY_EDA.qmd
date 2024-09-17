@@ -150,7 +150,7 @@ fields
 
 ```
 
-## How well are teachers performing?
+### How well are teachers performing?
 
 -   Determine the percentage of primary teachers in the sample below the National proficient standard
 
@@ -183,7 +183,6 @@ pisa_state_total <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"),
   scroll_box(width = "1000px", height = "300px")
 pisa_state
 ```
-
 
 ```{r}
 # Getting the IDs of the teachers
@@ -897,24 +896,25 @@ professionals_vis <- professionals %>%
   mutate(Profession = factor(Profession, levels = unique(Profession))) # Reorder Profession factor
 
 profession_visualisation <- professionals_vis %>%
-  ggplot(aes(y = Profession, xdist = dist_normal(Mean_Math, Std_Math))) +
-  stat_interval() +
-  geom_point(aes(x = Mean_Math), size = 3, color = "black") +
+  ggplot(aes(y = Profession, 
+             xdist = dist_normal(Mean_Math, Std_Math))) +
+  stat_interval(.width = 0.9) +
+  geom_point(aes(x = Mean_Math), size = 3, 
+             stroke = 1.5, 
+             fill = "white", 
+             shape = 21) +
   labs(
     title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population but less than other professionals",
-    subtitle = glue("Distribution of {colour_text('#FF0000','Pisa 2003')} Mathematical Proficiency scores for teachers and other professionals"),
+    subtitle = glue("Distribution of PISA 2003 Mathematical Proficiency scores for teachers and other professionals"),
     x = "Score",
     y = "Teacher",
     caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)"
   ) +
-  geom_vline(xintercept = 482, linetype = "dotted", color = "red", size = 1) + 
-  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark", size =2) + 
-  xlim(300, 750)
-
-profession_visualisation +
-  theme_grattan(chart_type = "bar", flipped = TRUE) +
-  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
-  grattan_colour_manual(3, faded_level = 2) +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark", size = 18/.pt) + 
+  xlim(300, 800) +
+  theme_grattan(flipped = TRUE) +
+  grattan_colour_manual(n = 1, faded_level= 5) +
   theme(axis.line = element_line(colour = "grey80"))
 
 ```
