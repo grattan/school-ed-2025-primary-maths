@@ -267,9 +267,9 @@ studying_teachers_2006
 # Looking at people who were at the time working as PS Teachers
 teachers_2006 <- LSAY2006 %>%
   # Selecting variables for kind of work
-  select(STIDSTD, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
+  select(STIDSTD, ANZSCO, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
   # Mutate across the observation 
-  mutate(across(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
+  mutate(across(c(ANZSCO, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
                 ~ case_when(
                    as.character(.) == '2412' ~ 1,  # PSE as 1
                    is.na(.) ~ NA_integer_,
