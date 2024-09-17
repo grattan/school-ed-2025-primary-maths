@@ -1524,57 +1524,6 @@ total_weighted_prof$teacher <- ifelse(total_weighted_prof$teacher == TRUE, "Teac
 -   box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
 
 ```{r}
-
-boxplot_stats <- function(data, year) {
-  # filter data for teachers
-  filtered_data <- data[data$teacher == TRUE, ]
-  
-  boxplot_data <- pisa.per.pv(
-    pvlabel = paste0("PV", 1:5, "MATH"), 
-    per = c(25, 50, 75), 
-    data = LSAY2003_teachflag,
-    by = teacher
-  )
-  
-  Q1 <- boxplot_data$Score[boxplot_data$Percentiles == 25]
-  Q2 <- boxplot_data$Score[boxplot_data$Percentiles == 50]
-  Q3 <- boxplot_data$Score[boxplot_data$Percentiles == 75]
-  IQR <- Q3 - Q1
-  
-  # calc whiskers
-  lower_whisker <- Q1 - 1.5 * IQR
-  upper_whisker <- Q3 + 1.5 * IQR
-  
-  # creating df from summary stats
-  boxplot_summary <- data.frame(
-    Year = year,
-    Q1 = Q1,
-    Q2 = Q2,
-    Q3 = Q3,
-    IQR = IQR,
-    Upper_whisker = upper_whisker,
-    Lower_whisker = lower_whisker
-  )
-  
-  return(boxplot_summary)
-}
-
-# compute boxplots for each year
-boxplot_2003 <- compute_boxplot_stats(LSAY2003_teachflag, 2003)
-boxplot_2006 <- compute_boxplot_stats(LSAY2006_teachflag, 2006)
-boxplot_2009 <- compute_boxplot_stats(LSAY2009_teachflag, 2009)
-boxplot_2015 <- compute_boxplot_stats(LSAY2015_teachflag, 2015)
-
-# combine the dfs
-pisa_boxplot_stats <- rbind(boxplot_2003, boxplot_2006, boxplot_2009, boxplot_2015)
-
-
-pisa_boxplot_stats
-
-
-```
-
-```{r}
 boxplot_stats <- function(data, year, is_teacher) {
 
   filtered_data <- data[data$teacher == is_teacher, ]
