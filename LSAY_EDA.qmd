@@ -24,9 +24,9 @@ LSAY2015 <- read_dta("data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta")
 
 ```
 
-## Y03
+## LSAY 2003 cohort
 
-## How many primary school teachers are in the data set?
+### How many primary school teachers are in the data set?
 
 To explore this in the Y03 data, we will look for the ASCED code `070103` (Teacher Education: Primary) in variables relating to questions focused at main area of study/training in this course at any given year: LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088
 
@@ -81,7 +81,7 @@ kbl(students_left_teaching, caption = "Closer look at students who left teaching
 
     Human Movement (69903)
 
-## How many primary school teachers?
+### How many primary school teachers?
 
 To see how many people were working as a primary school teacher at any point of responding to the questions, we focused on finding the ANSZVO code `2412` in variables related to the question:
 
@@ -113,7 +113,7 @@ unique_teachers_y03 <- LSAY2003 %>%
 
 ```
 
-## What did these people study?
+### What did these people study?
 
 ```{r}
 # Selecting IDs of previously identified Y03 Teachers
@@ -150,13 +150,11 @@ fields
 
 ```
 
-# How well are teachers performing?
+## How well are teachers performing?
 
 -   Determine the percentage of primary teachers in the sample below the National proficient standard
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
-
-## LSAY 2003 cohort
 
 We begin by checking that our analysis is working correctly by calculating the mean maths performance in each state in PISA 2003, and checking our numbers accord with those reported in Table 3.3, page. 81 by ACER [here](https://www.acer.org/files/PISA_screen.pdf). Our numbers are different, which is because there is a mismatch between the national sample and the LSAY sample.
 
@@ -185,6 +183,7 @@ pisa_state_total <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"),
   scroll_box(width = "1000px", height = "300px")
 pisa_state
 ```
+
 
 ```{r}
 # Getting the IDs of the teachers
@@ -559,7 +558,7 @@ teacher_jobs_2015 |>
   apply(2, unique)
 ```
 
-# Plausible values for 2015
+### Performance of 2015 cohort
 
 ```{r}
 # Extracting the unique teacher IDs
@@ -601,8 +600,10 @@ LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
         cm.weights = c(paste0("w_fsturwt",1:80)), 
         tabl = F)
 
-
+LSAY2015_agprof
 ```
+
+## Visualise performance
 
 ```{r}
 data_2006 <- data_2006 |>
