@@ -170,7 +170,7 @@ pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"),
 # Comparing to entire PISA dataset
 pisa_2003 <- haven::read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
 
-# Need to rename to uppercase, because intsvy::pisa.mean.pv requires capitals.
+# Need to rename to uppercase, because intsvy::pisa.mean.pv requires capitals
 names(pisa_2003) <- toupper(names(pisa_2003))
 
 pisa_state_total <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), 
@@ -191,13 +191,31 @@ teacher_ids_y03 <- unique_teachers_y03$STIDSTD
 LSAY2003_teachflag <- 
   LSAY2003 |> 
   mutate(teacher = if_else(STIDSTD %in% teacher_ids_y03, T, F))
+
+table(LSAY2003_teachflag$teacher)
+
 # using rrepest package to calculate mean and standard deviation
 Rrepest::Rrepest(data = LSAY2003_teachflag,
         svy = "PISA",
-        est = est(c("mean","std"),"pv@math"),
+        est = est(c("mean","std", "n"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
+
+ggplot(data = data.frame(x = c(-0, 1000)), 
+       aes(x)) +
+  stat_function(fun = dnorm, 
+                n = 144, args = list(mean = 554, sd = 64.8)) +
+  stat_function(fun = dnorm, 
+                n = 10226, args = list(mean = 530.3, sd = 92.9), 
+                color = grattan_red) +
+  scale_y_continuous_grattan() +
+  theme_grattan() +
+  labs(title = "Teachers' maths ability is less variable with a higher average", 
+       subtitle = glue("Probability distribution of Mathematics achievement in PISA 2003<br> for {colour_text(grattan_orange, 'teachers')} and {colour_text(grattan_red, 'non-teachers')}"), 
+       notes = "Note: Assumes a normal distribution, which may not be true given the small counts", 
+       x = "PISA scale score in Mathematics") +
+  theme(plot.subtitle = element_markdown())
 ```
 
 ```{r}
