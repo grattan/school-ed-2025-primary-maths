@@ -26,7 +26,7 @@ LSAY2015 <- read_dta("data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta")
 
 ## Y03
 
-### How many primary school teachers are in the data set?
+## How many primary school teachers are in the data set?
 
 To explore this in the Y03 data, we will look for the ASCED code `070103` (Teacher Education: Primary) in variables relating to questions focused at main area of study/training in this course at any given year: LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088
 
@@ -149,47 +149,6 @@ fields <- data.frame(
 fields
 
 ```
-
-# How many school leavers enroll in primary school teaching?
-
-To understand how many people who studied primary school teaching, we would select the IDs of those who were studying to be teachers then also select variables associated with question: "Left school before completing Year 12".
-
-```{r}
-# IDs of those enrolled in primary school aos at some point
-studying_teachers <- unique(unique_studying_teachers_y03$STIDSTD)
-# Filter for those studying primary school teaching and leaving school variables.
-studying_teachers_y12 <- LSAY2003 %>% 
-  filter(STIDSTD %in% studying_teachers) %>% 
-  select(STIDSTD, LBWDV01, LCWDV01, LEWDV01, LIWDV01) %>%
-   mutate(Studying_Teacher = rowSums(select(., LBWDV01, LCWDV01, LEWDV01, LIWDV01) == 1, na.rm = TRUE) > 0)
-
-```
-
-Only two of those studying primary school teaching in 2003 LSAY were school leavers. However both seemed to have return back to school to complete.
-
-The student IDs of these two: 2999 and 10049.
-
-```{r}
-# Closer look at the school leavers (year and level)
-school_leavers_year_level <- LSAY2003 %>% 
-  filter(STIDSTD %in% c(2999, 10049)) %>% 
-  select(STIDSTD, LBB001, LCB001, LDB001, LEB001, LEA005, LFB001, LFA006)
-school_leavers_year_level
-```
-
-Both left in year 11.
-
-```{r}
-school_leavers_year <- LSAY2003 %>% 
-  filter(STIDSTD %in% c(2999, 10049)) %>% 
-  # Selecting variables related to, "In which month and year did you leave school?"
-  select(STIDSTD, LBA002B, LCA002B, LDA002B, LEA002B, LFA002Y)
-school_leavers_year
-```
-
--   2999 left in 2003 then went back to complete year 12 in 2005
-
--   10049 left in 2004 and then went back to complete year 12 in 2005.
 
 # How well are teachers performing?
 
