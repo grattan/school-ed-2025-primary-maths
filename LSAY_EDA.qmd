@@ -1596,17 +1596,6 @@ teacher_fact +
 ```
 facet by year ^
 
-```{r}
-non_teacher_boxplot <- ggplot(pisa_boxplot_stats, aes(x = as.factor(Year))) +
-  geom_boxplot(aes(ymin = Lower_whisker,lower = Q1, middle = Q2, upper = Q3, ymax = Upper_whisker), stat = "identity") +
-  theme_minimal() +
-  labs(title = "Boxplot of Math Scores by Year", x = "Year", y = "Score") + coord_flip()
 
-non_teacher_boxplot +
-  theme_grattan(chart_type = "normal") +
-  grattan_y_continuous() +
-  grattan_colour_manual(1)
-
-```
 
 
