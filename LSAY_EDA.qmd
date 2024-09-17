@@ -610,12 +610,6 @@ LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
 
 ```
 
-
-
-
-
-
-
 ```{r}
 data_2006 <- data_2006 |>
   rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
@@ -677,8 +671,6 @@ pisa.ben.pv(pvlabel= paste0("PV", 1:10, "MATH"), cutoff= mathcut, by="teacher", 
 
 
 ```
-
-
 
 ```{r}
 data_2015 <- data_2015 |>
@@ -1231,9 +1223,6 @@ total_agg_prof +
 
 ```
 
-
-
-
 -   box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
 
 ```{r}
@@ -1307,8 +1296,8 @@ teacher_fact +
   grattan_y_continuous() +
   grattan_colour_manual(2)
 ```
-facet by year ^
 
+facet by year \^
 
 ```{r}
 teacher_fact <- ggplot(pisa_boxplot_stats, 
@@ -1330,5 +1319,3 @@ teacher_fact +
 
 
 ```
-
-
