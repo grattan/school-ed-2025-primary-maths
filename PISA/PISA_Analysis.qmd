@@ -2,6 +2,8 @@
 title: "PISA"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## PISA ANALYSIS
@@ -29,16 +31,14 @@ PISA2015 <- read_sav("data/CY6_MS_AUS_PISA2015_StudentandAchievementforPublicRel
 PISA2018 <- read_sav("data/CY7_MS_AUS_PISA2018_StudentandAchievement_PublicRelease.sav")
 PISA2022 <- read_sav("data/CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.sav")
 
-# alternative #1
-# options(HTTPUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0")
-# downloadPISA(root = "~/", years = c(2003, 2006, 2009, 2012, 2015, 2018))
-# pisa2003 <- readPISA(path = "data/PISA/2000", database = "INT", countries = "aus", cognitive = "score")
-
-# alternative #2
-# PISA_2003_alternative <-  pisa.select.merge(folder = "data/",
-#                                             student.file ="CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav",
-#                                             student = c("ST01Q01"),
-#                                             countries = c("AUS"))
+# Alternative #1: EdSurvey package
+# Attempts to try download the PISA data using EdSurvey failed as the website structure has changed since the package was released. I downloaded manually instead.
+# options(HTTPUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246")
+# downloadPISA(root = "data", years = c(2003))
+# pisa2003_EdSurvey <- readPISA(path = "data/PISA/2003", 
+#                      database = "INT", 
+#                      countries = "AUS", 
+#                      cognitive = "score")
 ```
 
 Monday: PISA
@@ -104,26 +104,36 @@ means_2000 <- Rrepest(data = PISA2000_Y10,
 means_2003 <- Rrepest(data = PISA2003, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
-        cm.weights = c(paste0("w_fstr", 1:80)),
-        by = "ST01Q01")
+        cm.weights = c(paste0("w_fstr", 1:80)))
 
-names(PISA2003) <- toupper(names(PISA2003))
+PISA2003_uppercase <- PISA2003
 
-# PISA2003 <- 
-#   PISA2003 |> 
-#   mutate(grade_category = case_when(
-#     ST01Q01 == 10 ~ '10',
-#     between(ST01Q01, 7, 9) ~ '<10',
-#     between(ST01Q01, 11, 12) ~ '>10',
-#     TRUE ~ NA
-#   ))
+names(PISA2003_uppercase) <- toupper(names(PISA2003))
 
 # Values slightly different from Ainley
 means_2003_new <- pisa.mean.pv(
   pvlabel = paste0("PV", 1:5, "MATH"),
   by = "ST01Q01",
-  data = PISA2003
+  data = PISA2003_uppercase
 )
+
+# Manually calculate means without repetition
+PISA2003_uppercase <-
+  PISA2003_uppercase |>
+  mutate(grade_category = case_when(
+    ST01Q01 == 10 ~ '10',
+    between(ST01Q01, 7, 9) ~ '<10',
+    between(ST01Q01, 11, 12) ~ '>10',
+    TRUE ~ NA
+  ))
+
+PISA2003_manual_means <- 
+  PISA2003_uppercase |> 
+  group_by(grade_category) |> 
+  summarise(across(c("PV1MATH", "PV2MATH", "PV3MATH", "PV4MATH", "PV5MATH"),
+         ~ weighted.mean(x = .x, w = W_FSTUWT, na.rm = T))) |>
+  group_by(grade_category) |> 
+  summarise(mean = sum(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH)/5)
 
 #2006
 means_2006 <- Rrepest(data = PISA2006_Y10, 
@@ -154,7 +164,6 @@ means_2009_new <- pisa.mean.pv(
 means_2012 <- Rrepest(data = PISA2012_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
-        by = "ST001D01T",
         cm.weights = c(paste0("w_fstr", 1:80)))
 
 means_2012_new <- pisa.mean.pv(
@@ -239,6 +248,8 @@ all_means_new <- bind_rows(
   means_2018_new,
   means_2022_new, 
 )
+
+
 
 all_means$CI_Lower <- all_means$`b.mean.pv@math` - 1.96 * all_means$`se.mean.pv@math`
 all_means$CI_Upper <- all_means$`b.mean.pv@math` + 1.96 * all_means$`se.mean.pv@math`
@@ -343,42 +354,81 @@ readmeans_2000 <- Rrepest(data = PISA2000_Y10,
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fstr", 1:80)))
+
+PISA2000_uppercase <- PISA2000 
+
+names(PISA2000_uppercase) <- toupper(names(PISA2000))
+
+readmeans_2000_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "READ"), 
+                                   by = "ST01Q01",
+                                   data = PISA2000_uppercase)
+
 #2003
 readmeans_2003 <- Rrepest(data = PISA2003_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fstr", 1:80)))
+
+readmeans_2003_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "READ"), 
+                                   by = "ST01Q01",
+                                   data = PISA2003)
 #2006
 readmeans_2006 <- Rrepest(data = PISA2006_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fstr", 1:80)))
+
+readmeans_2006_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "READ"), 
+                                   by = "ST01Q01",
+                                   data = PISA2006)
 #2009
 readmeans_2009 <- Rrepest(data = PISA2009_2_Y10, 
        svy = "PISA",
        est = est(c("mean", "std"), "pv@read"),
        cm.weights = c(paste0("w_fstr", 1:80)))
 
+readmeans_2009_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "READ"), 
+                                   by = "ST01Q01",
+                                   data = PISA2009_2)
+
 #2012
 readmeans_2012 <- Rrepest(data = PISA2012_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fstr", 1:80)))
+
+readmeans_2012_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "READ"), 
+                                   by = "ST01Q01",
+                                   data = PISA2012)
+
 #2015
 readmeans_2015 <- Rrepest(data = PISA_2015_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fsturwt",1:80)))
+
+readmeans_2015_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:10, "READ"), 
+                                   by = "ST001D01T",
+                                   data = PISA2015)
+
 #2018
 readmeans_2018 <- Rrepest(data = PISA2018_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+readmeans_2018_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:10, "READ"), 
+                                   by = "ST001D01T",
+                                   data = PISA2018)
 #2022
 readmeans_2022 <- Rrepest(data = PISA2022_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fsturwt", 1:80)))
+
+readmeans_2022_new <- pisa.mean.pv(pvlabel = paste0("PV", 1:10, "READ"), 
+                                   by = "ST001D01T",
+                                   data = PISA2022)
 
 ```
 
@@ -393,6 +443,16 @@ readmeans_2015$Year <- 2015
 readmeans_2018$Year <- 2018
 readmeans_2022$Year <- 2022
 
+# Add Year column
+readmeans_2000_new$Year <- 2000
+readmeans_2003_new$Year <- 2003
+readmeans_2006_new$Year <- 2006
+readmeans_2009_new$Year <- 2009
+readmeans_2012_new$Year <- 2012
+readmeans_2015_new$Year <- 2015
+readmeans_2018_new$Year <- 2018
+readmeans_2022_new$Year <- 2022
+
 all_readmeans <- rbind(
   readmeans_2000,
   readmeans_2003,
@@ -402,6 +462,17 @@ all_readmeans <- rbind(
   readmeans_2015,
   readmeans_2018,
   readmeans_2022
+)
+
+all_readmeans_new <- bind_rows(
+  readmeans_2000_new,
+  readmeans_2003_new,
+  readmeans_2006_new,
+  readmeans_2009_new,
+  readmeans_2012_new,
+  readmeans_2015_new,
+  readmeans_2018_new,
+  readmeans_2022_new
 )
 
 
@@ -605,13 +676,45 @@ yr10litscores_ci +
            fill = "lightgrey", alpha = 0.2, color = NA) + 
   annotate("text", x = 2020, y = 510, label = "1 Year Delay Due to COVID-19", 
            size = 4, color = "black", angle = 90, hjust = 0.5) 
+
+# chart for year 10 numeracy (Nick's version)
+all_readmeans_new |> 
+  filter(ST01Q01 == 10 | ST001D01T == 10) |> 
+  mutate(gap = (max(Mean) - min(Mean))/20*12) |> 
+  ggplot(aes(x = Year, y = Mean)) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = unique(all_means_new$Year)) + 
+  labs(title = "Year 10's reading scores have been declining over the years",
+       subtitle = glue("Average Australian Year 10 PISA score in Reading"),
+       x = NULL) +
+  theme_grattan() +
+  grattan_y_continuous() +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1)) +
+  geom_curve(data = . %>%  last(), 
+             aes(x = 2019, 
+                   y = 515, 
+                   xend = 2022, 
+                   yend = last(Mean) + 2),
+             curvature = -0.3,
+ arrow = grattan_arrow(),
+ colour = grattan_grey_title) +
+  geom_richtext(data = . %>% last(), 
+                aes(label = glue("<i>Year 10s in 2022<br>were about <b>{round(gap)} months<br>of learning</b> behind<br> their 2003 peers</i>"), 
+                    x = 2015, 
+                    y = 500),
+                vjust = -.5, 
+                hjust = "left",
+                colour = grattan_grey_title,
+                label.colour = NA,
+                size = 18/.pt)
 ```
 
-# Making charts now filtering just for each state and territory and for the Catholics (National, Victoria and NSW)
+# STATE NUMERACY SCORES
 
 (May need to doule check) 1 - NSW 2 - VIC 3- QLD 4- SA 5- WA 6 - TAS 7 - NT 8 - ACT
 
-## FOR VICTORIA
+## 1. VICTORIA
 
 PISA 2012 seems to only have 'STRATUM' instead of STATE - would have to filter for the states using this variable. View [page 9](https://www.oecd.org/content/dam/oecd/en/data/datasets/pisa/pisa-2012-datasets/main-survey/codebooks/Codebook%20for%20student%20questionnaire%20data%20file.pdf)
 
@@ -728,7 +831,7 @@ vic_PISA_mathmeans <- vic_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean
 
 ```
 
-## FOR NSW
+## 2. NSW
 
 ```{r}
 # Making charts just for NSW vs General population - Maths
@@ -839,7 +942,7 @@ nsw_PISA_mathmeans <- nsw_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean
 
 ```
 
-# FOR QLD - 3
+## 3. FOR QLD
 
 ```{r}
 
@@ -932,7 +1035,7 @@ qld_PISA_mathmeans <- qld_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean
 
 ```
 
-4- SA
+## 4. SA
 
 ```{r}
 
@@ -1025,7 +1128,7 @@ sa_PISA_mathmeans <- sa_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.p
 
 ```
 
-5- WA
+## 5. WA
 
 ```{r}
 PISA2000_wa <- PISA2000 %>% filter(State == 5)
@@ -1113,7 +1216,7 @@ wa_math_means$CI_Upper <- wa_math_means$`b.mean.pv@math` + 1.96 * wa_math_means$
 wa_PISA_mathmeans <- wa_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
 ```
 
-6 - TAS
+## 6. TAS
 
 ```{r}
 PISA2000_tas <- PISA2000 %>% filter(State == 6)
@@ -1201,7 +1304,7 @@ tas_math_means$CI_Upper <- tas_math_means$`b.mean.pv@math` + 1.96 * tas_math_mea
 tas_PISA_mathmeans <- tas_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
 ```
 
-7 - NT
+## 7. NT
 
 ```{r}
 PISA2000_nt <- PISA2000 %>% filter(State == 7)
@@ -1289,7 +1392,7 @@ nt_math_means$CI_Upper <- nt_math_means$`b.mean.pv@math` + 1.96 * nt_math_means$
 nt_PISA_mathmeans <- nt_math_means[, c("Year", ".", "b.mean.pv@math", "se.mean.pv@math", "b.std.pv@math", "se.std.pv@math", "CI_Lower", "CI_Upper")]
 ```
 
-8 - ACT
+## 8. ACT
 
 ```{r}
 # Filtering data for ACT (State = 8)
@@ -1425,7 +1528,7 @@ ggplot(all_states_math, aes(x = Year, y = `b.mean.pv@math`, color = STATE)) +
 
 # STATES LITERACY SCORES
 
-VICTORIA
+## VICTORIA
 
 ```{r}
 #2000
@@ -1499,7 +1602,7 @@ vic_PISA_read_means <- vic_read_all_means[, c("Year", ".", "b.mean.pv@read", "se
 
 ```
 
-NSW
+## NSW
 
 ```{r}
 #2000
@@ -1573,7 +1676,7 @@ nsw_PISA_read_means <- nsw_read_all_means[, c("Year", ".", "b.mean.pv@read", "se
 
 ```
 
-for ACT
+## ACT
 
 ```{r}
 #2000
@@ -1647,7 +1750,7 @@ act_PISA_read_means <- act_read_all_means[, c("Year", ".", "b.mean.pv@read", "se
 
 ```
 
-for QLD
+## QLD
 
 ```{r}
 #2000
@@ -1718,8 +1821,9 @@ qld_read_all_means$CI_Lower <- qld_read_all_means$`b.mean.pv@read` - 1.96 * qld_
 qld_read_all_means$CI_Upper <- qld_read_all_means$`b.mean.pv@read` + 1.96 * qld_read_all_means$`se.mean.pv@read`
 
 qld_PISA_read_means <- qld_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
-
 ```
+
+## NT
 
 ```{r}
 #2000
@@ -1749,7 +1853,8 @@ nt_read_means_2012 <- Rrepest(data = PISA2012_nt,
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fstr", 1:80)))
 #2015
-nt_read_means_2015 <- Rrepest(data = PISA_2015_nt, 
+nt_read_means_2015 <- Rrepe
+st(data = PISA_2015_nt, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@read"),
         cm.weights = c(paste0("w_fsturwt",1:80)))
@@ -1790,8 +1895,9 @@ nt_read_all_means$CI_Lower <- nt_read_all_means$`b.mean.pv@read` - 1.96 * nt_rea
 nt_read_all_means$CI_Upper <- nt_read_all_means$`b.mean.pv@read` + 1.96 * nt_read_all_means$`se.mean.pv@read`
 
 nt_PISA_read_means <- nt_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
-
 ```
+
+## SA
 
 ```{r}
 #2000
@@ -1862,8 +1968,9 @@ sa_read_all_means$CI_Lower <- sa_read_all_means$`b.mean.pv@read` - 1.96 * sa_rea
 sa_read_all_means$CI_Upper <- sa_read_all_means$`b.mean.pv@read` + 1.96 * sa_read_all_means$`se.mean.pv@read`
 
 sa_PISA_read_means <- sa_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
-
 ```
+
+## WA
 
 ```{r}
 #2000
@@ -1935,7 +2042,10 @@ wa_read_all_means$CI_Upper <- wa_read_all_means$`b.mean.pv@read` + 1.96 * wa_rea
 
 wa_PISA_read_means <- wa_read_all_means[, c("Year", ".", "b.mean.pv@read", "se.mean.pv@read", "b.std.pv@read", "se.std.pv@read", "CI_Lower", "CI_Upper")]
 
+
 ```
+
+## TAS
 
 ```{r}
 #2000
