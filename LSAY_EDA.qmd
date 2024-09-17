@@ -156,6 +156,8 @@ fields
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
+We begin by checking that our analysis is working correctly by calculating the mean maths performance in each state in PISA 2003, and checking our numbers accord with those reported in Table 3.3, page. 81 by ACER [here](https://www.acer.org/files/PISA_screen.pdf).
+
 ```{r}
 # using intsvy package to calculate average scores for each state
 library(intsvy)
