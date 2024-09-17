@@ -20,6 +20,7 @@ library(ggtext)
 library(Rrepest)
 library(intsvy)
 library(EdSurvey) #install.packages("EdSurvey")
+library(RALSA) # install.packages("RALSA", dependencies = TRUE)
 # reading sav file
 PISA2000 <- read_sav("data/CY01_AUS_PISA2000_StdQ_Achieve_and_SchQ_forPublic_Release.sav")
 PISA2003 <- read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
@@ -39,6 +40,11 @@ PISA2022 <- read_sav("data/CY08_MS_AUS_PISA 2022_Student_and_Achievement_Public.
 #                      database = "INT", 
 #                      countries = "AUS", 
 #                      cognitive = "score")
+
+# Alternative #2: Using RALSA
+lsa.convert.data(inp.folder = "data/PISA/2003",
+                 ISO = c("aus"),
+                 out.folder = "data/PISA/2003")
 ```
 
 Monday: PISA
@@ -101,7 +107,7 @@ means_2000 <- Rrepest(data = PISA2000_Y10,
         cm.weights = c(paste0("w_fstr", 1:80)))
 #2003
 # The mean values here are different to those reported by ACER here. https://www.acer.org/au/discover/article/the-effect-of-year-level-on-pisa-achievement.
-means_2003 <- Rrepest(data = PISA2003, 
+means_2003 <- Rrepest(data = PISA2003_Y10, 
         svy = "PISA",
         est = est(c("mean", "std"), "pv@math"),
         cm.weights = c(paste0("w_fstr", 1:80)))
@@ -134,6 +140,18 @@ PISA2003_manual_means <-
          ~ weighted.mean(x = .x, w = W_FSTUWT, na.rm = T))) |>
   group_by(grade_category) |> 
   summarise(mean = sum(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH)/5)
+
+# Compare aggregate mean to ACER (524 w/ sd of 95)
+# Both give the right values.
+pisa.mean.pv(
+  pvlabel = paste0("PV", 1:5, "MATH"),
+  data = PISA2003_uppercase)
+
+Rrepest(data = PISA2003, 
+        svy = "PISA", 
+        est = est(c("mean", "std"), "pv@math"), 
+        cm.weights = c(paste0("w_fstr", 1:80)))
+
 
 #2006
 means_2006 <- Rrepest(data = PISA2006_Y10, 
