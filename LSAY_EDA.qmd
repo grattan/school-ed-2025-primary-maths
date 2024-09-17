@@ -156,7 +156,7 @@ fields
 
 -   Determine the average achievement of primary teachers in the sample (in PISA points)
 
-## PISA 2003 cohort
+## LSAY 2003 cohort
 
 We begin by checking that our analysis is working correctly by calculating the mean maths performance in each state in PISA 2003, and checking our numbers accord with those reported in Table 3.3, page. 81 by ACER [here](https://www.acer.org/files/PISA_screen.pdf). Our numbers are different, which is because there is a mismatch between the national sample and the LSAY sample.
 
@@ -242,7 +242,7 @@ LSAY2003_agprof <- Rrepest::Rrepest(data = LSAY2003_proficiency,
 
 ```
 
-## PISA 20026 cohort
+## LSAY 2006 cohort
 
 ### How many people in the 2006 were studying primary school teaching?
 
@@ -373,9 +373,9 @@ LSAY2006_agprof
 
 ```
 
-# LSAY 2009
+## LSAY 2009 cohort
 
-## How many people in the 2009 cohort studied teaching?
+### How many people in the 2009 cohort studied teaching?
 
 "What is your main area of study or training in this (apprenceship/traineeship/course)?" \* LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088
 
@@ -452,7 +452,7 @@ aos_2009 <- kable(aos_2009, caption = "Field of Education Codes 2009", align = "
 aos_2009
 ```
 
-## Plausible values for 2009
+### Performance of 2009 cohort
 
 ```{r}
 # Extracting the unique teacher IDs
@@ -494,9 +494,9 @@ LSAY2009_agprof <- Rrepest::Rrepest(data = LSAY2009_proficiency,
 
 ```
 
-# LSAY 2015
+## LSAY 2015
 
-## How many people in the 2015 cohort studied teaching?
+### How many people in the 2015 cohort studied teaching?
 
 "What is your main area of study or training in this (apprenceship/traineeship/course)?" \* LCC088, LDC088, LEC088, LFC088, LGC088, LHC088
 
@@ -520,7 +520,7 @@ studying_teachers_2015 <- LSAY2015 %>%
 studying_teachers_2015
 ```
 
-## How many teachers in the 2015 cohort?
+### How many teachers in the 2015 cohort?
 
 Looking for code `2412` in variables related to the question: "What kind of work do you do in this job?" LCD022, LDD022, LED022, LFD025, LGD022, LHD022
 
@@ -544,7 +544,7 @@ teacher_2015 <- LSAY2015 %>%
 teacher_2015
 ```
 
-## What did these teachers study?
+### What did these teachers study?
 
 ```{r}
 # Extracting IDs of teachers in 2015 Cohort
@@ -553,6 +553,10 @@ teacher_jobs_2015 <- LSAY2015[LSAY2015$LSAYID %in% teacher_2015$LSAYID, ]
 # selecting student ID and 'area of study' variables 
 selected_columns <- c('LSAYID', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088')
 teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
+
+teacher_jobs_2015 |> 
+  select(-LSAYID) |> 
+  apply(2, unique)
 ```
 
 # Plausible values for 2015
