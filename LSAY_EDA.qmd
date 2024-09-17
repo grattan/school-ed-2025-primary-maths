@@ -276,7 +276,7 @@ teachers_2006 <- LSAY2006 %>%
                    TRUE ~ 0  # All else as 0
                  ))) %>%
   # column for TRUE = legit teachers, FALSE = not teachers
-  mutate(teachers_2006 = if_any(c(LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  mutate(teachers_2006 = if_any(c(ANZSCO, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
   # Filter for TRUE condition
   filter(teachers_2006)
 
@@ -322,17 +322,6 @@ aos_2006 <- kable(aos_2006, caption = "Field of Education Codes 2006", align = "
 
 aos_2006
 
-```
-
-```{r}
-# extracting the IDs of those who were teachers
-studying_teachers_06 <- unique(teachers_2006$STIDSTD)
-
-# filter the LSAY2003 data for those IDs and high school leaving variables
-school_leavers_06 <- LSAY2006 %>% 
-  filter(STIDSTD %in% studying_teachers_06) %>% 
-  select(STIDSTD, LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) %>%
-   mutate(Studying_Teacher = rowSums(select(., LBWDV01, LCWDV01, LDWDV01, LEWDV01, LFWDV01) == 1, na.rm = TRUE) > 0)
 ```
 
 # PISA PVs
