@@ -922,7 +922,7 @@ profession_visualisation <- professionals_vis %>%
                      linewidth = 4.5, 
                      interval_size_domain = c(3,4.5)) +
   labs(
-    title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population but less than other professionals",
+      title = "Teachers at 15 years-old were less likely to be proficient in math compared to other professionals",
     subtitle = glue("Average PISA 2003 Maths scores for teachers and other professionals, with 90 per cent confident intervals"),
     x = "Score",
     y = "Teacher",
@@ -1243,11 +1243,13 @@ total_agg_prof <- ggplot(total_weighted_prof, aes(x = teacher, y = total_weighte
   theme_minimal() +
   coord_flip() 
 
-total_agg_prof +
+total_agg_prof <- total_agg_prof +
   theme_grattan(chart_type = "bar",
                 flipped = T) +
   grattan_y_continuous(labels = ~ percent(.x/100)) +
   grattan_colour_manual(2)
+
+total_agg_prof
 
 ```
 
@@ -1312,38 +1314,45 @@ pisa_boxplot_stats <- rbind(pisa_boxplot_stats, pisa_boxplot_stats_nt)
 ```
 
 ```{r}
-teacher_fact <- ggplot(pisa_boxplot_stats, aes(x = factor(Year), ymin = Lower_whisker, lower = Q1, middle = Q2, upper = Q3, ymax = Upper_whisker)) +
+teacher_fact <- 
+  pisa_boxplot_stats |> 
+  mutate(teacher = fct_recode(factor(teacher), 
+                              "Non-teacher" = 'FALSE', 
+                              "Teacher" = 'TRUE')) |> 
+  ggplot(aes(x = factor(Year), 
+                           fill = teacher,
+             col = teacher,
+                           ymin = Lower_whisker, lower = Q1, middle = Q2, upper = Q3, ymax = Upper_whisker)) +
   geom_boxplot(stat = "identity") +
-  facet_wrap(~ teacher) +
-  labs(x = "Year", y = "Scores", title = "Boxplot of Scores Faceted by Teacher Status") +
+  labs(x = NULL, 
+       y = "PISA score", 
+       title = "Teachers tended to perform better across the performance spectrum",
+       subtitle = glue("Scores in PISA mathematics of {colour_text(grattan_red, 'teachers')} and {colour_text(grattan_orange, 'non-teachers')} across years}"), 
+       caption = "Notes: The boxplots show the median, interquartile range, and 10th and 90th percentiles.") +
   theme_minimal() +
   coord_flip()
 
-teacher_fact +
-  theme_grattan(chart_type = "normal") +
+teacher_fact <- teacher_fact +
+  theme_grattan(chart_type = "normal", 
+                flipped = TRUE) +
+  theme(plot.subtitle = element_markdown()) +
+  ggdirectlabel::geom_richlegend(aes
+                                 (label = fct_rev(teacher))
+                                 ) +
   grattan_y_continuous() +
-  grattan_colour_manual(2)
+  grattan_fill_manual(n = 2, faded_level = 4)
+
+teacher_fact
 ```
 
 facet by year \^
 
 ```{r}
-teacher_fact <- ggplot(pisa_boxplot_stats, 
-                       aes(x = teacher, 
-                           ymin = Lower_whisker, lower = Q1, 
-                           middle = Q2, upper = Q3, ymax = Upper_whisker)) +
-  geom_boxplot(stat = "identity") +
-  facet_grid(Year ~ .) +  
-  labs(x = "Teacher Status", y = "Scores", title = "Teachers tend to perform better than non-teachers across the years", subtitle = "Distribution of Australian Year 10 PISA scores in Mathematical Literacy") +
-  scale_x_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher")) +  
-  theme_minimal() +
-  coord_flip()
+# Save key charts
 
+plot_list_for_export <- list(total_agg_prof, 
+                             teacher_fact, 
+                             profession_visualisation)
 
-teacher_fact +
-  theme_grattan(chart_type = "normal") +
-  grattan_y_continuous() +
-  grattan_colour_manual(2)
-
-
+grattan_save_pptx(plot_list_for_export, filename = "atlas/LSAY_plots.pptx")
 ```
