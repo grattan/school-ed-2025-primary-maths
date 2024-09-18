@@ -9,6 +9,8 @@ execute:
   warning: false
   message: false
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -343,12 +345,14 @@ LSAY2006_teachflag <-
   mutate(teacher = if_else(STIDSTD %in% teacher_ids_2006, T, F))
 
 # getting the average and standard deviation of both groups
-Rrepest::Rrepest(data = LSAY2006_teachflag,
+pisa2006_avg_and_mean <- Rrepest::Rrepest(data = LSAY2006_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
+
+pisa2006_avg_and_mean
 ```
 
 ```{r}
@@ -464,12 +468,14 @@ LSAY2009_teachflag <-
   mutate(teacher = if_else(STIDSTD %in% teacher_ids_2009, T, F))
 
 # using rrepest package to calculate mean and standard deviation
-Rrepest::Rrepest(data = LSAY2009_teachflag,
+pisa2009_avg_and_mean <- Rrepest::Rrepest(data = LSAY2009_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fstr",1:80)),
         tabl = T)
+
+pisa2009_avg_and_mean
 
 ```
 
@@ -572,12 +578,14 @@ LSAY2015_teachflag <-
   mutate(teacher = if_else(LSAYID %in% teacher_ids_2015, T, F))
 
 # rrepest package to calculate mean and standard deviation
-Rrepest::Rrepest(data = LSAY2015_teachflag,
+pisa2015_avg_and_mean <-  Rrepest::Rrepest(data = LSAY2015_teachflag,
         svy = "PISA",
         est = est(c("mean","std"),"pv@math"),
         by = c("teacher"),
         cm.weights = c(paste0("w_fsturwt",1:80)),
         tabl = T)
+
+pisa2015_avg_and_mean
 
 
 ```
@@ -759,6 +767,8 @@ t_value
 # Manual t-test calculation for 2009
 
 #pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher")
+#pisa2009_avg_and_mean
+
 mean_FALSE <- 513.7
 mean_TRUE <- 552.7
 sd_FALSE <- 95.1
@@ -780,7 +790,7 @@ t_value
 
 ```{r}
 # Manual t-test calculation for 2015
-pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2015_teachflag, by = "teacher")
+# pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2015_teachflag, by = "teacher")
 mean_FALSE <- 494.0
 mean_TRUE <- 519.4
 sd_FALSE <- 92.5
@@ -855,6 +865,8 @@ profession_frequency <- UNIQUE_PROFESSIONALS_Y03 %>%
       profession == 6 ~ 'Engineering Professionals'
     )
   )
+
+profession_frequency
 ```
 
 ```{r}
@@ -886,36 +898,44 @@ professionals <- Rrepest::Rrepest(
 ```{r}
 professionals_vis <- professionals %>%
   rename(
-    Profession = profession,
+    Profession = str_wrap(Profession, 30),
     Mean_Math = `b.mean.pv@math`,
     SE_Mean_Math = `se.mean.pv@math`,
     Std_Math = `b.std.pv@math`,
     SE_Std_Math = `se.std.pv@math`
   ) %>%
   arrange(Mean_Math) %>%
-  mutate(Profession = factor(Profession, levels = unique(Profession))) # Reorder Profession factor
+  mutate(Profession = factor(Profession, levels = unique(Profession)),
+         upper_ci_90 = Mean_Math + 1.64 * SE_Mean_Math,
+         lower_ci_90 = Mean_Math - 1.64 * SE_Mean_Math) # Reorder Profession factor
 
 profession_visualisation <- professionals_vis %>%
   ggplot(aes(y = Profession, 
-             xdist = dist_normal(Mean_Math, Std_Math))) +
-  stat_interval(.width = 0.9) +
-  geom_point(aes(x = Mean_Math), size = 3, 
-             stroke = 1.5, 
-             fill = "white", 
-             shape = 21) +
+             x = Mean_Math,
+             xmin = lower_ci_90,
+             xmax = upper_ci_90)) +
+  geom_pointinterval(shape = 21,
+                     size = 3,
+                     stroke = 1.5,
+                     fill = "white", 
+                     colour = grattan_orange,
+                     linewidth = 4.5, 
+                     interval_size_domain = c(3,4.5)) +
   labs(
     title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population but less than other professionals",
-    subtitle = glue("Distribution of PISA 2003 Mathematical Proficiency scores for teachers and other professionals"),
+    subtitle = glue("Average PISA 2003 Maths scores for teachers and other professionals, with 90 per cent confident intervals"),
     x = "Score",
     y = "Teacher",
     caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)"
   ) +
   geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
-  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark", size = 18/.pt) + 
-  xlim(300, 800) +
+  annotate(geom = "text", y = 5.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency\nbenchmark", size = 18/.pt) + 
+  xlim(450, 700) +
   theme_grattan(flipped = TRUE) +
   grattan_colour_manual(n = 1, faded_level= 5) +
   theme(axis.line = element_line(colour = "grey80"))
+
+# check_chart_aspect_ratio(profession_visualisation, type = "fullslide")
 
 ```
 
@@ -944,36 +964,48 @@ names(visualisation_2003)[which(names(visualisation_2003) == "s.e")[1]] <- "SD_s
 
 distributions_2003 <- visualisation_2003 |> 
   ggplot(aes(y= teacher, xdist = dist_normal(Mean, SD))) +
-  stat_interval() +
-  geom_point(aes(x = Mean), size = 3, color = "black") +
-  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
-       subtitle = glue("Distribution of {colour_text('#FF0000','Pisa 2003')} Mathematical Proficiency scores for teachers and non-teachers"),
-       x = "Score",
-       y = "Teacher",
-  caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)") +
-  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
-  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
- scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))  +
-   xlim(300, 750)
+  stat_halfeye(.width = 0.9,
+               fill = grattan_orange,
+               point_fill = "white",
+               shape = 21,
+               size = 6) +
 
-combined_label <- glue("
-  Mean SE (Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == TRUE], 2)}\n
-  SD SE (Teachers): {round(visualisation_2003$SD_s.e[visualisation_2003$teacher == TRUE], 2)}\n
-  Mean SE (Non-Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == FALSE], 2)}\n
-  SD SE (Non-Teachers): {round(visualisation_2003$SD_s.e[visualisation_2003$teacher == FALSE], 2)}
-")
+  geom_rug(data = subset(LSAY2003_teachflag, teacher == T) , 
+           aes(x = rowMeans(
+             # We should not average PVs at the student level, but this nevertheless gives us a sense of teachers' scores
+             cbind(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH)
+             )
+             ),
+           inherit.aes = F) +
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
+       subtitle = glue("Modelled distribution of PISA 2003 Mathematical Proficiency scores for teachers and non-teachers"),
+       x = "Score",
+       y = NULL,
+  caption = "Notes: Assumes a normal distribution of teacher scores. Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)") +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 0.75, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))
+
+# combined_label <- glue("
+#   Mean SE (Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == TRUE], 2)}\n
+#   SD SE (Teachers): {round(visualisation_2003$SD_s.e[visualisation_2003$teacher == TRUE], 2)}\n
+#   Mean SE (Non-Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == FALSE], 2)}\n
+#   SD SE (Non-Teachers): {round(visualisation_2003$SD_s.e[visualisation_2003$teacher == FALSE], 2)}
+# ")
 
 # Add the combined label as a single annotation
-distributions_2003 <- distributions_2003 +
-  annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
+# distributions_2003 <- distributions_2003 +
+#   annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
 
- distributions_2003 +
+teacher_non_teacher_distributions_2003 <-  distributions_2003 +
   theme_grattan(chart_type = "bar", flipped = T) +
   theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
   grattan_colour_manual(3, faded_level = 2) +
-   theme(axis.line = element_line(colour = "grey80")) 
-   
+   theme(axis.line = element_line(colour = "grey80"))
 
+teacher_non_teacher_distributions_2003
+   
+# check_chart_aspect_ratio()
 
 #grattan_save_pptx(filename = "atlas/StatInterval_Plot2003.pptx")
 
@@ -1020,7 +1052,7 @@ distributions_2006 <- distributions_2006 +
    theme(axis.line = element_line(colour = "grey80")) 
 
 
-grattan_save_pptx(filename = "atlas/StatInterval_Plot2006.pptx")
+# grattan_save_pptx(filename = "atlas/StatInterval_Plot2006.pptx")
 
 ```
 
@@ -1064,7 +1096,7 @@ distributions_2009 <- distributions_2009 +
    
 
 
-grattan_save_pptx(filename = "atlas/StatInterval_Plot2009.pptx")
+# grattan_save_pptx(filename = "atlas/StatInterval_Plot2009.pptx")
 
 ```
 
@@ -1107,7 +1139,7 @@ distributions_2015 <- distributions_2015 +
    
 
 
-grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
+# grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
 
 ```
 
@@ -1212,8 +1244,9 @@ total_agg_prof <- ggplot(total_weighted_prof, aes(x = teacher, y = total_weighte
   coord_flip() 
 
 total_agg_prof +
-  theme_grattan(chart_type = "bar") +
-  grattan_y_continuous() +
+  theme_grattan(chart_type = "bar",
+                flipped = T) +
+  grattan_y_continuous(labels = ~ percent(.x/100)) +
   grattan_colour_manual(2)
 
 ```
