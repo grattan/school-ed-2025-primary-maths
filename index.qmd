@@ -746,4 +746,3 @@ bind_rows(weighted_results, unweighted_results) |>
 ```
 
 Please note that not all the charts throughout this file have been updated with appropriate weights.
-
