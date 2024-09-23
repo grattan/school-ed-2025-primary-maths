@@ -1,0 +1,1358 @@
+---
+title: "LSAY_EDA"
+format: 
+  html: 
+    toc: true
+    toc_float: true
+    toc_depth: 3
+execute:
+  warning: false
+  message: false
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| warning: false
+#| messages: false
+
+source("R/00-setup.R")
+# reading in the data
+LSAY2003 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01111_v7.1_unrestricted.dta")
+LSAY2006 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.01137_v10.1_unrestricted.dta")
+LSAY2009 <- read_dta("data/lsay_data/au.edu.anu.ada.ddi.30023v9_unrestricted.dta")
+LSAY2015 <- read_dta("data/lsay_data/2_LSAY_Y15_2022_STATA_01392_general.dta")
+
+```
+
+## LSAY 2003 cohort
+
+### How many primary school teachers are in the data set?
+
+To explore this in the Y03 data, we will look for the ASCED code `070103` (Teacher Education: Primary) in variables relating to questions focused at main area of study/training in this course at any given year: LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088
+
+```{r}
+
+unique_studying_teachers_y03 <- LSAY2003 %>%
+  # selecting variables for current area of study
+  select(STIDSTD, LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088) %>%
+  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103', NA values retained
+  mutate(across(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088),
+                ~ case_when(
+                   as.character(.) == '70103' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_, # Retain NA
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # Create new column where any 1 in the row = TRUE, no 1 = FALSE
+  mutate(teachers = if_any(c(LBCZ087, LCCZ087, LDCZ087, LEC087, LFC087, LGC087, LHC087, LIC087, LJC088, LKC088), ~ . == 1)) %>%
+  # Keep TRUE values
+  filter(teachers)
+
+# Creating table to display results
+ unique_studying_teachers_y03_tbl <- kbl(unique_studying_teachers_y03, caption = "Count of Primary School Education Students in Y03 Data.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1200px", height = "400px")
+# Displaying table 
+unique_studying_teachers_y03_tbl
+```
+
+There were **`r nrow(UNIQUE_STUDYING_TEACHERS)`** people studying primary school teaching at some point in the Y03 data.
+
+```{r}
+# Looking at student ID 2659 and 9362
+# Variable LHC087 (Main area of study: 2010) as both returned 0 here.
+students_left_teaching <- LSAY2003 %>% 
+  filter(STIDSTD %in% c(2659, 10049)) %>% 
+  select(STIDSTD, LDCZ087, LHC087) %>%
+  mutate(NEW_COURSE = c("Business Management", "Human Movement"))
+
+kbl(students_left_teaching, caption = "Closer look at students who left teaching.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "945px", height = "200px")
+
+```
+
+-   **Student 2659** went into another field of study four years after:
+
+    Business management (80301)
+
+-   **Student 10049** went into another field of study four years after:
+
+    Human Movement (69903)
+
+### How many primary school teachers?
+
+To see how many people were working as a primary school teacher at any point of responding to the questions, we focused on finding the ANSZVO code `2412` in variables related to the question:
+
+["What kind of work do you do?"]{.underline}
+
+-   LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029
+
+```{r}
+unique_teachers_y03 <- LSAY2003 %>%
+  # Selecting variables related to question: 'What kind of work do you do?'
+  select(STIDSTD, LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029) %>%
+  # Converting to character
+  mutate(across(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), as.character)) %>%
+  # Mutate across the observation 0 = not teacher, 1 = teacher, NA = NA. 
+  mutate(across(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ case_when(
+    . == '2412' ~ 1, # Teacher = 1
+    is.na(.) ~ NA_integer_, # NA values retained
+    TRUE ~ 0 # Non-teacher = 0.
+  ))) %>%
+  # New column where 1 across row = TRUE(Teacher), all else = FALSE 
+  mutate(actual_teachers = if_any(c(LDD025, LED025, LFD025, LGD025, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  filter(actual_teachers) # Filtering for TRUE condition
+
+# Creating table to display results
+ unique_teachers_yo3_table <- kbl(unique_teachers_y03, caption = "Number of Teachers in the Y03 Data.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1200px", height = "400px")
+
+```
+
+### What did these people study?
+
+```{r}
+# Selecting IDs of previously identified Y03 Teachers
+teacher_jobs <- LSAY2003[LSAY2003$STIDSTD %in% unique_teachers_y03$STIDSTD, ]
+
+# Using those IDs and selecting area of study variables across given years
+teachers_aos <- c('STIDSTD', 'LBCZ087', 'LCCZ087', 'LDCZ087', 'LEC087', 'LFC087', 'LGC087', 'LHC087', 'LIC087', 'LJC088', 'LKC088')
+teacher_jobs <- teacher_jobs[, teachers_aos]
+
+```
+
+```{r}
+# table to visualise what teachers studied more clearly
+fields <- data.frame(
+  Codes = c(70101, 70103, 70109, 70199, 70115, 90503, 91703, 92101, 100101, 80101),
+  `Field_of_Education` = c(
+    "Teacher Education: Early Childhood",
+    "Teacher Education: Primary",
+    "Teacher Education: Vocational Education and Training",
+    "Teacher Education, n.e.c.",
+    "English as a Second Language Teaching",
+    "Children's Services", 
+    "Religious Studies", 
+    "Sport and Recreation Activities",
+    "Music", "Accounting"
+  )
+)
+
+ fields <- kbl(fields, caption = "Area of Study for Teachers in Y03.") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+fields
+
+```
+
+### How well are teachers performing?
+
+-   Determine the percentage of primary teachers in the sample below the National proficient standard
+
+-   Determine the average achievement of primary teachers in the sample (in PISA points)
+
+We begin by checking that our analysis is working correctly by calculating the mean maths performance in each state in PISA 2003, and checking our numbers accord with those reported in Table 3.3, page. 81 by ACER [here](https://www.acer.org/files/PISA_screen.pdf). Our numbers are different, which is because there is a mismatch between the national sample and the LSAY sample.
+
+```{r}
+# using intsvy package to calculate average scores for each state
+library(intsvy)
+pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), 
+                           by = "STATEID", 
+                           data = LSAY2003) %>%
+  mutate(STATE = c("ACT", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT"), .before = everything()) |> 
+  select(-STATEID)
+
+# Comparing to entire PISA dataset
+pisa_2003 <- haven::read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
+
+# Need to rename to uppercase, because intsvy::pisa.mean.pv requires capitals
+names(pisa_2003) <- toupper(names(pisa_2003))
+
+pisa_state_total <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), 
+                           by = "STATE", 
+                           data = pisa_2003)
+
+ pisa_state <- kbl(pisa_state, caption = "Average Math Performance Across States") %>%
+  kable_paper() %>%
+  row_spec(0, background = "orange", bold = TRUE) %>%
+  scroll_box(width = "1000px", height = "300px")
+pisa_state
+```
+
+```{r}
+# Getting the IDs of the teachers
+teacher_ids_y03 <- unique_teachers_y03$STIDSTD
+# create a table for LSAY2003 splitting teachers and non-teachers
+LSAY2003_teachflag <- 
+  LSAY2003 |> 
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids_y03, T, F))
+
+table(LSAY2003_teachflag$teacher)
+
+# using rrepest package to calculate mean and standard deviation
+pisa2003_avg_and_mean <- 
+  Rrepest::Rrepest(data = LSAY2003_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fstr",1:80)),
+        tabl = T)
+
+pisa2003_avg_and_mean
+
+# Visualise distributions
+ggplot(data = data.frame(x = c(-0, 1000)), 
+       aes(x)) +
+  stat_function(fun = dnorm, 
+                n = 144, args = list(mean = pisa2003_avg_and_mean$body$dataset$`pv@math..mean..B`[2], sd = pisa2003_avg_and_mean$body$dataset$`pv@math..std..B`[2])) +
+  stat_function(fun = dnorm, 
+                n = 10226, args = list(mean = pisa2003_avg_and_mean$body$dataset$`pv@math..mean..B`[1], sd = pisa2003_avg_and_mean$body$dataset$`pv@math..std..B`[1]), 
+                color = grattan_red) +
+  scale_y_continuous_grattan() +
+  theme_grattan() +
+  labs(title = "Teachers' maths ability is less variable with a higher average", 
+       subtitle = glue("Probability distribution of Mathematics achievement in PISA 2003<br> for {colour_text(grattan_orange, 'teachers')} and {colour_text(grattan_red, 'non-teachers')}"), 
+       notes = "Note: Assumes a normal distribution, which may not be true given the small counts", 
+       x = "PISA scale score in Mathematics") +
+  theme(plot.subtitle = element_markdown())
+
+```
+
+```{r}
+# creating columns to indicate if teacher was proficient or not
+LSAY2003_proficiency <- 
+  LSAY2003_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
+# finding percentage and standard error of teachers and non-teachers proficient in math
+LSAY2003_agprof <- Rrepest::Rrepest(data = LSAY2003_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fstr",1:80)), 
+        tabl = F)
+
+```
+
+## LSAY 2006 cohort
+
+### How many people in the 2006 were studying primary school teaching?
+
+Looking for variables linked with the question: "What is your main area of study or training in this (apprenticeship/traineeship/course)?"
+
+-   LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088
+
+```{r}
+
+studying_teachers_2006 <- LSAY2006 %>%
+  # selecting variables for current area of study
+  select(STIDSTD, LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088) %>%
+  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
+  mutate(across(c(LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088),
+                ~ case_when(
+                   as.character(.) == '70103' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_, # Retain NA
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # Create new column where any 1 in the row = TRUE, no 1 = FALSE
+  mutate(unique_teachers = if_any(c(LBC087, LCC087, LDC087, LEC087, LFC087, LGC088, LHC088, LIC088, LJC088, LKC088), ~ . == 1)) %>%
+  # Keep TRUE values
+  filter(unique_teachers)
+
+studying_teachers_2006
+```
+
+```{r}
+# Looking at people who were at the time working as PS Teachers
+teachers_2006 <- LSAY2006 %>%
+  # Selecting variables for kind of work
+  select(STIDSTD, ANZSCO, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
+  # Mutate across the observation 
+  mutate(across(c(ANZSCO, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
+                ~ case_when(
+                   as.character(.) == '2412' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_,
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # column for TRUE = legit teachers, FALSE = not teachers
+  mutate(teachers_2006 = if_any(c(ANZSCO, LBD011, LCD024, LDD024, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  # Filter for TRUE condition
+  filter(teachers_2006)
+
+```
+
+```{r}
+# Taking a look at Y06 Teachers area of study
+teacher_jobs_06 <- LSAY2006[LSAY2006$STIDSTD %in% teachers_2006$STIDSTD, ]
+
+# Selecting teacher student IDs and variables related to area of study across the years
+selected_columns <- c('STIDSTD', 'LBC087', 'LCC087', 'LDC087', 'LEC087', 'LFC087', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
+teacher_jobs_06 <- teacher_jobs_06[, selected_columns]
+```
+
+```{r}
+# Creating a table to see what the teachers studied
+aos_2006 <- data.frame(
+  Code = c(100705, 100103, 100101, 80399, 70103, 70101, 70105, 70199, 91701, 60901, 61399, 60101, 91703, 80101, 81101, 91523, 90513),
+  Field = c(
+    "Written Communication",
+    "Drama and Theatre Studies",
+    "Music",
+    "Business and Management, n.e.c.",
+    "Teacher Education: Primary",
+    "Teacher Education: Early Childhood",
+    "Teacher Education: Secondary",
+    "Teacher Education, n.e.c.",
+    "Philosophy",
+    "Optometry",
+    "Public Health, n.e.c.",
+    "General Medicine",
+    "Religious Studies",
+    "Accounting",
+    "Banking and Finance",
+    "Literature",
+    "Counselling"
+  )
+)
+aos_2006 <- kable(aos_2006, caption = "Field of Education Codes 2006", align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", bold = TRUE, color = "white") %>%
+  column_spec(1, bold = TRUE)
+
+aos_2006
+
+```
+
+### Performance of 2006 cohort
+
+-   Determine the percentage of primary teachers in the sample below the National proficient standard
+
+-   Determine the average achievement of primary teachers in the sample (in PISA points)
+
+```{r}
+# creating a 2006 flag to distinguish between teachers and non-teachers
+teacher_ids_2006 <- teachers_2006$STIDSTD
+LSAY2006_teachflag <- 
+  LSAY2006 |> 
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids_2006, T, F))
+
+# getting the average and standard deviation of both groups
+pisa2006_avg_and_mean <- Rrepest::Rrepest(data = LSAY2006_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fstr",1:80)),
+        tabl = T)
+
+pisa2006_avg_and_mean
+```
+
+```{r}
+# seeing teachers who are proficient and not proficient
+LSAY2006_proficiency <- 
+  LSAY2006_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
+
+# getting the percentage and standard error of both groups who are proficient and not
+LSAY2006_agprof <- Rrepest::Rrepest(data = LSAY2006_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fstr",1:80)), 
+        tabl = F)
+
+LSAY2006_agprof
+
+```
+
+## LSAY 2009 cohort
+
+### How many people in the 2009 cohort studied teaching?
+
+"What is your main area of study or training in this (apprenceship/traineeship/course)?" \* LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088
+
+Then filtering for ASCED code `70103` (Teacher Education: Primary)
+
+```{r}
+
+studying_teachers_2009 <- LSAY2009 %>%
+  # selecting variables for current area of study
+  select(STIDSTD, LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088) %>%
+  # mutate across the observation to replace 0 = not '70103', 1 = is '70103'
+  mutate(across(c(LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088),
+                ~ case_when(
+                   as.character(.) == '70103' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_, # Retain NA
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # create new column where any 1 in the row = TRUE, no 1 = FALSE
+  mutate(unique_teachers = if_any(c(LBC089, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088, LIC088, LJC088, LKC088), ~ . == 1)) %>%
+  # Keep TRUE values
+  filter(unique_teachers)
+
+studying_teachers_2009
+```
+
+```{r}
+# finding teachers in the 2009 cohort
+teachers_2009 <- LSAY2009 %>%
+  # selecting variables for kind of work
+  select(STIDSTD, ANZSCO73, LBD014, LCD029, LDD029, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029) %>%
+  # Mutate across the observation 
+  mutate(across(c(ANZSCO73, LBD014, LCD029, LDD029, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029),
+                ~ case_when(
+                   as.character(.) == '2412' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_,
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # column for TRUE = legit teachers, FALSE = not teachers
+  mutate(legit_teachers = if_any(c(ANZSCO73, LBD014, LCD029, LDD029, LED029, LFD029, LGD029, LHD029, LID029, LJD029, LKD029), ~ . == 1)) %>%
+  # Filter for TRUE condition
+  filter(legit_teachers)
+
+teachers_2009
+```
+
+```{r}
+# Taking a look at what the legit teachers studied
+teacher_jobs_2009 <- LSAY2009[LSAY2009$STIDSTD %in% teachers_2009$STIDSTD, ]
+
+# selecting student ID and area of study across the years
+selected_columns <- c('STIDSTD', 'LBC089', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088', 'LIC088', 'LJC088', 'LKC088')
+teacher_jobs_2009 <- teacher_jobs_2009[, selected_columns]
+```
+
+```{r}
+aos_2009 <- data.frame(
+  Code = c(90701, 70199, 79999, 90503, 60501, 70103, 70105, 61799),
+  Field = c(
+    "Psychology",
+    "Teacher Education, n.e.c.",
+    "Education, n.e.c. ",
+    "Children's Services.",
+    "Pharmacy",
+    "Teacher Education: Primary",
+    "Teacher Education: Secondary",
+    "Rehabilitation Therapies, n.e.c."
+  )
+)
+aos_2009 <- kable(aos_2009, caption = "Field of Education Codes 2009", align = "c", booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, background = "orange", bold = TRUE, color = "white") %>%
+  column_spec(1, bold = TRUE)
+
+aos_2009
+```
+
+### Performance of 2009 cohort
+
+```{r}
+# Extracting the unique teacher IDs
+teacher_ids_2009 <- teachers_2009$STIDSTD
+```
+
+```{r}
+# creating a flag to distinguish between teachers and non-teachers
+LSAY2009_teachflag <- 
+  LSAY2009 |> 
+  mutate(teacher = if_else(STIDSTD %in% teacher_ids_2009, T, F))
+
+# using rrepest package to calculate mean and standard deviation
+pisa2009_avg_and_mean <- Rrepest::Rrepest(data = LSAY2009_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fstr",1:80)),
+        tabl = T)
+
+pisa2009_avg_and_mean
+
+```
+
+```{r}
+
+# distinguishing between proficient and non-proficient for both groups
+LSAY2009_proficiency <- 
+  LSAY2009_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
+
+# percentage above proficiency for both groups
+LSAY2009_agprof <- Rrepest::Rrepest(data = LSAY2009_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fstr",1:80)), 
+        tabl = F)
+
+```
+
+## LSAY 2015
+
+### How many people in the 2015 cohort studied teaching?
+
+"What is your main area of study or training in this (apprenceship/traineeship/course)?" \* LCC088, LDC088, LEC088, LFC088, LGC088, LHC088
+
+```{r}
+
+studying_teachers_2015 <- LSAY2015 %>%
+  # selecting variables for current area of study
+  select(LSAYID, LCC088, LDC088, LEC088, LFC088, LGC088, LHC088) %>%
+  # Mutate across the observation to replace 0 = not '70103', 1 = is '70103'
+  mutate(across(c(LCC088, LDC088, LEC088, LFC088, LGC088, LHC088),
+                ~ case_when(
+                   as.character(.) == '70103' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_, # Retain NA
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # Create new column where any 1 in the row = TRUE, no 1 = FALSE
+  mutate(unique_teachers = if_any(c(LCC088, LDC088, LEC088, LFC088, LGC088, LHC088), ~ . == 1)) %>%
+  # Keep TRUE values
+  filter(unique_teachers)
+
+studying_teachers_2015
+```
+
+### How many teachers in the 2015 cohort?
+
+Looking for code `2412` in variables related to the question: "What kind of work do you do in this job?" LCD022, LDD022, LED022, LFD025, LGD022, LHD022
+
+```{r}
+
+teacher_2015 <- LSAY2015 %>%
+  # Selecting variables for kind of work
+  select(LSAYID, LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022) %>%
+  # Mutate across the observation 
+  mutate(across(c(LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022),
+                ~ case_when(
+                   as.character(.) == '2412' ~ 1,  # PSE as 1
+                   is.na(.) ~ NA_integer_,
+                   TRUE ~ 0  # All else as 0
+                 ))) %>%
+  # column for TRUE = legit teachers, FALSE = not teachers
+  mutate(legit_teachers = if_any(c(LBEM004, LCD022, LDD022, LED022, LFD025, LGD022, LHD022), ~ . == 1)) %>%
+  # Filter for TRUE condition
+  filter(legit_teachers)
+
+teacher_2015
+```
+
+### What did these teachers study?
+
+```{r}
+# Extracting IDs of teachers in 2015 Cohort
+teacher_jobs_2015 <- LSAY2015[LSAY2015$LSAYID %in% teacher_2015$LSAYID, ]
+
+# selecting student ID and 'area of study' variables 
+selected_columns <- c('LSAYID', 'LCC088', 'LDC088', 'LEC088', 'LFC088', 'LGC088', 'LHC088')
+teacher_jobs_2015 <- teacher_jobs_2015[, selected_columns]
+
+teacher_jobs_2015 |> 
+  select(-LSAYID) |> 
+  apply(2, unique)
+```
+
+### Performance of 2015 cohort
+
+```{r}
+# Extracting the unique teacher IDs
+teacher_ids_2015 <- teacher_2015$LSAYID
+```
+
+```{r}
+
+# creating a flag to distinguish between teachers and non-teachers
+LSAY2015_teachflag <- 
+  LSAY2015 |> 
+  mutate(teacher = if_else(LSAYID %in% teacher_ids_2015, T, F))
+
+# rrepest package to calculate mean and standard deviation
+pisa2015_avg_and_mean <-  Rrepest::Rrepest(data = LSAY2015_teachflag,
+        svy = "PISA",
+        est = est(c("mean","std"),"pv@math"),
+        by = c("teacher"),
+        cm.weights = c(paste0("w_fsturwt",1:80)),
+        tabl = T)
+
+pisa2015_avg_and_mean
+
+
+```
+
+```{r}
+
+# flag for proficient and not proficient
+LSAY2015_proficiency <- 
+  LSAY2015_teachflag |> 
+  mutate(across(PV1MATH:PV5MATH,
+                ~ if_else(. >= 482, "Proficient", "Not proficient", missing = NA_character_),
+                .names = "{col}proficient"))
+
+# finding percentage and standard error of both groups proficient and non-proficient in math
+LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
+        svy = "PISA",
+        est = est("freq","pv@mathproficient"),
+        by = "teacher",
+        cm.weights = c(paste0("w_fsturwt",1:80)), 
+        tabl = F)
+
+LSAY2015_agprof
+```
+
+## Visualise performance
+
+```{r}
+data_2006 <- data_2006 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart <- ggplot(data_2006, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2006 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+
+base_chart + 
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+```
+
+```{r}
+# 2009
+data_2009 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+
+```
+
+```{r}
+data_2009 <- data_2009 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart_2009 <- ggplot(data_2009, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2009 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+
+base_chart_2009 + 
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+```
+
+```{r}
+# Quantiles for 2015
+data_2015 <- pisa.per.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher")
+
+pisa.ben.pv(pvlabel= paste0("PV", 1:10, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2015_teachflag)
+
+
+```
+
+```{r}
+data_2015 <- data_2015 |>
+  rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
+
+# Plot the data
+base_chart_2015 <- ggplot(data_2015, aes(x = as.factor(Percentiles), y = Score, fill = as.factor(teacher))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = Score - Std_err, ymax = Score + Std_err), 
+                position = position_dodge(0.9), width = 0.25, color = "black") +
+  labs(title = "Scores at Different Percentiles by Teacher Status",
+       subtitle = "PISA 2015 Math Scores for Teachers and Non-Teachers Across Percentiles",
+       x = "Percentiles",
+       y = "Score",
+       fill = "Teacher") +
+   geom_hline(yintercept = 482, linetype = "dashed", color = "red", size = 1)
+
+base_chart_2015 + 
+  theme_grattan(chart_type =  "bar") +
+  grattan_colour_manual(2) +
+  grattan_y_continuous()
+```
+
+```{r}
+
+
+data_2003 <- data_2003 |> 
+ # rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
+  mutate(Year = 2003)
+
+data_2006 <- data_2006 |> 
+  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
+  mutate(Year = 2006)
+
+data_2009 <- data_2009 |> 
+  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
+  mutate(Year = 2009)
+
+data_2015 <- data_2015 |> 
+  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
+  mutate(Year = 2015)
+
+
+
+```
+
+```{r}
+# Manual t-test calculation for 2003
+mean_FALSE <- 530.3
+mean_TRUE <- 554.0
+sd_FALSE <- 92.9
+sd_TRUE <- 64.8
+n_FALSE <- 10226
+n_TRUE <- 144
+se <- sqrt((92.9^2 / 10226) + (64.8^2 / 144)) # For Welch's t-test
+t_value <- (mean_FALSE - mean_TRUE) / se
+
+# approx dof
+df <- ( (sd_FALSE^2 / n_FALSE) + (sd_TRUE^2 / n_TRUE) )^2 /
+      ( ((sd_FALSE^2 / n_FALSE)^2 / (n_FALSE - 1)) + ((sd_TRUE^2 / n_TRUE)^2 / (n_TRUE - 1)) )
+
+# p-value
+p_value <- 2 * pt(t_value, df = df, lower.tail = TRUE)
+p_value
+t_value
+```
+
+```{r}
+# Manual t-test calculation for 2006
+#pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher")
+
+mean_FALSE <- 518.6
+mean_TRUE <- 550.7
+sd_FALSE <- 87.9
+sd_TRUE <- 67.2
+n_FALSE <- 14054
+n_TRUE <- 116
+se <- sqrt((87.9^2 / 14054) + (67.2^2 / 116)) # For Welch's t-test
+t_value <- (mean_FALSE - mean_TRUE) / se
+
+# approx dof - essentially 2 less than the total number of observations
+df <- ( (sd_FALSE^2 / n_FALSE) + (sd_TRUE^2 / n_TRUE) )^2 /
+      ( ((sd_FALSE^2 / n_FALSE)^2 / (n_FALSE - 1)) + ((sd_TRUE^2 / n_TRUE)^2 / (n_TRUE - 1)) )
+
+# p-value
+p_value <- 2 * pt(t_value, df = df, lower.tail = TRUE)
+p_value
+t_value
+```
+
+```{r}
+# Manual t-test calculation for 2009
+
+#pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2009_teachflag, by = "teacher")
+#pisa2009_avg_and_mean
+
+mean_FALSE <- 513.7
+mean_TRUE <- 552.7
+sd_FALSE <- 95.1
+sd_TRUE <- 63.9
+n_FALSE <- 14130
+n_TRUE <- 121
+se <- sqrt((95.1^2 / 14130) + (63.9^2 / 121)) # For Welch's t-test
+t_value <- (mean_FALSE - mean_TRUE) / se
+
+# approx dof
+df <- ( (sd_FALSE^2 / n_FALSE) + (sd_TRUE^2 / n_TRUE) )^2 /
+      ( ((sd_FALSE^2 / n_FALSE)^2 / (n_FALSE - 1)) + ((sd_TRUE^2 / n_TRUE)^2 / (n_TRUE - 1)) )
+
+# p-value
+p_value <- 2 * pt(t_value, df = df, lower.tail = TRUE)
+p_value
+t_value
+```
+
+```{r}
+# Manual t-test calculation for 2015
+# pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2015_teachflag, by = "teacher")
+mean_FALSE <- 494.0
+mean_TRUE <- 519.4
+sd_FALSE <- 92.5
+sd_TRUE <- 61.0
+n_FALSE <- 14503
+n_TRUE <- 27
+se <- sqrt((92.5^2 / 14503) + (61.0^2 / 27)) # For Welch's t-test
+t_value <- (mean_FALSE - mean_TRUE) / se
+
+# approx dof
+df <- ( (sd_FALSE^2 / n_FALSE) + (sd_TRUE^2 / n_TRUE) )^2 /
+      ( ((sd_FALSE^2 / n_FALSE)^2 / (n_FALSE - 1)) + ((sd_TRUE^2 / n_TRUE)^2 / (n_TRUE - 1)) )
+
+# p-value
+p_value <- 2 * pt(t_value, df = df, lower.tail = TRUE)
+p_value
+t_value
+
+```
+
+## Comparing Teacher Performance with other Professionals
+
+Starting with 2003 first as it has the largest sample of teachers. looking at other professions at the end of the waves.
+
+-   medical practitioners,
+
+-   midwifery and nursing professionals
+
+-   legal professionals,
+
+-   accounts auditors and company secretaries
+
+-   engineering professionals
+
+| Professionals                             | ANSZCO Code |
+|-------------------------------------------|-------------|
+| Medical Practitioners                     | 253         |
+| Midwifery and Nursing Professionals       | 254         |
+| Legal professionals                       | 271         |
+| accounts auditors and company secretaries | 221         |
+| Engineering professionals                 | 233         |
+
+```{r}
+# Adapting the code earlier to see the frequency of each profession in the last wave
+UNIQUE_PROFESSIONALS_Y03 <- LSAY2003 %>%
+  # Selecting last wave variable related to question: 'What kind of work do you do?'
+  select(STIDSTD, LKD029) %>%
+  mutate(across(c(LKD029), as.character)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 1,  # Teacher = 1
+    startsWith(LKD029, '253')  ~ 2,  # Medical Practitioners = 2
+    startsWith(LKD029, '254')  ~ 3,  # Midwifery and Nursing Professionals = 3
+    startsWith(LKD029, '271')  ~ 4,  # Legal Professionals = 4
+    startsWith(LKD029, '221')  ~ 5,  # Accounts Auditors and Company Secretaries = 5
+    startsWith(LKD029, '233')  ~ 6,  # Engineering Professionals = 6
+    is.na(LKD029) ~ NA_integer_, # NA values retained
+    TRUE ~ 0 # All others = 0
+  )) %>%
+  # keeping 1:6 professions
+  filter(profession != 0 & !is.na(profession))
+
+# frequency of each profession
+profession_frequency <- UNIQUE_PROFESSIONALS_Y03 %>%
+  count(profession) %>%
+  mutate(
+    Profession = case_when(
+      profession == 1 ~ 'Teacher',
+      profession == 2 ~ 'Medical Practitioners',
+      profession == 3 ~ 'Midwifery and Nursing Professionals',
+      profession == 4 ~ 'Legal Professionals',
+      profession == 5 ~ 'Accounts Auditors and Company Secretaries',
+      profession == 6 ~ 'Engineering Professionals'
+    )
+  )
+
+profession_frequency
+```
+
+```{r}
+
+# Adapting the code to include different professions
+LSAY2003_profession_flag <- LSAY2003 %>%
+  mutate(LKD029 = as.character(LKD029)) %>%
+  mutate(profession = case_when(
+    LKD029 == '2412' ~ 'Teacher',
+    startsWith(LKD029, '253') ~ 'Medical Practitioners',
+    startsWith(LKD029, '254') ~ 'Midwifery and Nursing Professionals',
+    startsWith(LKD029, '271') ~ 'Legal Professionals',
+    startsWith(LKD029, '221') ~ 'Accounts Auditors and Company Secretaries',
+    startsWith(LKD029, '233') ~ 'Engineering Professionals',
+    TRUE ~ 'Other'
+  ))
+
+professionals <- Rrepest::Rrepest(
+  data = LSAY2003_profession_flag,
+  svy = "PISA",
+  est = est(c("mean","std"),"pv@math"),
+  by = c("profession"),
+  cm.weights = c(paste0("w_fstr", 1:80)),
+  tabl = FALSE
+)
+
+```
+
+```{r}
+professionals_vis <- professionals %>%
+  rename(
+    Profession = str_wrap(Profession, 30),
+    Mean_Math = `b.mean.pv@math`,
+    SE_Mean_Math = `se.mean.pv@math`,
+    Std_Math = `b.std.pv@math`,
+    SE_Std_Math = `se.std.pv@math`
+  ) %>%
+  arrange(Mean_Math) %>%
+  mutate(Profession = factor(Profession, levels = unique(Profession)),
+         upper_ci_90 = Mean_Math + 1.64 * SE_Mean_Math,
+         lower_ci_90 = Mean_Math - 1.64 * SE_Mean_Math) # Reorder Profession factor
+
+profession_visualisation <- professionals_vis %>%
+  ggplot(aes(y = Profession, 
+             x = Mean_Math,
+             xmin = lower_ci_90,
+             xmax = upper_ci_90)) +
+  geom_pointinterval(shape = 21,
+                     size = 3,
+                     stroke = 1.5,
+                     fill = "white", 
+                     colour = grattan_orange,
+                     linewidth = 4.5, 
+                     interval_size_domain = c(3,4.5)) +
+  labs(
+      title = "Teachers at 15 years-old were less likely to be proficient in math compared to other professionals",
+    subtitle = glue("Average PISA 2003 Maths scores for teachers and other professionals, with 90 per cent confident intervals"),
+    x = "Score",
+    y = "Teacher",
+    caption = "Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)"
+  ) +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 5.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency\nbenchmark", size = 18/.pt) + 
+  xlim(450, 700) +
+  theme_grattan(flipped = TRUE) +
+  grattan_colour_manual(n = 1, faded_level= 5) +
+  theme(axis.line = element_line(colour = "grey80"))
+
+# check_chart_aspect_ratio(profession_visualisation, type = "fullslide")
+
+```
+
+https://scc.ms.unimelb.edu.au/resources/graphs-for-statistical-analysis/graphs \* how to show standard error/explain simply
+
+```{r}
+#70th percentile
+pisa.per.pv(pvlabel= paste0("PV",1:5,"MATH"),
+per=c(10, 25, 70, 90), data= LSAY2003)
+```
+
+```{r}
+# Finding how many teachers are above the 70th percentile: '582.26'
+pisa.ben.pv(pvlabel= paste0("PV",1:5,"MATH"), cutoff=582.26, by="teacher", data=LSAY2003_teachflag)
+```
+
+```{r}
+# Trying out different visualisations
+# Seeing if we can get some standard deviations in
+# 2003 Visualisations (To replace boxplots/barcharts)
+
+visualisation_2003 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "teacher", data = LSAY2003_teachflag)
+
+names(visualisation_2003)[which(names(visualisation_2003) == "s.e")[1]] <- "SD_s.e"
+
+
+distributions_2003 <- visualisation_2003 |> 
+  ggplot(aes(y= teacher, xdist = dist_normal(Mean, SD))) +
+  stat_halfeye(.width = 0.9,
+               fill = grattan_orange,
+               point_fill = "white",
+               shape = 21,
+               size = 6) +
+
+  geom_rug(data = subset(LSAY2003_teachflag, teacher == T) , 
+           aes(x = rowMeans(
+             # We should not average PVs at the student level, but this nevertheless gives us a sense of teachers' scores
+             cbind(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH)
+             )
+             ),
+           inherit.aes = F) +
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
+       subtitle = glue("Modelled distribution of PISA 2003 Mathematical Proficiency scores for teachers and non-teachers"),
+       x = "Score",
+       y = NULL,
+  caption = "Notes: Assumes a normal distribution of teacher scores. Source: Longitudinal Surveys of Australian Youth, 2003 cohort (Version 7.1)") +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 0.75, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))
+
+# combined_label <- glue("
+#   Mean SE (Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == TRUE], 2)}\n
+#   SD SE (Teachers): {round(visualisation_2003$SD_s.e[visualisation_2003$teacher == TRUE], 2)}\n
+#   Mean SE (Non-Teachers): {round(visualisation_2003$s.e[visualisation_2003$teacher == FALSE], 2)}\n
+#   SD SE (Non-Teachers): {round(visualisation_2003$SD_s.e[visualisation_2003$teacher == FALSE], 2)}
+# ")
+
+# Add the combined label as a single annotation
+# distributions_2003 <- distributions_2003 +
+#   annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
+
+teacher_non_teacher_distributions_2003 <-  distributions_2003 +
+  theme_grattan(chart_type = "bar", flipped = T) +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
+  grattan_colour_manual(3, faded_level = 2) +
+   theme(axis.line = element_line(colour = "grey80"))
+
+teacher_non_teacher_distributions_2003
+   
+# check_chart_aspect_ratio()
+
+#grattan_save_pptx(filename = "atlas/StatInterval_Plot2003.pptx")
+
+
+
+```
+
+```{r}
+# 2006 Visualisations (To replace boxplots/barcharts)
+visualisation_2006 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "teacher", data = LSAY2006_teachflag)
+
+names(visualisation_2006)[which(names(visualisation_2006) == "s.e")[1]] <- "SD_s.e"
+
+
+distributions_2006 <- visualisation_2006 |> 
+  ggplot(aes(y= teacher, xdist = dist_normal(Mean, SD))) +
+  stat_interval() +
+  geom_point(aes(x = Mean), size = 3, color = "black") +
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
+       subtitle = glue("Distribution of {colour_text('#FF0000','Pisa 2006')} Mathematical Proficiency scores for teachers and non-teachers"),
+       x = "Score",
+       y = "Teacher",
+  caption = "Source: Longitudinal Surveys of Australian Youth, 2006 cohort (Version 7.1)") +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))  +
+   xlim(300, 750)
+
+combined_label <- glue("
+  Mean SE (Teachers): {round(visualisation_2006$s.e[visualisation_2006$teacher == TRUE], 2)}\n
+  SD SE (Teachers): {round(visualisation_2006$SD_s.e[visualisation_2006$teacher == TRUE], 2)}\n
+  Mean SE (Non-Teachers): {round(visualisation_2006$s.e[visualisation_2006$teacher == FALSE], 2)}\n
+  SD SE (Non-Teachers): {round(visualisation_2006$SD_s.e[visualisation_2006$teacher == FALSE], 2)}
+")
+
+# Add the combined label as a single annotation
+distributions_2006 <- distributions_2006 +
+  annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
+
+ distributions_2006 +
+  theme_grattan(chart_type = "bar", flipped = T) +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
+  grattan_colour_manual(3, faded_level = 2) +
+   theme(axis.line = element_line(colour = "grey80")) 
+
+
+# grattan_save_pptx(filename = "atlas/StatInterval_Plot2006.pptx")
+
+```
+
+```{r}
+# 2009 Visualisations (To replace boxplots/barcharts)
+visualisation_2009 <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), by = "teacher", data = LSAY2009_teachflag)
+
+names(visualisation_2009)[which(names(visualisation_2009) == "s.e")[1]] <- "SD_s.e"
+
+
+distributions_2009 <- visualisation_2009 |> 
+  ggplot(aes(y= teacher, xdist = dist_normal(Mean, SD))) +
+  stat_interval() +
+  geom_point(aes(x = Mean), size = 3, color = "black") +
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
+       subtitle = glue("Distribution of {colour_text('#FF0000','PISA 2009')} Mathematical Proficiency scores for teachers and non-teachers"),
+       x = "Score",
+       y = "Teacher",
+  caption = "Source: Longitudinal Surveys of Australian Youth, 2009 cohort (Version 7.1)") +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher"))  +
+   xlim(300, 750)
+
+combined_label <- glue("
+  Mean SE (Teachers): {round(visualisation_2009$s.e[visualisation_2009$teacher == TRUE], 2)}\n
+  SD SE (Teachers): {round(visualisation_2009$SD_s.e[visualisation_2009$teacher == TRUE], 2)}\n
+  Mean SE (Non-Teachers): {round(visualisation_2009$s.e[visualisation_2009$teacher == FALSE], 2)}\n
+  SD SE (Non-Teachers): {round(visualisation_2009$SD_s.e[visualisation_2009$teacher == FALSE], 2)}
+")
+
+# Add the combined label as a single annotation
+distributions_2009 <- distributions_2009 +
+  annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
+
+ distributions_2009 +
+  theme_grattan(chart_type = "bar", flipped = T) +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
+  grattan_colour_manual(3, faded_level = 2) +
+   theme(axis.line = element_line(colour = "grey80"))
+   
+
+
+# grattan_save_pptx(filename = "atlas/StatInterval_Plot2009.pptx")
+
+```
+
+```{r}
+visualisation_2015 <- pisa.mean.pv(pvlabel = paste0("PV", 1:10, "MATH"), by = "teacher", data = LSAY2015_teachflag)
+
+names(visualisation_2015)[which(names(visualisation_2015) == "s.e")[1]] <- "SD_s.e"
+
+
+distributions_2015 <- visualisation_2015 |> 
+  ggplot(aes(y= teacher, xdist = dist_normal(Mean, SD))) +
+  stat_interval() +
+  geom_point(aes(x = Mean), size = 3, color = "black") +
+  labs(title = "Teachers at 15 years-old were slightly more likely to be proficient in math compared to the general population",
+       subtitle = glue("Distribution of {colour_text('#FF0000','PISA 2015')} Mathematical Proficiency scores for teachers and non-teachers"),
+       x = "Score",
+       y = "Teacher",
+  caption = "Source: Longitudinal Surveys of Australian Youth, 2015 cohort (Version 7.1)") +
+  geom_vline(xintercept = 482, linetype = "dotted", color = "black", size = 1) + 
+  annotate(geom = "text", y = 1.5, x = 475, colour = "black", vjust = 0.5, hjust = -.15, label = "Proficiency benchmark") +
+ scale_y_discrete(labels = c("TRUE" = "Teacher", "FALSE" = "Non-Teacher")) +
+   xlim(300, 750)
+
+combined_label <- glue("
+  Mean SE (Teachers): {round(visualisation_2015$s.e[visualisation_2015$teacher == TRUE], 2)}\n
+  SD SE (Teachers): {round(visualisation_2015$SD_s.e[visualisation_2015$teacher == TRUE], 2)}\n
+  Mean SE (Non-Teachers): {round(visualisation_2015$s.e[visualisation_2015$teacher == FALSE], 2)}\n
+  SD SE (Non-Teachers): {round(visualisation_2015$SD_s.e[visualisation_2015$teacher == FALSE], 2)}
+")
+
+# Add the combined label as a single annotation
+distributions_2015 <- distributions_2015 +
+  annotate(geom = "label", x = 650, y = 0.62, size = 2.8, color = "black", label = combined_label, hjust = 0, fill = "burlywood1")
+
+ distributions_2015 +
+  theme_grattan(chart_type = "bar", flipped = T) +
+  theme(plot.subtitle = element_markdown(lineheight = 1.1), legend.position = "bottom") +
+  grattan_colour_manual(3, faded_level = 2) +
+   theme(axis.line = element_line(colour = "grey80"))
+   
+
+
+# grattan_save_pptx(filename = "atlas/StatInterval_Plot2015.pptx")
+
+```
+
+# WEIGHTED AVERAGE ACROSS THE YEARS
+
+Get the aggregate percentage of teachers who are proficient overtime. Nice to have: Compare this to all non-teachers and other professionals.
+
+```{r}
+# adding years to the df
+LSAY2003_agprof <- LSAY2003_agprof %>%
+  mutate(Year = 2003)
+LSAY2006_agprof <- LSAY2006_agprof %>%
+  mutate(Year = 2006)
+LSAY2009_agprof <- LSAY2009_agprof %>%
+  mutate(Year = 2009)
+LSAY2015_agprof <- LSAY2015_agprof %>%
+  mutate(Year = 2015)
+
+#joining all these dataframes together
+LSAY_agprof <- bind_rows(LSAY2003_agprof, LSAY2006_agprof, LSAY2009_agprof, LSAY2015_agprof)
+
+#dropping last two columns
+LSAY_agprof <- LSAY_agprof %>%
+  select(-c("b.pv@mathproficient.NA", "se.pv@mathproficient.NA"))
+# rearranging so year column is at the start
+LSAY_agprof <- LSAY_agprof %>%
+  select(Year, everything())
+
+# getting all the n_teachers
+n_teachers_2003 <- sum(LSAY2003_teachflag$teacher == TRUE)
+n_teachers_2006 <- sum(LSAY2006_teachflag$teacher == TRUE)
+n_teachers_2009 <- sum(LSAY2009_teachflag$teacher == TRUE)
+n_teachers_2015 <- sum(LSAY2015_teachflag$teacher == TRUE)
+
+# non-teachers
+n_normal_2003 <- sum(LSAY2003_teachflag$teacher == FALSE)
+n_normal_2006 <- sum(LSAY2006_teachflag$teacher == FALSE)
+n_normal_2009 <- sum(LSAY2009_teachflag$teacher == FALSE)
+n_normal_2015 <- sum(LSAY2015_teachflag$teacher == FALSE)
+
+# finding weighted average of proficient teacher = TRUE
+LSAY_agprof_t <- LSAY_agprof %>%
+  filter(teacher == TRUE) %>%
+  #adding a column for n = teachers 'n_teachers_2003' for each year
+  mutate(n_teachers = case_when(
+    Year == 2003 ~ n_teachers_2003,
+    Year == 2006 ~ n_teachers_2006,
+    Year == 2009 ~ n_teachers_2009,
+    Year == 2015 ~ n_teachers_2015
+  )) 
+
+# creating a weighted average proficiency for each year
+# getting sum of all teacher samples
+total_teachers <- sum(LSAY_agprof_t$n_teachers)
+
+LSAY_agprof_t <- LSAY_agprof_t %>%
+  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_teachers) / total_teachers)
+
+
+LSAY_agprof_nt <- LSAY_agprof %>%
+  filter(teacher == FALSE) %>%
+  #adding a column for n = teachers 'n_teachers_2003' for each year
+  mutate(n_normal = case_when(
+    Year == 2003 ~ n_normal_2003,
+    Year == 2006 ~ n_normal_2006,
+    Year == 2009 ~ n_normal_2009,
+    Year == 2015 ~ n_normal_2015
+  )) 
+
+total_non_teachers <- sum(LSAY_agprof_nt$n_normal)
+
+LSAY_agprof_nt <- LSAY_agprof_nt %>%
+  mutate(weighted_prof = (`b.pv@mathproficient.Proficient` * n_normal) / total_non_teachers)
+
+total_proficient_nt <- sum(LSAY_agprof_nt$weighted_prof)
+total_proficient_t <- sum(LSAY_agprof_t$weighted_prof)
+
+# creating a bar chat for the weighted average proficiency over time for teacher vs non-teacher
+
+t_nt_agprof <- bind_rows(LSAY_agprof_t, LSAY_agprof_nt)
+
+total_weighted_prof <- t_nt_agprof %>%
+  group_by(teacher) %>%
+  summarise(total_weighted_prof = sum(weighted_prof, na.rm = TRUE))
+
+# changing TRUE, FALSE to TEACHER and NON-TEACHER
+total_weighted_prof$teacher <- ifelse(total_weighted_prof$teacher == TRUE, "Teacher", "Non-Teacher")
+
+```
+
+Proficient / non-proficient chart for teachers, non teachers and professionals - bar chart - ONLY FOR PROFICIENT/MEETING PROFICIENCY
+
+```{r}
+
+total_agg_prof <- ggplot(total_weighted_prof, aes(x = teacher, y = total_weighted_prof, fill = teacher)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  labs(title = "Teachers tend to have higher proficiency in mathematics compared to non-teachers over time",
+       subtitle = "Weighted average proficiency in PISA mathematics for teachers and non-teachers over time",
+       x = "Teacher", y = "Percentage Weighted Proficiency",
+       caption = "Source: Longitudinal Surveys of Australian Youth: 2003, 2006, 2009 and 2015 Cohort") +
+  theme_minimal() +
+  coord_flip() 
+
+total_agg_prof <- total_agg_prof +
+  theme_grattan(chart_type = "bar",
+                flipped = T) +
+  grattan_y_continuous(labels = ~ percent(.x/100)) +
+  grattan_colour_manual(2)
+
+total_agg_prof
+
+```
+
+-   box plot with aggregated data, 10th and 90th percentiles for boxplots: Refer to top of the picture for the prefered data frame.
+
+```{r}
+boxplot_stats <- function(data, year, is_teacher) {
+
+  filtered_data <- data[data$teacher == is_teacher, ]
+  
+  boxplot_data <- pisa.per.pv(
+    pvlabel = paste0("PV", 1:5, "MATH"), 
+    per = c(10, 25, 50, 75, 90), 
+    data = filtered_data
+  )
+  
+  Q1 <- boxplot_data$Score[boxplot_data$Percentiles == 25]
+  Q2 <- boxplot_data$Score[boxplot_data$Percentiles == 50]
+  Q3 <- boxplot_data$Score[boxplot_data$Percentiles == 75]
+  IQR <- Q3 - Q1
+  
+  # calc whiskers
+  lower_whisker <- boxplot_data$Score[boxplot_data$Percentiles == 10]
+  upper_whisker <- boxplot_data$Score[boxplot_data$Percentiles == 90]
+  
+  # creating df from summary stats
+  boxplot_summary <- data.frame(
+    Year = year,
+    Q1 = Q1,
+    Q2 = Q2,
+    Q3 = Q3,
+    IQR = IQR,
+    Upper_whisker = upper_whisker,
+    Lower_whisker = lower_whisker
+  )
+  
+  return(boxplot_summary)
+}
+
+# For teachers
+boxplot_2003_teachers <- boxplot_stats(LSAY2003_teachflag, 2003, TRUE)
+boxplot_2006_teachers <- boxplot_stats(LSAY2006_teachflag, 2006, TRUE)
+boxplot_2009_teachers <- boxplot_stats(LSAY2009_teachflag, 2009, TRUE)
+boxplot_2015_teachers <- boxplot_stats(LSAY2015_teachflag, 2015, TRUE)
+# binding together and adding column TEACHER
+pisa_boxplot_stats <- rbind(boxplot_2003_teachers, boxplot_2006_teachers, boxplot_2009_teachers, boxplot_2015_teachers) %>%
+  mutate(teacher = TRUE)
+
+# For non-teachers
+boxplot_2003_nonteachers <- boxplot_stats(LSAY2003_teachflag, 2003, FALSE)
+boxplot_2006_nonteachers <- boxplot_stats(LSAY2006_teachflag, 2006, FALSE)
+boxplot_2009_nonteachers <- boxplot_stats(LSAY2009_teachflag, 2009, FALSE)
+boxplot_2015_nonteachers <- boxplot_stats(LSAY2015_teachflag, 2015, FALSE)
+# binding together and adding column TEACHER = FALSE
+pisa_boxplot_stats_nt <- rbind(boxplot_2003_nonteachers, boxplot_2006_nonteachers, boxplot_2009_nonteachers, boxplot_2015_nonteachers) %>%
+  mutate(teacher = FALSE)
+
+# binding together
+pisa_boxplot_stats <- rbind(pisa_boxplot_stats, pisa_boxplot_stats_nt)
+
+
+```
+
+```{r}
+teacher_fact <- 
+  pisa_boxplot_stats |> 
+  mutate(teacher = fct_recode(factor(teacher), 
+                              "Non-teacher" = 'FALSE', 
+                              "Teacher" = 'TRUE')) |> 
+  ggplot(aes(x = factor(Year), 
+                           fill = teacher,
+             col = teacher,
+                           ymin = Lower_whisker, lower = Q1, middle = Q2, upper = Q3, ymax = Upper_whisker)) +
+  geom_boxplot(stat = "identity") +
+  labs(x = NULL, 
+       y = "PISA score", 
+       title = "Teachers tended to perform better across the performance spectrum",
+       subtitle = glue("Scores in PISA mathematics of {colour_text(grattan_red, 'teachers')} and {colour_text(grattan_orange, 'non-teachers')} across years}"), 
+       caption = "Notes: The boxplots show the median, interquartile range, and 10th and 90th percentiles.") +
+  theme_minimal() +
+  coord_flip()
+
+teacher_fact <- teacher_fact +
+  theme_grattan(chart_type = "normal", 
+                flipped = TRUE) +
+  theme(plot.subtitle = element_markdown()) +
+  ggdirectlabel::geom_richlegend(aes
+                                 (label = fct_rev(teacher))
+                                 ) +
+  grattan_y_continuous() +
+  grattan_fill_manual(n = 2, faded_level = 4)
+
+teacher_fact
+```
+
+facet by year \^
+
+```{r}
+# Save key charts
+
+plot_list_for_export <- list(total_agg_prof, 
+                             teacher_fact, 
+                             profession_visualisation)
+
+grattan_save_pptx(plot_list_for_export, filename = "atlas/LSAY_plots.pptx")
+```
