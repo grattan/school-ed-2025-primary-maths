@@ -58,7 +58,7 @@ unique_studying_teachers_y03 <- LSAY2003 %>%
 unique_studying_teachers_y03_tbl
 ```
 
-There were **`r nrow(UNIQUE_STUDYING_TEACHERS)`** people studying primary school teaching at some point in the Y03 data.
+There were **`r nrow(unique_studying_teachers_y03)`** people studying primary school teaching at some point in the Y03 data.
 
 ```{r}
 # Looking at student ID 2659 and 9362
@@ -170,7 +170,7 @@ pisa_state <- pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"),
   select(-STATEID)
 
 # Comparing to entire PISA dataset
-pisa_2003 <- haven::read_sav("data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
+pisa_2003 <- haven::read_sav("data/lsay_data/CY02_AUS_PISA2003_StdQ_AchieveandSchQ_forPublic_Release.sav")
 
 # Need to rename to uppercase, because intsvy::pisa.mean.pv requires capitals
 names(pisa_2003) <- toupper(names(pisa_2003))
@@ -613,6 +613,9 @@ LSAY2015_agprof
 ## Visualise performance
 
 ```{r}
+data_2006 <- pisa.per.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2006_teachflag, by = "teacher", per = c(10, 25, 75, 90))
+
+
 data_2006 <- data_2006 |>
   rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher)
 
@@ -669,7 +672,7 @@ data_2015 <- pisa.per.pv(pvlabel = paste0("PV", 1:10, "MATH"), data = LSAY2015_t
 
 pisa.mean.pv(pvlabel = paste0("PV", 1:5, "MATH"), data = LSAY2003_teachflag, by = "teacher")
 
-pisa.ben.pv(pvlabel= paste0("PV", 1:10, "MATH"), cutoff= mathcut, by="teacher", data=LSAY2015_teachflag)
+
 
 
 ```
@@ -696,28 +699,6 @@ base_chart_2015 +
   grattan_y_continuous()
 ```
 
-```{r}
-
-
-data_2003 <- data_2003 |> 
- # rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
-  mutate(Year = 2003)
-
-data_2006 <- data_2006 |> 
-  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
-  mutate(Year = 2006)
-
-data_2009 <- data_2009 |> 
-  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
-  mutate(Year = 2009)
-
-data_2015 <- data_2015 |> 
-  #rename(Percentiles = Percentiles, Score = Score, Std_err = 'Std. err.', teacher = teacher) |> 
-  mutate(Year = 2015)
-
-
-
-```
 
 ```{r}
 # Manual t-test calculation for 2003
@@ -898,12 +879,13 @@ professionals <- Rrepest::Rrepest(
 ```{r}
 professionals_vis <- professionals %>%
   rename(
-    Profession = str_wrap(Profession, 30),
+    Profession = profession,
     Mean_Math = `b.mean.pv@math`,
     SE_Mean_Math = `se.mean.pv@math`,
     Std_Math = `b.std.pv@math`,
     SE_Std_Math = `se.std.pv@math`
   ) %>%
+  mutate(Profession = str_wrap(Profession,30)) %>%
   arrange(Mean_Math) %>%
   mutate(Profession = factor(Profession, levels = unique(Profession)),
          upper_ci_90 = Mean_Math + 1.64 * SE_Mean_Math,
@@ -1356,3 +1338,5 @@ plot_list_for_export <- list(total_agg_prof,
 
 grattan_save_pptx(plot_list_for_export, filename = "atlas/LSAY_plots.pptx")
 ```
+
+
