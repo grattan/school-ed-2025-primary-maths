@@ -610,6 +610,37 @@ LSAY2015_agprof <- Rrepest::Rrepest(data = LSAY2015_proficiency,
 LSAY2015_agprof
 ```
 
+# creating a barplot of counts of teachers in each year
+
+```{r}
+# Creating a table to display the counts of teachers in each year
+teacher_counts <- data.frame(
+  Year = c(2003, 2006, 2009, 2015),
+  Count = c(nrow(unique_teachers_y03), nrow(teachers_2006), nrow(teachers_2009), nrow(teacher_2015)))
+
+# creating a barplot with ggplot for teacher_counts, 2003 at the top of the chart
+
+teacher_count_plot <- teacher_counts |> 
+  ggplot(aes(x = fct_relevel(factor(Year), "2003", after = 0), y = Count, fill = factor(Year))) +
+  geom_bar(stat = "identity") +
+  theme(legend.position = "none") +
+  labs(title = "Teachers counts in 2015 are significantly disproportionate to other years",
+       subtitle = "Count of Primary School Teachers in Each PISA Year",
+       x = "Year",
+       y = "Count",
+       fill = "Year") +
+  coord_flip()
+
+teacher_count_plot +
+  theme_grattan(chart_type = "bar") +
+  grattan_colour_manual(4) +
+  grattan_y_continuous()
+
+
+```
+
+
+
 ## Visualise performance
 
 ```{r}
@@ -1332,11 +1363,14 @@ facet by year \^
 ```{r}
 # Save key charts
 
-plot_list_for_export <- list(total_agg_prof, 
+plot_list_for_export <- list(total_agg_prof,
+                             teacher_count_plot,
                              teacher_fact, 
                              profession_visualisation)
 
 grattan_save_pptx(plot_list_for_export, filename = "atlas/LSAY_plots.pptx")
+
+grattan_save_pptx(teacher_count_plot, filename = "atlas/teacher_count.pptx")
 ```
 
 
