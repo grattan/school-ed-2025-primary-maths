@@ -155,6 +155,8 @@ grattan_save("atlas/Historical_NAPLAN_Numeracy_EYL.pdf", base_chart, "fullslide"
 grattan_save("atlas/Historical_NAPLAN_Numeracy_EYL.png", base_chart, "fullslide", save_data = TRUE)
 grattan_save_pptx(base_chart, "atlas/Historical_NAPLAN_Numeracy_EYL.pptx", "fullslide")
 
+#####
+
 #4B. Re-baseline the data to the same starting point and explore months of growth differences before and after COVID. (Subsequantly, will use regression analysis to explore if these are statistically significant.
 
 #Narrow data set
@@ -182,7 +184,7 @@ relative_change_eyl_chart <- relative_change_eyl |>
            fill = "white", col = NA) +
   geom_point(size = 8/.pt) + #and plot a data points, small size
   grattan_y_continuous(limits = c(-3,12), breaks =seq(-3, 12, by = 3)) + # Adjust the scale
-  grattan_x_continuous(limits = c(2011.5, 2024), breaks = c(2008, 2014, 2012, 2016, 2018, 2020, 2022)) + #Adjust x-axis to start at 2008 and end at 2022
+  grattan_x_continuous(limits = c(2011.5, 2023), breaks = c(2008, 2014, 2012, 2016, 2018, 2020, 2022)) + #Adjust x-axis to start at 2012 and end at 2022
   theme_grattan() + #adopt grattan chart design and themes. Could include inside hte brackets:  chart_type = "normal"
   scale_colour_grattan() +
   labs(
@@ -208,9 +210,54 @@ relative_change_eyl_chart <- relative_change_eyl |>
 #Don't re-run this - will overwrite manual format edits
 #grattan_save_pptx(filename = "atlas/relative_change_eyl_chart.pptx", relative_change_eyl_chart, type = "fullslide")
 
+###
 
+#4C - Calculate learning gaps over tim for parental education bachelor and Year 11.
 
+learning_gaps_over_time <-
+  #refine data set
+  filter(naplan_numeracy_eyl, state == "AUS", subgroup %in% c("Parental Education: Year 11", "Parental Education: Bachelor"), calendar_year %in% seq(2012, 2022))|>
+  select(calendar_year, year_level, subgroup, numeracy_eyl) |>
+  #calculate the gap
+  pivot_wider(names_from = subgroup, values_from = numeracy_eyl) |>
+  mutate(ses_gap = `Parental Education: Bachelor` - `Parental Education: Year 11`, ses_gap_whole_years = floor(ses_gap), ses_gap_months = round((ses_gap-ses_gap_whole_years)*12, 0))
 
+#View(learning_gaps_over_time)
+
+#Chart gaps with x = year, y = ses_gap, line colour = year level
+learning_gaps_over_time_chart <- learning_gaps_over_time |>
+  ggplot(aes(x = calendar_year, y = ses_gap, colour = year_level, group = year_level)) +  #plot using year level as the grouping for the lines and colour each distinctly
+  geom_line() +  #plot a line chart
+  annotate(geom = "rect", xmin = 2019.05, xmax = 2020.95, ymin = -Inf, ymax = Inf,
+           fill = "white", col = NA) +
+  geom_point(size = 8/.pt) + #and plot a data points, small size
+  grattan_y_continuous(limits = c(0,5), breaks = seq(0, 5, by = 1)) + # Adjust the scale
+  grattan_x_continuous(limits = c(2011.5, 2023), breaks = c(2008, 2014, 2012, 2016, 2018, 2020, 2022)) + #Adjust x-axis to start at 2012 and end at 2022
+  theme_grattan() + #adopt grattan chart design and themes. Could include inside the brackets:  chart_type = "normal"
+  scale_colour_grattan() +
+  labs(
+    x = NULL,
+    colour = "Year level",
+    title = "SES gaps are not closing over time",
+    subtitle = "Numeracy learning gap between students with bachelor qualified parents and parents not completing school, in effective years of learning"
+  ) + #Label the chart
+  ggdirectlabel::geom_finallabel(aes(label = paste("Year", year_level))) +
+  annotate("text",
+           x = 2020,
+           y = 2.5,
+           label = "NAPLAN cancelled due to COVID-19",
+           angle = 90,
+           hjust = 0.5,
+           vjust = 0.5,
+           size = 18/.pt,  # Adjust text size
+           color = grattan_black  # Change text color
+  ) #Add a label for the lack of 2020 data
+
+#check_chart_aspect_ratio(learning_gaps_over_time_chart)
+
+#Don't run again - manual edits made
+#grattan_save_pptx(filename = "atlas/learning_gaps_over_time_chart.pptx", learning_gaps_over_time_chart, type = "fullslide")
+#grattan_save_all("atlas/learning_gaps_over_time_chart.pdf", learning_gaps_over_time_chart)
 
 # 5. Create a function to chart the NAPLAN scores in the past decade (2012-22) for each jurisdiction
 # Note: This chapter provides an introduction to functional programming. https://r4ds.had.co.nz/functions.html.

@@ -1,0 +1,17 @@
+{
+  "hash": "053da3538b7116ccf0f7b0023e325d21",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Schools' practices\"\nauthor: \"Nick Parkinson\"\ndate: \"18 July 2024\"\nformat: \n  html:\n    css: .formatting/grattan-style.css\n    theme: lumen\n    highlight: pygments\n    toc: true\n    toc_depth: 2\n    number_sections: yes\n    df_print: kable\n    fig-height: 5.7\n    fig-width: 8.75\n    fig-cap-location: top\n    fig-dpi: 300\nlightbox: auto\nexecute:\n  echo: false\n  warning: false\n  freeze: auto\neditor: visual\neditor_options: \n  chunk_output_type: console\n---\n\n\n\n\n## How do schools schedule maths?\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n|Approach to scheduling maths                  |     %| 90% CI (lower)| 90% CI (upper)|\n|:---------------------------------------------|-----:|--------------:|--------------:|\n|Common approach, but no scheduled maths block | 47.2%|          44.4%|          50.0%|\n|Scheduled maths block                         | 42.3%|          39.7%|          44.8%|\n|Teacher discretion                            |  9.5%|           7.8%|          11.2%|\n|Other                                         |  1.1%|           0.5%|           1.6%|\n\n\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](school_practices_files/figure-html/hours_of_maths-1.png){width=2625}\n:::\n:::\n\n\n## School practices\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](school_practices_files/figure-html/school_practices-1.png){width=2625}\n:::\n\n::: {.cell-output-display}\n![](school_practices_files/figure-html/school_practices-2.png){width=2625}\n:::\n:::\n\n\nWe can see how these results differ by ses\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](school_practices_files/figure-html/school_practices_ses-1.png){width=2625}\n:::\n:::\n\n\n## Perceptions of colleagues' content knowledge\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](school_practices_files/figure-html/teacher-confidence-1.png){width=2625}\n:::\n:::\n",
+    "supporting": [
+      "school_practices_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

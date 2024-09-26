@@ -1,0 +1,17 @@
+{
+  "hash": "6553dc6ff887ff3eb7e6377222a0241d",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Leaders' views\"\nauthor: \"Nick Parkinson\"\ndate: \"18 July 2024\"\nformat: \n  html:\n    css: .formatting/grattan-style.css\n    theme: lumen\n    highlight: pygments\n    toc: true\n    toc_depth: 2\n    number_sections: yes\n    df_print: kable\n    fig-height: 5.7\n    fig-width: 8.75\n    fig-cap-location: top\n    fig-dpi: 300\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  freeze: auto\neditor: visual\neditor_options: \n  chunk_output_type: console\n---\n\n\n\n\n## How do leaders feel?\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](leader_views_files/figure-html/leaders_views-1.png){width=2625}\n:::\n:::\n\n\nCheck results by state and territory.\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](leader_views_files/figure-html/views_by_state_and_territory-1.png){width=2625}\n:::\n:::\n\n\n## To what extent are teachers' hesistant about upper primary?\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n|Q31                    |   N|  prop|\n|:----------------------|---:|-----:|\n|No teachers            |  45|  6.0%|\n|Some teachers          | 291| 42.0%|\n|About half of teachers | 202| 29.0%|\n|Most teachers          | 154| 22.0%|\n|All teachers           |   1|  0.0%|\n\n\n:::\n:::\n\n\n## \n",
+    "supporting": [
+      "leader_views_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
