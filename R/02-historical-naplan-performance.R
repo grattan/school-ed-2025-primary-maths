@@ -155,6 +155,63 @@ grattan_save("atlas/Historical_NAPLAN_Numeracy_EYL.pdf", base_chart, "fullslide"
 grattan_save("atlas/Historical_NAPLAN_Numeracy_EYL.png", base_chart, "fullslide", save_data = TRUE)
 grattan_save_pptx(base_chart, "atlas/Historical_NAPLAN_Numeracy_EYL.pptx", "fullslide")
 
+#4B. Re-baseline the data to the same starting point and explore months of growth differences before and after COVID. (Subsequantly, will use regression analysis to explore if these are statistically significant.
+
+#Narrow data set
+relative_change_eyl <-
+  filter(naplan_numeracy_eyl, state == "AUS", subgroup == "All", calendar_year %in% seq(2012, 2022))|>
+  select(calendar_year, year_level, numeracy_eyl)
+
+#Establish baseline for each year group to 2012
+baseline <- relative_change_eyl |>
+group_by(year_level) |>
+   summarise(baseline_2012 = first(numeracy_eyl))
+
+#Re-baseline dataset
+
+relative_change_eyl <-
+  left_join(relative_change_eyl, baseline) |>
+  mutate(shift_from_2012_years = numeracy_eyl-baseline_2012, shift_from_2012_months = round(shift_from_2012_years*12,1)) |>
+  arrange(year_level)
+
+#Chart data with x = year, y = change since 2012 in months, line colour = year level
+relative_change_eyl_chart <- relative_change_eyl |>
+  ggplot(aes(x = calendar_year, y = shift_from_2012_months, colour = year_level, group = year_level)) +  #plot using year level as the grouping for the lines and colour each distinctly
+  geom_line() +  #plot a line chart
+  annotate(geom = "rect", xmin = 2019.05, xmax = 2020.95, ymin = -Inf, ymax = Inf,
+           fill = "white", col = NA) +
+  geom_point(size = 8/.pt) + #and plot a data points, small size
+  grattan_y_continuous(limits = c(-3,12), breaks =seq(-3, 12, by = 3)) + # Adjust the scale
+  grattan_x_continuous(limits = c(2011.5, 2024), breaks = c(2008, 2014, 2012, 2016, 2018, 2020, 2022)) + #Adjust x-axis to start at 2008 and end at 2022
+  theme_grattan() + #adopt grattan chart design and themes. Could include inside hte brackets:  chart_type = "normal"
+  scale_colour_grattan() +
+  labs(
+    x = NULL,
+    colour = "Year level",
+    title = "Minimal gains were reversed by COVID",
+    subtitle = "Effective numeracy learning growth in months of learning at each year level"
+  ) + #Label the chart
+  ggdirectlabel::geom_finallabel(aes(label = paste("Year", year_level))) +
+  annotate("text",
+           x = 2020,
+           y = 4.5,
+           label = "NAPLAN cancelled due to COVID-19",
+           angle = 90,
+           hjust = 0.5,
+           vjust = 0.5,
+           size = 18/.pt,  # Adjust text size
+           color = grattan_black  # Change text color
+  ) #Add a label for the lack of 2020 data
+
+#check_chart_aspect_ratio(relative_change_eyl_chart)
+
+#Don't re-run this - will overwrite manual format edits
+#grattan_save_pptx(filename = "atlas/relative_change_eyl_chart.pptx", relative_change_eyl_chart, type = "fullslide")
+
+
+
+
+
 # 5. Create a function to chart the NAPLAN scores in the past decade (2012-22) for each jurisdiction
 # Note: This chapter provides an introduction to functional programming. https://r4ds.had.co.nz/functions.html.
 # Note: You might find it helpful to look at my code here (https://github.com/grattan/school-ed-2022-teaching-assistants-analysis/blob/main/teacher-assistant-analysis.R) which has a function that charts teaching assistants for each jurisdiction, and here (https://github.com/grattan/school-ed-2023-naplan-analyser/blob/master/NAPLAN_analyser/app.R) which creates an app that spits out the 2023 NAPLAN data for each state and territory.
