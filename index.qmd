@@ -136,6 +136,24 @@ clean_survey |>
   labs(x = NULL)
 ```
 
+```{r}
+#| echo: false
+#| output: false
+# Check the WA responses over time: Did the WA department actually share the survey?
+clean_survey |>
+  filter(Q19 == "WA") |> 
+  rowid_to_column() |>
+  ggplot(aes(x = RecordedDate, y = rowid)) +
+  geom_line() +
+  geom_vline(xintercept = dmy("30/07/2024")) +
+  theme_grattan() +
+  scale_x_datetime(
+    date_labels = "%d-%b",
+  ) +
+  scale_y_continuous_grattan() +
+  labs(x = NULL)
+```
+
 # Demographics
 
 We create tables to determine the representativeness of the sample. We compare these again the latest available data [here](https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/staff-numbers#:~:text=Key%20Facts,schools%2018.2%25%20in%20independent%20schools.) and [here](https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/school-numbers).
