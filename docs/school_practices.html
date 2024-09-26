@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -41,13 +41,22 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,8 +65,10 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -69,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./GrattanLogo_left.png" alt="" class="navbar-logo">
     </a>
@@ -86,25 +97,25 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
- <span class="menu-text">Demographics</span></a>
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Demographics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./teacher_attitudes.html" rel="" target="">
- <span class="menu-text">Teacher attitudes</span></a>
+    <a class="nav-link" href="./teacher_attitudes.html"> 
+<span class="menu-text">Teacher attitudes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./school_practices.html" rel="" target="" aria-current="page">
- <span class="menu-text">School practices</span></a>
+    <a class="nav-link active" href="./school_practices.html" aria-current="page"> 
+<span class="menu-text">School practices</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./leader_views.html" rel="" target="">
- <span class="menu-text">Leaders’ views</span></a>
+    <a class="nav-link" href="./leader_views.html"> 
+<span class="menu-text">Leaders’ views</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -153,7 +164,9 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
+
 
 <section id="how-do-schools-schedule-maths" class="level2">
 <h2 class="anchored" data-anchor-id="how-do-schools-schedule-maths">How do schools schedule maths?</h2>
@@ -177,27 +190,27 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Common approach, but no scheduled maths block</td>
-<td style="text-align: right;">47.5%</td>
-<td style="text-align: right;">44.4%</td>
-<td style="text-align: right;">50.7%</td>
+<td style="text-align: right;">47.3%</td>
+<td style="text-align: right;">44.2%</td>
+<td style="text-align: right;">50.4%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Scheduled maths block</td>
-<td style="text-align: right;">41.7%</td>
-<td style="text-align: right;">38.8%</td>
-<td style="text-align: right;">44.7%</td>
+<td style="text-align: right;">42.2%</td>
+<td style="text-align: right;">39.3%</td>
+<td style="text-align: right;">45.1%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Teacher discretion</td>
-<td style="text-align: right;">10.0%</td>
-<td style="text-align: right;">8.0%</td>
-<td style="text-align: right;">11.9%</td>
+<td style="text-align: right;">9.8%</td>
+<td style="text-align: right;">7.9%</td>
+<td style="text-align: right;">11.7%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Other</td>
-<td style="text-align: right;">0.8%</td>
+<td style="text-align: right;">0.7%</td>
 <td style="text-align: right;">0.2%</td>
-<td style="text-align: right;">1.4%</td>
+<td style="text-align: right;">1.2%</td>
 </tr>
 </tbody>
 </table>
@@ -205,7 +218,11 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="school_practices_files/figure-html/hours_of_maths-1.png" class="img-fluid" width="2625"></p>
+<div>
+<figure class="figure">
+<p><a href="school_practices_files/figure-html/hours_of_maths-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="school_practices_files/figure-html/hours_of_maths-1.png" class="img-fluid figure-img" width="2625"></a></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -213,16 +230,28 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="school-practices">School practices</h2>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="school_practices_files/figure-html/school_practices-1.png" class="img-fluid" width="2625"></p>
+<div>
+<figure class="figure">
+<p><a href="school_practices_files/figure-html/school_practices-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="school_practices_files/figure-html/school_practices-1.png" class="img-fluid figure-img" width="2625"></a></p>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="school_practices_files/figure-html/school_practices-2.png" class="img-fluid" width="2625"></p>
+<div>
+<figure class="figure">
+<p><a href="school_practices_files/figure-html/school_practices-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="school_practices_files/figure-html/school_practices-2.png" class="img-fluid figure-img" width="2625"></a></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We can see how these results differ by ses</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="school_practices_files/figure-html/school_practices_ses-1.png" class="img-fluid" width="2625"></p>
+<div>
+<figure class="figure">
+<p><a href="school_practices_files/figure-html/school_practices_ses-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="school_practices_files/figure-html/school_practices_ses-1.png" class="img-fluid figure-img" width="2625"></a></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -230,7 +259,11 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="perceptions-of-colleagues-content-knowledge">Perceptions of colleagues’ content knowledge</h2>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="school_practices_files/figure-html/teacher-confidence-1.png" class="img-fluid" width="2625"></p>
+<div>
+<figure class="figure">
+<p><a href="school_practices_files/figure-html/teacher-confidence-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="school_practices_files/figure-html/teacher-confidence-1.png" class="img-fluid figure-img" width="2625"></a></p>
+</figure>
+</div>
 </div>
 </div>
 
@@ -317,10 +350,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -330,8 +380,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -343,7 +402,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -387,6 +569,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -412,6 +595,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -472,6 +681,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","selector":".lightbox","loop":false,"openEffect":"zoom","closeEffect":"zoom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
+
 
 
 
