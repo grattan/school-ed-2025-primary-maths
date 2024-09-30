@@ -63,7 +63,7 @@ raw_survey_data <- fetch_survey(
 # Save the Qualtrics survey, just in case
 currentDate <- Sys.Date()
 
-filename <- paste("data/survey", currentDate, ".csv", set = "")
+filename <- paste0("data/survey", currentDate, ".csv", set = "")
 
 # write.csv(raw_survey_data, file = filename)
 
@@ -89,7 +89,9 @@ We filter out:
 initial_sample <- nrow(raw_survey_data)
 
 clean_survey <- raw_survey_data |>
-  filter(Q_RecaptchaScore >= 0.5) # filter out bots
+  mutate(possible_bot = Q_RecaptchaScore < 0.5) # filter out bots
+
+table(clean_survey$possible_bot)
 
 substantive_questions <- names(clean_survey)[which(names(clean_survey) == "Q24"):ncol(clean_survey) - 1]
 

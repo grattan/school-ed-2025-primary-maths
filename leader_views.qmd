@@ -145,7 +145,7 @@ leaders_views_state_and_territory |>
   # theme and labels
   theme_grattan(flipped = T,
                 base_size = 14) +
-  grattan_y_continuous(labels = percent, limits = c(-.2, 1)) +
+  grattan_y_continuous(labels = percent, limits = c(-.1, 1)) +
   labs(title = "The clarity of advice is a challenge across states and territories",
        subtitle = "Percent of leaders who agree or strongly agree (with 90 per cent confidence interval)",
        x = NULL, y = NULL,

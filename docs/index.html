@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -26,7 +26,6 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -67,13 +66,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -82,16 +75,13 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-submit-button-title": "Submit"
   }
 }</script>
+
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
-
 
 
 <link rel="stylesheet" href=".formatting/grattan-style.css">
@@ -101,9 +91,9 @@ div.csl-indent {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./GrattanLogo_left.png" alt="" class="navbar-logo">
     </a>
@@ -118,25 +108,25 @@ div.csl-indent {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
-<span class="menu-text">Demographics</span></a>
+    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Demographics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./teacher_attitudes.html"> 
-<span class="menu-text">Teacher attitudes</span></a>
+    <a class="nav-link" href="./teacher_attitudes.html" rel="" target="">
+ <span class="menu-text">Teacher attitudes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./school_practices.html"> 
-<span class="menu-text">School practices</span></a>
+    <a class="nav-link" href="./school_practices.html" rel="" target="">
+ <span class="menu-text">School practices</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./leader_views.html"> 
-<span class="menu-text">Leaders’ views</span></a>
+    <a class="nav-link" href="./leader_views.html" rel="" target="">
+ <span class="menu-text">Leaders’ views</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools ms-auto">
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -191,9 +181,7 @@ div.csl-indent {
   </div>
   
 
-
 </header>
-
 
 <section id="import-data" class="level1">
 <h1>Import data</h1>
@@ -206,19 +194,15 @@ div.csl-indent {
 <li><p>Anyone whose responses are <a href="https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/">flagged by Qualtrics as suspicious</a> (i.e.&nbsp;Q_RecaptchaScore is below 0.5). This is typically because of the speed at which they respond, or ‘straight lining’ (i.e.&nbsp;clicking the same radio buttons in a single column).</p></li>
 <li><p>Anyone who did not complete more than one substantive (i.e.&nbsp;non-demographic) question.</p></li>
 </ul>
-<p>Through this process, we lose 385 responses. This leaves us with 1,696 valid responses.</p>
+<p>Through this process, we lose 407 responses. This leaves us with 1,735 valid responses.</p>
 <p>We also check for duplicates, using <a href="https://www.qualtrics.com/support/survey-platform/survey-module/survey-checker/fraud-detection/">Qualtrics duplicate flag</a>. This pulls out respondents who try reattempt the survey from the same IP address. We can see if they are duplicates by looking through their answers manually.</p>
-<p>We now check the number of valid responses over time, in <a href="#fig-responses-over-time" class="quarto-xref">Figure&nbsp;1</a>.</p>
+<p>We now check the number of valid responses over time, in <a href="#fig-responses-over-time">Figure&nbsp;1</a>.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-responses-over-time" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-responses-over-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Number of responses over time
-</figcaption>
-<div aria-describedby="fig-responses-over-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="index_files/figure-html/fig-responses-over-time-1.png" class="img-fluid figure-img" width="2100">
-</div>
+<div id="fig-responses-over-time" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<figcaption class="figure-caption">Figure&nbsp;1: Number of responses over time</figcaption>
+<p><img src="index_files/figure-html/fig-responses-over-time-1.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -231,6 +215,7 @@ Figure&nbsp;1: Number of responses over time
 <h2 class="anchored" data-anchor-id="teacher-characteristics">Teacher characteristics</h2>
 <div class="cell">
 <div class="cell-output-display">
+
 <table>
  <thead>
 <tr>
@@ -250,21 +235,21 @@ Figure&nbsp;1: Number of responses over time
   <tr grouplength="5"><td colspan="5" style="border-bottom: 1px solid;color: rgba(239, 121, 0, 255) !important;"><strong>Sex</strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Female </td>
-   <td style="text-align:right;"> 1,395 </td>
+   <td style="text-align:right;"> 1,422 </td>
    <td style="text-align:right;"> 82% </td>
    <td style="text-align:right;"> 129,560 </td>
    <td style="text-align:right;"> 82% </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Male </td>
-   <td style="text-align:right;"> 281 </td>
+   <td style="text-align:right;"> 292 </td>
    <td style="text-align:right;"> 17% </td>
    <td style="text-align:right;"> 28,207 </td>
    <td style="text-align:right;"> 18% </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Prefer not to say </td>
-   <td style="text-align:right;"> 19 </td>
+   <td style="text-align:right;"> 20 </td>
    <td style="text-align:right;"> 1% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
@@ -278,7 +263,7 @@ Figure&nbsp;1: Number of responses over time
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Total </td>
-   <td style="text-align:right;"> 1,696 </td>
+   <td style="text-align:right;"> 1,735 </td>
    <td style="text-align:right;"> 100% </td>
    <td style="text-align:right;"> 157,767 </td>
    <td style="text-align:right;"> 100% </td>
@@ -286,49 +271,49 @@ Figure&nbsp;1: Number of responses over time
   <tr grouplength="7"><td colspan="5" style="border-bottom: 1px solid;color: rgba(239, 121, 0, 255) !important;"><strong>Main teaching role</strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Generalist teacher </td>
-   <td style="text-align:right;"> 932 </td>
+   <td style="text-align:right;"> 958 </td>
    <td style="text-align:right;"> 55% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> No teaching load </td>
-   <td style="text-align:right;"> 344 </td>
+   <td style="text-align:right;"> 348 </td>
    <td style="text-align:right;"> 20% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Tutor </td>
-   <td style="text-align:right;"> 130 </td>
+   <td style="text-align:right;"> 132 </td>
    <td style="text-align:right;"> 8% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Specialist subject teacher </td>
-   <td style="text-align:right;"> 117 </td>
+   <td style="text-align:right;"> 120 </td>
    <td style="text-align:right;"> 7% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Relief teacher </td>
-   <td style="text-align:right;"> 91 </td>
+   <td style="text-align:right;"> 92 </td>
    <td style="text-align:right;"> 5% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Other </td>
-   <td style="text-align:right;"> 82 </td>
+   <td style="text-align:right;"> 85 </td>
    <td style="text-align:right;"> 5% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Total </td>
-   <td style="text-align:right;"> 1,696 </td>
+   <td style="text-align:right;"> 1,735 </td>
    <td style="text-align:right;"> 100% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
@@ -336,56 +321,56 @@ Figure&nbsp;1: Number of responses over time
   <tr grouplength="8"><td colspan="5" style="border-bottom: 1px solid;color: rgba(239, 121, 0, 255) !important;"><strong>Leadership responsibilities*</strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Principal </td>
-   <td style="text-align:right;"> 232 </td>
+   <td style="text-align:right;"> 236 </td>
    <td style="text-align:right;"> 13% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Deputy principal </td>
-   <td style="text-align:right;"> 176 </td>
+   <td style="text-align:right;"> 180 </td>
    <td style="text-align:right;"> 10% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Instructional leader </td>
-   <td style="text-align:right;"> 417 </td>
+   <td style="text-align:right;"> 424 </td>
    <td style="text-align:right;"> 23% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Team leader </td>
-   <td style="text-align:right;"> 181 </td>
+   <td style="text-align:right;"> 187 </td>
    <td style="text-align:right;"> 10% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Pastoral or wellbeing leader </td>
-   <td style="text-align:right;"> 50 </td>
+   <td style="text-align:right;"> 51 </td>
    <td style="text-align:right;"> 3% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Other leadership role </td>
-   <td style="text-align:right;"> 201 </td>
+   <td style="text-align:right;"> 209 </td>
    <td style="text-align:right;"> 11% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> No leadership role </td>
-   <td style="text-align:right;"> 549 </td>
+   <td style="text-align:right;"> 561 </td>
    <td style="text-align:right;"> 30% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Total </td>
-   <td style="text-align:right;"> 1,806 </td>
+   <td style="text-align:right;"> 1,848 </td>
    <td style="text-align:right;"> 100% </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
@@ -400,28 +385,28 @@ Figure&nbsp;1: Number of responses over time
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> 5-9 years </td>
-   <td style="text-align:right;"> 202 </td>
+   <td style="text-align:right;"> 207 </td>
    <td style="text-align:right;"> 12% </td>
    <td style="text-align:right;"> 6,461 </td>
    <td style="text-align:right;"> 14% </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> 10-20 years </td>
-   <td style="text-align:right;"> 471 </td>
+   <td style="text-align:right;"> 483 </td>
    <td style="text-align:right;"> 28% </td>
    <td style="text-align:right;"> 12,480 </td>
    <td style="text-align:right;"> 28% </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> 20+ years </td>
-   <td style="text-align:right;"> 910 </td>
+   <td style="text-align:right;"> 932 </td>
    <td style="text-align:right;"> 54% </td>
    <td style="text-align:right;"> 17,584 </td>
    <td style="text-align:right;"> 39% </td>
   </tr>
   <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Total </td>
-   <td style="text-align:right;"> 1,696 </td>
+   <td style="text-align:right;"> 1,735 </td>
    <td style="text-align:right;"> 100% </td>
    <td style="text-align:right;"> 44,698 </td>
    <td style="text-align:right;"> 100% </td>
@@ -434,7 +419,7 @@ Figure&nbsp;1: Number of responses over time
 </tfoot>
 <tfoot>
 <tr>
-<td style="padding: 0; border:0;" colspan="100%"><sup>*</sup> Options add up to more than 1696 because respondents could select multiple leadership responsibilities.</td>
+<td style="padding: 0; border:0;" colspan="100%"><sup>*</sup> Options add up to more than 1735 because respondents could select multiple leadership responsibilities.</td>
 </tr>
 </tfoot>
 </table>
@@ -446,7 +431,6 @@ Figure&nbsp;1: Number of responses over time
 <h2 class="anchored" data-anchor-id="school-characteristics">School characteristics</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div>
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 20%">
@@ -481,28 +465,28 @@ Population data
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Primary</td>
-<td style="text-align: right;">1,398</td>
+<td style="text-align: right;">1,429</td>
 <td style="text-align: right;">82%</td>
 <td style="text-align: right;">138,613</td>
 <td style="text-align: right;">88%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Combined</td>
-<td style="text-align: right;">219</td>
+<td style="text-align: right;">224</td>
 <td style="text-align: right;">13%</td>
 <td style="text-align: right;">13,074</td>
 <td style="text-align: right;">8%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Special</td>
-<td style="text-align: right;">79</td>
+<td style="text-align: right;">82</td>
 <td style="text-align: right;">5%</td>
 <td style="text-align: right;">6,080</td>
 <td style="text-align: right;">4%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
-<td style="text-align: right;">1,696</td>
+<td style="text-align: right;">1,735</td>
 <td style="text-align: right;">100%</td>
 <td style="text-align: right;">157,767</td>
 <td style="text-align: right;">100%</td>
@@ -512,28 +496,28 @@ Population data
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Catholic</td>
-<td style="text-align: right;">438</td>
+<td style="text-align: right;">446</td>
 <td style="text-align: right;">26%</td>
 <td style="text-align: right;">27,307</td>
 <td style="text-align: right;">17%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Government</td>
-<td style="text-align: right;">1,048</td>
+<td style="text-align: right;">1,075</td>
 <td style="text-align: right;">62%</td>
 <td style="text-align: right;">109,372</td>
 <td style="text-align: right;">69%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Independent</td>
-<td style="text-align: right;">210</td>
+<td style="text-align: right;">214</td>
 <td style="text-align: right;">12%</td>
 <td style="text-align: right;">21,088</td>
 <td style="text-align: right;">13%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
-<td style="text-align: right;">1,696</td>
+<td style="text-align: right;">1,735</td>
 <td style="text-align: right;">100%</td>
 <td style="text-align: right;">157,767</td>
 <td style="text-align: right;">100%</td>
@@ -543,28 +527,28 @@ Population data
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Australian Capital Territory</td>
-<td style="text-align: right;">46</td>
+<td style="text-align: right;">47</td>
 <td style="text-align: right;">3%</td>
 <td style="text-align: right;">2,936</td>
 <td style="text-align: right;">2%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">New South Wales</td>
-<td style="text-align: right;">373</td>
+<td style="text-align: right;">389</td>
 <td style="text-align: right;">22%</td>
 <td style="text-align: right;">46,753</td>
 <td style="text-align: right;">30%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Northern Territory</td>
-<td style="text-align: right;">56</td>
+<td style="text-align: right;">59</td>
 <td style="text-align: right;">3%</td>
 <td style="text-align: right;">1,963</td>
 <td style="text-align: right;">1%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Queensland</td>
-<td style="text-align: right;">238</td>
+<td style="text-align: right;">248</td>
 <td style="text-align: right;">14%</td>
 <td style="text-align: right;">32,598</td>
 <td style="text-align: right;">21%</td>
@@ -585,21 +569,21 @@ Population data
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Victoria</td>
-<td style="text-align: right;">698</td>
+<td style="text-align: right;">705</td>
 <td style="text-align: right;">41%</td>
 <td style="text-align: right;">43,059</td>
 <td style="text-align: right;">27%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Western Australia</td>
-<td style="text-align: right;">138</td>
+<td style="text-align: right;">140</td>
 <td style="text-align: right;">8%</td>
 <td style="text-align: right;">16,526</td>
 <td style="text-align: right;">10%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
-<td style="text-align: right;">1,696</td>
+<td style="text-align: right;">1,735</td>
 <td style="text-align: right;">100%</td>
 <td style="text-align: right;">157,767</td>
 <td style="text-align: right;">100%</td>
@@ -609,28 +593,28 @@ Population data
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">A fairly even mix of advantaged and disadvantaged students</td>
-<td style="text-align: right;">741</td>
+<td style="text-align: right;">758</td>
 <td style="text-align: right;">44%</td>
 <td style="text-align: right;">108,716</td>
 <td style="text-align: right;">31%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Mostly advantaged</td>
-<td style="text-align: right;">577</td>
+<td style="text-align: right;">586</td>
 <td style="text-align: right;">34%</td>
 <td style="text-align: right;">155,345</td>
 <td style="text-align: right;">45%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Mostly disadvantaged</td>
-<td style="text-align: right;">378</td>
-<td style="text-align: right;">22%</td>
+<td style="text-align: right;">391</td>
+<td style="text-align: right;">23%</td>
 <td style="text-align: right;">81,996</td>
 <td style="text-align: right;">24%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
-<td style="text-align: right;">1,696</td>
+<td style="text-align: right;">1,735</td>
 <td style="text-align: right;">100%</td>
 <td style="text-align: right;">346,057</td>
 <td style="text-align: right;">100%</td>
@@ -640,35 +624,35 @@ Population data
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Metropolitan</td>
-<td style="text-align: right;">999</td>
+<td style="text-align: right;">1,022</td>
 <td style="text-align: right;">59%</td>
 <td style="text-align: right;">247,899</td>
 <td style="text-align: right;">71%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Regional</td>
-<td style="text-align: right;">483</td>
+<td style="text-align: right;">494</td>
 <td style="text-align: right;">28%</td>
 <td style="text-align: right;">62,251</td>
 <td style="text-align: right;">18%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Rural</td>
-<td style="text-align: right;">171</td>
+<td style="text-align: right;">175</td>
 <td style="text-align: right;">10%</td>
 <td style="text-align: right;">29,475</td>
 <td style="text-align: right;">8%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Remote</td>
-<td style="text-align: right;">43</td>
+<td style="text-align: right;">44</td>
 <td style="text-align: right;">3%</td>
 <td style="text-align: right;">7,786</td>
 <td style="text-align: right;">2%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
-<td style="text-align: right;">1,696</td>
+<td style="text-align: right;">1,735</td>
 <td style="text-align: right;">100%</td>
 <td style="text-align: right;">347,411</td>
 <td style="text-align: right;">100%</td>
@@ -678,91 +662,91 @@ Population data
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Up to 50 students</td>
-<td style="text-align: right;">61</td>
+<td style="text-align: right;">63</td>
 <td style="text-align: right;">4%</td>
 <td style="text-align: right;">3,539</td>
 <td style="text-align: right;">3%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">51 to 100 students</td>
-<td style="text-align: right;">78</td>
+<td style="text-align: right;">79</td>
 <td style="text-align: right;">5%</td>
 <td style="text-align: right;">4,021</td>
 <td style="text-align: right;">3%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">101 to 200 students</td>
-<td style="text-align: right;">211</td>
+<td style="text-align: right;">215</td>
 <td style="text-align: right;">13%</td>
 <td style="text-align: right;">13,869</td>
 <td style="text-align: right;">10%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">201 to 300 students</td>
-<td style="text-align: right;">288</td>
+<td style="text-align: right;">295</td>
 <td style="text-align: right;">17%</td>
 <td style="text-align: right;">18,855</td>
 <td style="text-align: right;">14%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">301 to 400 students</td>
-<td style="text-align: right;">287</td>
+<td style="text-align: right;">295</td>
 <td style="text-align: right;">17%</td>
 <td style="text-align: right;">23,613</td>
 <td style="text-align: right;">17%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">401 to 500 students</td>
-<td style="text-align: right;">258</td>
+<td style="text-align: right;">260</td>
 <td style="text-align: right;">15%</td>
 <td style="text-align: right;">21,307</td>
 <td style="text-align: right;">15%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">501 to 600 students</td>
-<td style="text-align: right;">190</td>
+<td style="text-align: right;">194</td>
 <td style="text-align: right;">11%</td>
 <td style="text-align: right;">17,299</td>
 <td style="text-align: right;">12%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">601 to 700 students</td>
-<td style="text-align: right;">96</td>
+<td style="text-align: right;">101</td>
 <td style="text-align: right;">6%</td>
 <td style="text-align: right;">13,726</td>
 <td style="text-align: right;">10%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">701 to 800 students</td>
-<td style="text-align: right;">81</td>
+<td style="text-align: right;">83</td>
 <td style="text-align: right;">5%</td>
 <td style="text-align: right;">8,003</td>
 <td style="text-align: right;">6%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">801 to 900 students</td>
-<td style="text-align: right;">44</td>
+<td style="text-align: right;">45</td>
 <td style="text-align: right;">3%</td>
 <td style="text-align: right;">4,640</td>
 <td style="text-align: right;">3%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">901 to 1000 students</td>
-<td style="text-align: right;">34</td>
+<td style="text-align: right;">35</td>
 <td style="text-align: right;">2%</td>
 <td style="text-align: right;">3,842</td>
 <td style="text-align: right;">3%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">More than 1,000 students</td>
-<td style="text-align: right;">47</td>
+<td style="text-align: right;">49</td>
 <td style="text-align: right;">3%</td>
 <td style="text-align: right;">5,852</td>
 <td style="text-align: right;">4%</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Total</td>
-<td style="text-align: right;">1,675</td>
+<td style="text-align: right;">1,714</td>
 <td style="text-align: right;">100%</td>
 <td style="text-align: right;">138,566</td>
 <td style="text-align: right;">100%</td>
@@ -771,7 +755,6 @@ Population data
 </table>
 
 
-</div>
 </div>
 </div>
 </section>
@@ -805,21 +788,13 @@ Population data
 <p>We can visualise the distribution of weights.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="2100"></p>
-</figure>
-</div>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>We can compare the results of weighting the datasets.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="2100"></p>
-</figure>
-</div>
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>Please note that not all the charts throughout this file have been updated with appropriate weights.</p>
@@ -828,7 +803,7 @@ Population data
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-kalton2003weighting" class="csl-entry" role="listitem">
 Kalton, Graham, and Ismael Flores-Cervantes. 2003. <span>“Weighting Methods.”</span> <em>Journal of Official Statistics</em> 19 (2): 81.
 </div>
@@ -915,27 +890,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -945,17 +903,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -967,130 +916,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
+      return note.innerHTML;
     });
   }
       let selectedAnnoteEl;
@@ -1134,7 +960,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1160,32 +985,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1246,7 +1045,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-
 
 
 
