@@ -33,7 +33,8 @@ rebuild_data <- FALSE
 # Import data
 
 ```{r}
-file_path_course_information <- "data/UAC courses reference data - ua15 to ua24.xlsx"
+file_path_course_information <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC courses reference data - ua15 to ua24.xlsx"
+#"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC courses reference data - ua15 to ua24.xlsx"
 
 data_frame_course_information <- file_path_course_information |> 
   excel_sheets() |> 
@@ -44,7 +45,8 @@ data_frame_course_information <- file_path_course_information |>
   map(read_excel, path = file_path_course_information) |> 
   list_rbind()
 
-file_path_school_leaver_results <- "data/UAC data for Grattan Institute - 2015 to 2024.xlsx"
+file_path_school_leaver_results <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC data for Grattan Institute - 2015 to 2024.xlsx"
+#"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC data for Grattan Institute - 2015 to 2024.xlsx"
 
 data_frame_school_leaver_results <- file_path_school_leaver_results |> 
   excel_sheets() |> 
