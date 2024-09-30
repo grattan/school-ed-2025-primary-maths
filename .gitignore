@@ -3,5 +3,6 @@
 .Rhistory
 *.png
 *.pptx
-atlas\*
-teacher_attitudes_cache\*
+atlas/
+teacher_attitudes_cache/
+data/
