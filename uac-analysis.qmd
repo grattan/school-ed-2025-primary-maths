@@ -33,15 +33,17 @@ rebuild_data <- FALSE
 # Import data
 
 ```{r}
+
+#Upload the !!Preliminary!! course list provided to Grattan. 
+#Note - UAC subsequently filtered that down, in the data set ultimately provided to us, using filters: field of study code (broad FOS = 7) or any course with description including the string “Educat” or “Teach”. 
+
 file_path_course_information <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC courses reference data - ua15 to ua24.xlsx"
 #"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC courses reference data - ua15 to ua24.xlsx"
 
 data_frame_course_information <- file_path_course_information |> 
   excel_sheets()
-  # Filter out 2024 and 2015 just for simplicity of common structure across sheets
-  # Use all years in final analysis
-
-data_frame_course_information <-  data_frame_course_information %>% setdiff(c("2024", "2015")) |> 
+  
+data_frame_course_information <-  data_frame_course_information %>% 
   set_names() |> 
   map(read_excel, path = file_path_course_information) |> 
   list_rbind()
