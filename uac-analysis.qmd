@@ -37,8 +37,10 @@ rebuild_data <- FALSE
 #Upload the !!Preliminary!! course list provided to Grattan. 
 #Note - UAC subsequently filtered that down, in the data set ultimately provided to us, using filters: field of study code (broad FOS = 7) or any course with description including the string “Educat” or “Teach”. 
 
-file_path_course_information <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC courses reference data - ua15 to ua24.xlsx"
-#"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC courses reference data - ua15 to ua24.xlsx"
+user_data_folder <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/"
+#"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/"
+
+file_path_course_information <- glue(user_data_folder, "UAC courses reference data - ua15 to ua24.xlsx")
 
 data_frame_course_information <- file_path_course_information |> 
   excel_sheets()
@@ -48,8 +50,7 @@ data_frame_course_information <-  data_frame_course_information %>%
   map(read_excel, path = file_path_course_information) |> 
   list_rbind()
 
-file_path_school_leaver_results <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC data for Grattan Institute - 2015 to 2024.xlsx"
-#"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/UAC data for Grattan Institute - 2015 to 2024.xlsx"
+file_path_school_leaver_results <- glue(user_data_folder, "UAC data for Grattan Institute - 2015 to 2024.xlsx")
 
 data_frame_school_leaver_results <- file_path_school_leaver_results |> 
   excel_sheets() |> 
@@ -65,18 +66,25 @@ data_frame_school_leaver_results <- file_path_school_leaver_results |>
 ```{r}
 
 # From the course description
-search_terms <- c("educat|teach|school")
+search_terms1 <- "^7"
+search_terms2 <- c("educat|teach")
 
 data_frame_course_information <- 
   data_frame_course_information |> 
   mutate(teaching_degree = 
            if_else(
-             grepl(search_terms,
-                   course_desc_short,
+             grepl(search_terms1,
+                   field_of_study,
                    ignore.case = TRUE
            ), 
            T, 
-           F)
+              if_else(grepl(search_terms2,
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F)
+           )
   )
 
 course_names <- 
@@ -85,7 +93,7 @@ course_names <-
   pull(course_desc_short) |> 
   unique()
 
-write.csv(course_names, "data/course_names.csv")
+write.csv(course_names, glue(user_data_folder, "UAC_course_names.csv"))
 
 # From the teacher data
 enrolled_counts <- 
@@ -94,13 +102,59 @@ enrolled_counts <-
   count(course_desc_short) |> 
   arrange(-n)
 
+#identify courses with primary, secondary, special or specialist, or distance in the title
+
+enrolled_counts <- enrolled_counts |>
+  mutate(
+    primary = if_else(grepl("primary",
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    secondary = if_else(grepl("secondary",
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    special = if_else(grepl("special",
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    distance = if_else(grepl("distance",
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    ece =  if_else(grepl(c("eary|child"),
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F)
+  )
+
+write.csv(enrolled_counts, glue(user_data_folder, "UAC_course_by_enrolment.csv"))
+
+enrolled_counts |> count(primary, secondary, ece, special, distance)
+
+#setdiff(course_names, enrolled_counts$course_desc_short)
+
+```
+
+#Overall enrolments by year
+
+```{r}
+#Count number of enrolled students in each year
+#May need to re-read in enrolemnts sheet edited in excel, with irrelevant courses removed
 data_frame_school_leaver_results |> 
   filter(enrolment_status == "E") |> 
   count(hsc_year) |> 
   plot()
-
-
-write.csv(enrolled_counts, "data/course_by_enrolment.csv")
 
 ```
 
