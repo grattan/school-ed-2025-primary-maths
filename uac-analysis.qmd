@@ -104,6 +104,7 @@ enrolled_counts <-
 
 #identify courses with primary, secondary, special or specialist, or distance in the title
 
+#There's probably a way to use map here, even with the boolean language. Come to that later. ChatGPT strucggling to do it without using across() and throwing up errors.
 enrolled_counts <- enrolled_counts |>
   mutate(
     primary = if_else(grepl("primary",
@@ -130,7 +131,25 @@ enrolled_counts <- enrolled_counts |>
               ), 
               T, 
               F),
-    ece =  if_else(grepl(c("eary|child"),
+    ece =  if_else(grepl(c("early|child|kinder"),
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    bachelor =  if_else(grepl(c("bachelor"),
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    diploma =  if_else(grepl(c("diploma|dip"),
+                   course_desc_short,
+                   ignore.case = TRUE
+              ), 
+              T, 
+              F),
+    master =  if_else(grepl(c("master"),
                    course_desc_short,
                    ignore.case = TRUE
               ), 
@@ -140,7 +159,7 @@ enrolled_counts <- enrolled_counts |>
 
 write.csv(enrolled_counts, glue(user_data_folder, "UAC_course_by_enrolment.csv"))
 
-enrolled_counts |> count(primary, secondary, ece, special, distance)
+enrolled_counts |> count(primary, secondary, ece, special, distance, master)
 
 #setdiff(course_names, enrolled_counts$course_desc_short)
 
