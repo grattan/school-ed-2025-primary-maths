@@ -159,3 +159,93 @@ teacher_anxiety_df |>
        x = NULL, y = NULL,
        caption = glue("Notes: Total responses to statements varied by statement between {min(teacher_anxiety_df$n) |> comma()} and {max(teacher_anxiety_df$n) |>  comma()}. {source_caption}"))
 ```
+
+## How does anxiety compare by teacher and school characteristics?
+
+```{r}
+eacher_anxiety_df_for_regressions <-
+  clean_survey |>
+  mutate(across(starts_with("Q40"), ~ case_when(
+    . == "Agree" ~ T,
+    . == "Strongly agree" ~ T,
+    is.na(.) ~ NA,
+    .default = F
+  ))) |>
+  mutate(ses = relevel(factor(Q20), ref = "Mostly advantaged"))
+```
+
+
+### Teacher gender
+```{r}
+#| label: teacher_anxiety_by_gender
+model <- glm(Q40_1 ~ sex_gender,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+model <- glm(Q40_2 ~ sex_gender,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+model <- glm(Q40_3 ~ sex_gender,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+glue('Being male is associated with a reduction of {percent(1 - exp(model$coefficients[[2]]))} in odds of agreeing with the statement "{teacher_anxiety_labels[3]}"')
+
+
+model <- glm(Q40_4 ~ sex_gender,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+glue('Being male is associated with a reduction of {percent(1 - exp(model$coefficients[[2]]))} in odds of agreeing with the statement "{teacher_anxiety_labels[4]}"')
+```
+
+
+### School-level advantage
+```{r}
+#| label: teacher-anxiety-by-ses
+
+# By SES
+
+model <- glm(Q40_1 ~ ses,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+model <- glm(Q40_2 ~ ses,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+model <- glm(Q40_3 ~ ses,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+model <- glm(Q40_4 ~ ses,
+  family = "binomial",
+  data = teacher_anxiety_df_for_regressions
+)
+
+summary(model)
+
+```
+
