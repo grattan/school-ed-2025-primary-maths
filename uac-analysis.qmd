@@ -102,9 +102,9 @@ enrolled_counts <-
   count(course_desc_short) |> 
   arrange(-n)
 
-#identify courses with primary, secondary, special or specialist, or distance in the title
+#To help filter and classify the courses, identify courses with primary, secondary, special or specialist, or distance in the title, and save the data set.
 
-#There's probably a way to use map here, even with the boolean language. Come to that later. ChatGPT strucggling to do it without using across() and throwing up errors.
+#There's probably a way to use map() here, even with the boolean language. Come to that later. ChatGPT struggling to do it without using across(), and is repeatedly throwing up errors.
 enrolled_counts <- enrolled_counts |>
   mutate(
     primary = if_else(grepl("primary",
@@ -159,9 +159,29 @@ enrolled_counts <- enrolled_counts |>
 
 write.csv(enrolled_counts, glue(user_data_folder, "UAC_course_by_enrolment.csv"))
 
-enrolled_counts |> count(primary, secondary, ece, special, distance, master)
+#enrolled_counts |> count(primary, secondary, ece, special, distance, master)
 
+#Get a list of the courses filtered out from the preliminary course list provided by UAC.
 #setdiff(course_names, enrolled_counts$course_desc_short)
+
+#Following manual review and classification in Excel of the courses in  UAC_course_by_enrolment.csv, created a new doc UAC_teaching_courses_by_enrolment.csv. Read this in and select only columns B, C and M (course_desc_short, n, and teaching_degree)
+
+teaching_course_filters <- read.csv(glue(user_data_folder, "UAC_teaching_courses_by_enrolment.csv"))
+
+teaching_course_counts <- teaching_course_filters |> 
+    select(course_desc_short, n, teaching_degree)
+
+#Combine with the UAC data set to classify the type of teaching course for each student. Filter out the non-techig courses
+
+classified_school_leaver_results <- data_frame_school_leaver_results |>
+  left_join(select(teaching_course_counts,!n), by = "course_desc_short") |>
+  filter(teaching_degree != "no")
+  
+#glimpse(classified_school_leaver_results)
+
+classification_counts <- classified_school_leaver_results |>
+  group_by(teaching_degree) |> 
+  count()
 
 ```
 
