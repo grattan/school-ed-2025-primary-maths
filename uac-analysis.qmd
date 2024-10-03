@@ -249,7 +249,7 @@ print(participation_rates_groups)
 
 ```
 
-# Chart the tibble
+# Chart the participation rates
 
 ```{r}
 
@@ -270,3 +270,19 @@ ggplot(participation_long, aes(x = subject, y = percentage, fill = set_group_nam
   theme_grattan(legend = "bottom") 
 
 ```
+
+#Update the above
+#Let's go back and rename all the subjects with current equivalents also
+
+
+# Year 12 maths performance - by score
+#As above, but with mean score for each subject 
+
+
+# Year 12 maths performance - by band
+#Tibble as above but with proportion in each band for each subject. Consider if the proportion of all studnets or of students taking the subject. 
+#May need to do a tibble per subject. TBC if we care about every suject
+
+
+
+
