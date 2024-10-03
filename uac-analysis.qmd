@@ -248,3 +248,25 @@ participation_rates_groups <- map2_dfr(names(set_groups), set_groups, ~ {
 print(participation_rates_groups)
 
 ```
+
+# Chart the tibble
+
+```{r}
+
+participation_long <- participation_rates_groups |> 
+  pivot_longer(cols = ends_with("band"), 
+               names_to = "subject", 
+               values_to = "percentage")
+
+# Create the grouped column chart. Not to be used (would need polishing)
+
+ggplot(participation_long, aes(x = subject, y = percentage, fill = set_group_name)) +
+  geom_col(position = "dodge") +  # Use dodge to create grouped columns
+  labs(title = "Primary teaching students participated in easier Year 12 maths subjects",
+       subtitle = "Participation rates in Year 12 mathematics subjects by type of teaching students",
+       x = NA,
+       y = NA,
+       fill = "set_group_name") +
+  theme_grattan(legend = "bottom") 
+
+```
