@@ -36,6 +36,7 @@ rebuild_data <- FALSE
 
 #Upload the !!Preliminary!! course list provided to Grattan. 
 #Note - UAC subsequently filtered that down, in the data set ultimately provided to us, using filters: field of study code (broad FOS = 7) or any course with description including the string “Educat” or “Teach”. 
+#Pull data from MT Teams folder, as gitignore is set to ignore data folder, and these will be lost when we change branches.
 
 user_data_folder <- "C:/Users/PETRIE/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/"
 #"C:/Users/parkinsonn/The University of Melbourne/2024 Primary schools maths - General/3. Data/4. Uni entry data/"
@@ -48,7 +49,7 @@ data_frame_course_information <- file_path_course_information |>
 data_frame_course_information <-  data_frame_course_information %>% 
   set_names() |> 
   map(read_excel, path = file_path_course_information) |> 
-  list_rbind()
+  list_rbind() #binds all the worksheets into a single data frame as they have the same structure and variables, just a different year
 
 file_path_school_leaver_results <- glue(user_data_folder, "UAC data for Grattan Institute - 2015 to 2024.xlsx")
 
@@ -58,14 +59,14 @@ data_frame_school_leaver_results <- file_path_school_leaver_results |>
   set_names() |> 
   map(read_excel, path = file_path_school_leaver_results, col_types = "text") |> 
   list_rbind()
-
+#sheets read as text, in case when the binding of list happens there are differences in how the variables are classified (perhaps due to diffenre coding) - e.g. numeric vs character etc. This avoids data loss. Will later need to reclassify them before can complete any analysis.
 ```
 
 ## List of degrees
 
 ```{r}
 
-# From the course description
+# Create list from the course description file (i.e. the orginal courses test file sent by UAC)
 search_terms1 <- "^7"
 search_terms2 <- c("educat|teach")
 
@@ -93,9 +94,11 @@ course_names <-
   pull(course_desc_short) |> 
   unique()
 
-write.csv(course_names, glue(user_data_folder, "UAC_course_names.csv"))
+#Output to MS Teams folder,as gitignore is set to ignore data folder, and these will be lost when we change branches.
 
-# From the teacher data
+#write.csv(course_names, glue(user_data_folder, "UAC_course_names.csv"))
+
+# Create list from the teacher data (i.e. from the final dataset provided by UAC)
 enrolled_counts <- 
   data_frame_school_leaver_results |> 
   filter(enrolment_status == "E") |> 
@@ -157,21 +160,26 @@ enrolled_counts <- enrolled_counts |>
               F)
   )
 
-write.csv(enrolled_counts, glue(user_data_folder, "UAC_course_by_enrolment.csv"))
+#Save list to MS Teams
+#write.csv(enrolled_counts, glue(user_data_folder, "UAC_course_by_enrolment.csv"))
 
+#Check relative enrolments over time
 #enrolled_counts |> count(primary, secondary, ece, special, distance, master)
 
 #Get a list of the courses filtered out from the preliminary course list provided by UAC.
 #setdiff(course_names, enrolled_counts$course_desc_short)
+```
 
+# Manually classify courses, read in the updated course file, and join it with the student level data set
+```{r}
 #Following manual review and classification in Excel of the courses in  UAC_course_by_enrolment.csv, created a new doc UAC_teaching_courses_by_enrolment.csv. Read this in and select only columns B, C and M (course_desc_short, n, and teaching_degree)
 
 teaching_course_filters <- read.csv(glue(user_data_folder, "UAC_teaching_courses_by_enrolment.csv"))
 
 teaching_course_counts <- teaching_course_filters |> 
-    select(course_desc_short, n, teaching_degree)
+    select(course_desc_short, n, teaching_degree) #Keep the counts of each course in case i need it at some point
 
-#Combine with the UAC data set to classify the type of teaching course for each student. Filter out the non-teaching courses
+#Combine with the UAC data set to classify the type of teaching course for each student. No need for course counts (complicates join). Then, filter out the non-teaching courses
 
 classified_school_leaver_results <- data_frame_school_leaver_results |>
   left_join(select(teaching_course_counts,!n), by = "course_desc_short") |>
@@ -185,6 +193,7 @@ classified_school_leaver_results <- classified_school_leaver_results %>%
 
 #glimpse(classified_school_leaver_results)
 
+#Summarise teachers in each classification (over 10 years)
 classification_counts <- classified_school_leaver_results |>
   group_by(teaching_degree) |> 
   count() 
@@ -206,9 +215,10 @@ plot(classification_counts_year)
 # Year 12 maths participation rates
 
 ```{r}
-# Establish participation rate (proportion) in each Year 12 subject for primary teachers, and compare with secondary and all teachers (using different definitions of primary and secondary)
+# Establish participation rate (proportion) in each Year 12 subject for primary teachers, and compare with secondary and all teachers (using various different definitions of primary and secondary, depending on what the course allows a student to complete)
 
-# Define the set groups
+# Define the set groups, as filtering condition for the following function. i.e. list which subgroup to explore. This is a named character vector. Names are subsequenty used.
+
 set_groups <- c(
   "All teachers" = "", 
   "Primary" = "primary", 
@@ -221,7 +231,7 @@ set_groups <- c(
   "Secondary or both or either" = "secondary|both|either"
 )
 
-# Update the calculate_participation function to handle 'or' conditions
+# Create a calculate_participation function, with the filtering condition as the input. 
 calculate_participation <- function(set_group) {
   participation <- classified_school_leaver_results |> 
     filter(enrolment_status == "E") |> 
@@ -229,11 +239,11 @@ calculate_participation <- function(set_group) {
       if (set_group == "") {
         TRUE  # Include all groups
       } else {
-        teaching_degree %in% str_split(set_group, "\\|")[[1]]  # Split string by '|'
+        teaching_degree %in% str_split(set_group, "\\|")[[1]]  # According to ChatGPT, necessary to give the if / else function the instruction to split strings by interpreting '|' as "or". It doesn't work using c(x, y) -  runs multiple string searches, not one with multiple conditions.
       }
     ) |> 
     select(ends_with("band")) |> 
-    summarise(across(everything(), ~round(sum(!is.na(.))/n() * 100, 0)))
+    summarise(across(everything(), ~round(sum(!is.na(.))/n() * 100, 0))) #Assigns a 1 to every observation that isn't NA, then counts them, converts to rounded percentage. Does this for all the 'band' variables i.e. each subject. 
   
   return(participation)
 }
