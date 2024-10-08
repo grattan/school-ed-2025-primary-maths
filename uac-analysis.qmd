@@ -344,6 +344,36 @@ ggplot(mean_long, aes(x = subject, y = percentage, fill = set_group_name)) +
 #May need to do a tibble per subject. TBC if we care about every subject
 ```{r}
 
+#List the names of the variables ending in 'band' from classified_school_leaver_results
+
+band_vars <- classified_school_leaver_results |> 
+  select(ends_with("band")) |> 
+  names()
+
+#Identify the unique values of each band variable in the classified_school_leaver_results data frame, to use as the levels for the proportion calculation    
+
+band_levels <- classified_school_leaver_results |> 
+  select(ends_with("band")) |> 
+  map(unique)
+
+#View(band_levels)
+
+#Create new variables in classified_school_leaver_results. First, create a variable mirroring ext1_band, as a factor, but with the letter 'E' removed from the front of all values that include it, and with the levels redefined as 1, 2, 3 and 4. Then do the same for the variable ext2_band.
+
+classified_school_leaver_results <- classified_school_leaver_results |> 
+  mutate(ext1_num_band = as.factor(str_remove(ext1_band, "E")) |> 
+           fct_relevel(c("1", "2", "3", "4")),
+         ext2_num_band = as.factor(str_remove(ext2_band, "E")) |> 
+           fct_relevel(c("1", "2", "3", "4")))
+
+#Re-run the band_levels code to check that the new variables have been created correctly
+
+band_levels <- classified_school_leaver_results |> 
+  select(ends_with("band")) |> 
+  map(unique) 
+
+#View(band_levels)
+
 ```
 
 
