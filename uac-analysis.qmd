@@ -217,7 +217,7 @@ plot(classification_counts_year)
 ```{r}
 # Establish participation rate (proportion) in each Year 12 subject for primary teachers, and compare with secondary and all teachers (using various different definitions of primary and secondary, depending on what the course allows a student to complete)
 
-# Define the set groups, as filtering condition for the following function. i.e. list which subgroup to explore. This is a named character vector. Names are subsequenty used.
+# Define the set groups, as filtering condition for the following function. i.e. list which subgroup to explore. This is a named character vector. Names are subsequently used.
 
 set_groups <- c(
   "All teachers" = "", 
@@ -273,7 +273,7 @@ participation_long <- participation_rates_groups |>
 ggplot(participation_long, aes(x = subject, y = percentage, fill = set_group_name)) +
   geom_col(position = "dodge") +  # Use dodge to create grouped columns
   labs(title = "Primary teaching students participated in easier Year 12 maths subjects",
-       subtitle = "Participation rates in Year 12 mathematics subjects by type of teaching students",
+       subtitle = "Participation rates in Year 12 mathematics subjects, 2014-2023, by type of teaching degree enrolment",
        x = NA,
        y = NA,
        fill = "set_group_name") +
@@ -281,18 +281,70 @@ ggplot(participation_long, aes(x = subject, y = percentage, fill = set_group_nam
 
 ```
 
-#Update the above
-#Let's go back and rename all the subjects with current equivalents also
+# Year 12 maths performance - by mean score
+#As above, but with mean score for each subject
+```{r}
+# Establish the mean performance in each Year 12 subject for primary teachers, and compare with secondary and all teachers (using various different definitions of primary and secondary, depending on what the course allows a student to complete)
+
+# Define the set_groups, if different to above. (Here use same as above).
+
+# Create a mean_score function, with the filtering condition as the input. 
+mean_score <- function(set_group) {
+  mean <- classified_school_leaver_results |> 
+    filter(enrolment_status == "E") |> 
+    filter(
+      if (set_group == "") {
+        TRUE  # Include all groups
+      } else {
+        teaching_degree %in% str_split(set_group, "\\|")[[1]]  # According to ChatGPT, necessary to give the if / else function the instruction to split strings by interpreting '|' as "or". It doesn't work using c(x, y) -  runs multiple string searches, not one with multiple conditions.
+      }
+    ) |> 
+    select(ends_with("mark")) |> 
+    summarise(across(everything(), ~round(mean(.x, na.rm = TRUE), 0))) #Take mean for all the 'mark' variables i.e. for each subject. 
+  
+  return(mean)
+}
+
+# Create a tibble with mean_score data for each set_group value
+mean_score_groups <- map2_dfr(names(set_groups), set_groups, ~ {
+  mean_score(.y) |> 
+    mutate(set_group_name = .x)  # Add a column for the set_group name
+}) 
+
+# Print the resulting tibble
+print(mean_score_groups)
 
 
-# Year 12 maths performance - by score
-#As above, but with mean score for each subject 
+```
 
+# Chart the mean scores
+
+```{r}
+
+mean_long <- mean_score_groups |> 
+  pivot_longer(cols = ends_with("mark"), 
+               names_to = "subject", 
+               values_to = "percentage")
+
+# Create the grouped column chart. Not to be used (would need polishing)
+
+ggplot(mean_long, aes(x = subject, y = percentage, fill = set_group_name)) +
+  geom_col(position = "dodge") +  # Use dodge to create grouped columns
+  labs(title = "Primary and secondary teaching students had similar Year 12 results for Standard and Advanced mathematics",
+       subtitle = "Mean scores in Year 12 mathematics subjects, 2014-2023, by type of teaching degree enrolment",
+       x = NA,
+       y = NA,
+       fill = "set_group_name") +
+  theme_grattan(legend = "bottom") 
+
+```
 
 # Year 12 maths performance - by band
 #Tibble as above but with proportion in each band for each subject. Consider if the proportion of all studnets or of students taking the subject. 
-#May need to do a tibble per subject. TBC if we care about every suject
+#May need to do a tibble per subject. TBC if we care about every subject
+```{r}
 
+```
 
 
 
