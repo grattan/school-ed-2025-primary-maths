@@ -340,8 +340,7 @@ ggplot(mean_long, aes(x = subject, y = percentage, fill = group_name)) +
 ```
 
 # Year 12 maths performance - by band
-#Tibble as above but with proportion in each band for each subject. Consider if the proportion of all studnets or of students taking the subject. 
-#May need to do a tibble per subject. TBC if we care about every subject
+
 ```{r}
 # First, tidy up the variables to enable comparison and charting
 
@@ -394,8 +393,9 @@ View(band_levels)
 ```
 
 ```{r}
-# Create the data to make a stacked bar chart of the proportion of students in each band for each subject, by type of teaching degree enrolment. Define this more narrowly given that adding the eithers and boths is marginal to the analysis (set_groups2). 
+# Create the data to make a stacked bar chart of the proportion of students in each band for each subject, by type of teaching degree enrolment. 
 
+#Define the groups more narrowly given that adding the eithers and boths is marginal to the analysis. 
 
 set_groups2 <- c(
   "All teachers" = "", 
@@ -403,15 +403,14 @@ set_groups2 <- c(
   "Secondary" = "secondary" 
 )
 
-# Calculate the proportion of students in each band for the following subject variables (std1_band, st2_band, adv_band, ext1_num_band, ext2_num_band), by type of teaching degree enrolment (set_groups2). Output a tibble with columns for group_name (the values of set_groups2), subject (with the selected variables as the values), band (the levels of the selected variables) and band_proportion (proportion of students in that band, for that variable and group_name).
+# Define the subjects to be analysed
+subjects <- c("std1_num_band", "std2_band", "adv_band", "ext1_num_band", "ext2_num_band")
 
-### Too hard basket for co-pilot, probably need to step it out more/differently
-
-# Calculate the proportion of students in each band for each subject (variable ending in "band"), by type of teaching degree enrolment (set_groups). Use set_groups conditions as defined above.
+# For each group (set_groups2), summarise the proportion of students in each band (level) for each of the subjects. 
 
 # Function to calculate proportions for each 'band' variable individually
 calculate_band_proportion <- function(group) {
-  band_proportion <- classified_school_leaver_results |> 
+  classified_school_leaver_results |> 
     filter(enrolment_status == "E") |> 
     filter(
       if (group == "") {
@@ -420,32 +419,88 @@ calculate_band_proportion <- function(group) {
         teaching_degree %in% group 
       }
     ) |> 
-    select(ends_with("band")) |> 
-    map(~ {
-      # Check if the variable has any data
-      tbl <- table(.x)
-      if (length(tbl) <= 1) {
-        return(NA)  # Return NA if there's insufficient data for proportion calculations
-      } else {
-        return(round(prop.table(tbl) * 100, 0))  # Calculate the proportion
-      }
-    })
-  
-  return(band_proportion)
+    select(subjects) |>  # Select the subjects
+    # Calculate proportions for each band
+    map_dfr(~ {
+      proportions <- round(prop.table(table(.x)) * 100, 0)  # Calculate the proportions
+      tibble(
+        Level_1 = proportions["1"] %||% NA,
+        Level_2 = proportions["2"] %||% NA,
+        Level_3 = proportions["3"] %||% NA,
+        Level_4 = proportions["4"] %||% NA,
+        Level_5 = proportions["5"] %||% NA,
+        Level_6 = proportions["6"] %||% NA
+      )
+    }, .id = "subject")  # Use the subject name as an identifier
 }
+
 
 # Run the function for each set_groups2 value
 band_proportion_groups <- map2_dfr(names(set_groups2), set_groups2, ~ {
   band_proportion <- calculate_band_proportion(.y)
   tibble(group_name = .x, band_proportion = band_proportion)  # Return a tibble with group and proportions
-})
-
+}) |> 
+  #Unpack the tables in column 2 into multiple columns
+  unnest_wider(band_proportion)
+  
 # Print the resulting tibble
 print(band_proportion_groups)
 
-# Print the data in each of the tables in the band_proportion_groups list
+# Gather the data to enable a stacked bar chart to be created
 
-#View(band_proportion_groups$band_proportion)
+band_proportion_groups_long <- band_proportion_groups |> 
+  pivot_longer(cols = -c(group_name, subject),
+               names_to = "band", 
+               values_to = "proportion")
 
+print(band_proportion_groups_long)
+```
+
+# Chart the band proportions
+
+```{r}
+# Define order of colours in stacked chart
+# ordered_colours <- c(
+#  "neg_needs_additional_support_percent" = grattan_red,
+#  "neg_developing_percent" = grattan_darkorange,
+#  "strong_percent" = grattan_orange,
+#  "exceeding_percent" = grattan_yellow
+# )
+
+#Create stacked chart
+band_proportions_chart <- band_proportion_groups_long |> 
+ggplot(aes(x = subject,
+           y = proportion, 
+           fill = group_name, 
+           )) +
+geom_col(position = "stack") +
+  
+#data labels on chart
+geom_text(aes(label = paste0(proportion, "%"),
+              y = proportion, 
+              color = T,
+              group = band,
+              vjust = if_else(proportion < 5, -1, 0.5)),
+          size = 18/.pt,    
+          position = position_stack(vjust = 0.5),
+          ) +
+  
+# theme and labels
+theme_grattan() +
+scale_fill_grattan(discrete = T) +
+#scale_fill_manual(values = ordered_colours) +
+grattan_y_continuous(labels = NULL, limits =c(0,100), breaks = seq(0, 100, by = 20)) +
+#scale_x_discrete(expand = expansion(mult = c(0, 0.5))) +
+scale_colour_manual(values = c("white", "black")) +
+labs(title = "Primary teachers achieve similar Year 12 maths results to secondary teachers",
+     subtitle = glue("Proportion of teaching students whose Year 12 maths results were in performance bands {colour_text(grattan_red, '1')} ,2, 3, 4, 5 or 6, for each year subject"),
+     x = NULL, 
+     y = NULL) +
+theme(plot.subtitle = element_markdown()) 
+
+print(band_proportions_chart)
+
+#grattan_save_all("atlas/proficiency_chart_2024.pdf", proficiency_chart_2024)
+#grattan_save_pptx(filename = "atlas/proficiency_chart_2024.pptx", proficiency_chart_2024)
 
 ```
