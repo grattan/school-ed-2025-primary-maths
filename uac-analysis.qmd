@@ -637,11 +637,9 @@ write_xlsx(x = data_frames, path = output_file)
 # Please use the exact course name specified for the subject.
 # For extension subjects, the percentages for Level6 and Level5 are both NA.
 # For Level1, please calculate the percentage (as 100 less the sum of the percentages for Levels 2-6) or if the answer would be 0, then include 0 (not NA).
+# tribble(
+#   ~year, ~subject, ~number, ~median, ~Level6, ~Level5, ~Level4, ~Level3, ~Level2, ~Level1, ~source 
 
-
-tribble(
-  ~year, ~subject, ~number, ~median, ~Level6, ~Level5, ~Level4, ~Level3, ~Level2, ~Level1, ~source 
-  2023,
 
 #Level 1 scores were calculated by chatgpt (as 100-sum(L2-6) ) and will need to be cross checked for accuracy later.
 tribble(
