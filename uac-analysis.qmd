@@ -456,7 +456,49 @@ band_proportion_groups_long <- band_proportion_groups |>
 print(band_proportion_groups_long)
 ```
 
-# Chart the band  ###NEEDS WORK. TOO MANY VARIABLES ###
+# Chart the bands stacked - differnet chart for each subject.
+
+```{r}
+
+# Write a function based on the band_proportion_groups_long tibble, which filters the subject variable by an input value, and creates a stacked bar chart with x = group_name, y = proportion, fill = band.
+
+
+band_proportion_chart <- function(selected_subject) {
+  band_proportion_groups_long |> 
+    filter(subject == !!selected_subject) |> 
+    ggplot(aes(x = group_name,
+               y = proportion, 
+               fill = band)) +  
+    geom_col(position = "stack") +
+    theme_grattan() +
+    scale_fill_grattan(discrete = T) +
+    grattan_y_continuous(labels = NULL, limits =c(0,100), breaks = seq(0, 100, by = 20)) +
+    labs(title = "Primary teachers achieve similar Year 12 maths results to secondary teachers",
+         subtitle = glue("Proportion of teaching students whose Year 12 maths results were in<br>performance bands {colour_text(grattan_red, '1')} ,2, 3, 4, 5 or 6, for each year subject"),
+         x = NULL, 
+         y = NULL) +
+    theme(plot.subtitle = element_markdown()) 
+}
+
+# Define the selected_subject variable as the unique values of band_proportion_groups_long$subjects variable.
+
+selected_subjects <- band_proportion_groups_long |> 
+  pull(subject) |> 
+  unique()
+
+# Map the selected_subjects to the band_proportion_chart function.
+
+band_proportion_charts <- map(selected_subjects, band_proportion_chart)
+
+# Save all of these using grattan_save_all.  ###Not working. Syntax of grattan_save_all seems wrong. grattan_save_pptx not processing the .y argument.
+
+#grattan_save_all(filename = glue(user_data_folder, "band_proportion_chart_{.y}.pdf"), object = band_proportion_charts, type = "all")
+
+#grattan_save_pptx(filename = glue(user_data_folder, "band_proportion_chart_{.y}.pptx", object = band_proportion_charts, type = "fullslide"))
+```
+  
+
+# Chart the band stacked and dodged  ###NEEDS WORK. DOESN'T WANT TO STACK AND DODGE ###
 
 ```{r}
 # Define order of colours in stacked chart
@@ -467,13 +509,13 @@ print(band_proportion_groups_long)
 #  "exceeding_percent" = grattan_yellow
 # )
 
-#Create stacked chart
+#Create stacked, dodge chart
 band_proportions_chart <- band_proportion_groups_long |> 
 ggplot(aes(x = subject,
            y = proportion, 
-           fill = group_name, 
-           )) +
-geom_col(position = "stack") +
+           fill = band, 
+           group = group_name)) +  
+geom_col(position = position_dodge2(width = 0.5)) +
   
 #data labels on chart
 geom_text(aes(label = paste0(proportion, "%"),
@@ -559,4 +601,27 @@ band_number_groups_long <- band_number_groups |>
                values_to = "number")
 
 print(band_proportion_groups_long)
+```
+
+# Output data on performance
+
+```{r}
+# Output the band_proportion_groups and band_number_groups data to a CSV file with 2 worksheets
+ 
+library(writexl)
+
+# Create a named list of data frames, where names correspond to the worksheet names
+data_frames <- list(
+  "band_proportions" = band_proportion_groups, 
+  "band_numbers" = band_number_groups,
+  "mean_scores" = mean_score_groups
+)
+
+# Output the data to an Excel file 
+output_file <- glue(user_data_folder, "UAC_band_performance_data.xlsx")
+
+# Write to Excel file
+write_xlsx(x = data_frames, path = output_file)
+
+
 ```
