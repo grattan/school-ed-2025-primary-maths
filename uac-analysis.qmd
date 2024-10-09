@@ -339,7 +339,7 @@ ggplot(mean_long, aes(x = subject, y = percentage, fill = group_name)) +
 
 ```
 
-# Year 12 maths performance - by band
+# Year 12 maths performance - by band (proportion)
 
 ```{r}
 # First, tidy up the variables to enable comparison and charting
@@ -456,7 +456,7 @@ band_proportion_groups_long <- band_proportion_groups |>
 print(band_proportion_groups_long)
 ```
 
-# Chart the band proportions
+# Chart the band  ###NEEDS WORK. TOO MANY VARIABLES ###
 
 ```{r}
 # Define order of colours in stacked chart
@@ -503,4 +503,60 @@ print(band_proportions_chart)
 #grattan_save_all("atlas/proficiency_chart_2024.pdf", proficiency_chart_2024)
 #grattan_save_pptx(filename = "atlas/proficiency_chart_2024.pptx", proficiency_chart_2024)
 
+```
+
+# Year 12 maths performance - by band (number of students)
+
+```{r}
+# Create the data to make a grouped column chart of the number of students in each band for each subject, by type of teaching degree enrolment. 
+
+#Use set_groups2 and subjects from above. 
+
+# For each group (set_groups2), summarise the number of students in each band (level) for each of the subjects. 
+
+# Function to calculate number for each 'band' variable individually
+calculate_band_number <- function(group) {
+  classified_school_leaver_results |> 
+    filter(enrolment_status == "E") |> 
+    filter(
+      if (group == "") {
+        TRUE  # Include all groups
+      } else {
+        teaching_degree %in% group 
+      }
+    ) |> 
+    select(subjects) |>  # Select the subjects
+    # Calculate proportions for each band
+    map_dfr(~ {
+      numbers <- round(table(.x), 0)  # Calculate the numbers
+      tibble(
+        Level_1 = numbers["1"] %||% NA,
+        Level_2 = numbers["2"] %||% NA,
+        Level_3 = numbers["3"] %||% NA,
+        Level_4 = numbers["4"] %||% NA,
+        Level_5 = numbers["5"] %||% NA,
+        Level_6 = numbers["6"] %||% NA
+      )
+    }, .id = "subject")  # Use the subject name as an identifier
+}
+
+# Run the function for each set_groups2 value
+band_number_groups <- map2_dfr(names(set_groups2), set_groups2, ~ {
+  band_numbers <- calculate_band_number(.y)
+  tibble(group_name = .x, band_numbers = band_numbers)  # Return a tibble with group and student numbers
+}) |> 
+  #Unpack the tables in column 2 into multiple columns
+  unnest_wider(band_numbers)
+  
+# Print the resulting tibble
+print(band_number_groups)
+
+# Gather the data to enable a grouped bar chart to be created (if needed)
+
+band_number_groups_long <- band_number_groups |> 
+  pivot_longer(cols = -c(group_name, subject),
+               names_to = "band", 
+               values_to = "number")
+
+print(band_proportion_groups_long)
 ```
