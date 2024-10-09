@@ -232,14 +232,14 @@ set_groups <- c(
 )
 
 # Create a calculate_participation function, with the filtering condition as the input. 
-calculate_participation <- function(set_group) {
+calculate_participation <- function(group) {
   participation <- classified_school_leaver_results |> 
     filter(enrolment_status == "E") |> 
     filter(
-      if (set_group == "") {
+      if (group == "") {
         TRUE  # Include all groups
       } else {
-        teaching_degree %in% str_split(set_group, "\\|")[[1]]  # According to ChatGPT, necessary to give the if / else function the instruction to split strings by interpreting '|' as "or". It doesn't work using c(x, y) -  runs multiple string searches, not one with multiple conditions.
+        teaching_degree %in% str_split(group, "\\|")[[1]]  # According to ChatGPT, necessary to give the if / else function the instruction to split strings by interpreting '|' as "or". It doesn't work using c(x, y) -  runs multiple string searches, not one with multiple conditions.
       }
     ) |> 
     select(ends_with("band")) |> 
@@ -248,10 +248,10 @@ calculate_participation <- function(set_group) {
   return(participation)
 }
 
-# Create a tibble with participation data for each set_group value
+# Create a tibble with participation data for each set_groups value
 participation_rates_groups <- map2_dfr(names(set_groups), set_groups, ~ {
   calculate_participation(.y) |> 
-    mutate(set_group_name = .x)  # Add a column for the set_group name
+    mutate(group_name = .x)  # Add a column for the set_group name
 }) 
 
 # Print the resulting tibble
@@ -270,13 +270,13 @@ participation_long <- participation_rates_groups |>
 
 # Create the grouped column chart. Not to be used (would need polishing)
 
-ggplot(participation_long, aes(x = subject, y = percentage, fill = set_group_name)) +
+ggplot(participation_long, aes(x = subject, y = percentage, fill = group_name)) +
   geom_col(position = "dodge") +  # Use dodge to create grouped columns
   labs(title = "Primary teaching students participated in easier Year 12 maths subjects",
        subtitle = "Participation rates in Year 12 mathematics subjects, 2014-2023, by type of teaching degree enrolment",
        x = NA,
        y = NA,
-       fill = "set_group_name") +
+       fill = "group_name") +
   theme_grattan(legend = "bottom") 
 
 ```
@@ -289,14 +289,14 @@ ggplot(participation_long, aes(x = subject, y = percentage, fill = set_group_nam
 # Define the set_groups, if different to above. (Here use same as above).
 
 # Create a mean_score function, with the filtering condition as the input. 
-mean_score <- function(set_group) {
+mean_score <- function(group) {
   mean <- classified_school_leaver_results |> 
     filter(enrolment_status == "E") |> 
     filter(
-      if (set_group == "") {
+      if (group == "") {
         TRUE  # Include all groups
       } else {
-        teaching_degree %in% str_split(set_group, "\\|")[[1]]  # According to ChatGPT, necessary to give the if / else function the instruction to split strings by interpreting '|' as "or". It doesn't work using c(x, y) -  runs multiple string searches, not one with multiple conditions.
+        teaching_degree %in% str_split(group, "\\|")[[1]]  # Split strings by interpreting '|' as "or". 
       }
     ) |> 
     select(ends_with("mark")) |> 
@@ -305,10 +305,10 @@ mean_score <- function(set_group) {
   return(mean)
 }
 
-# Create a tibble with mean_score data for each set_group value
+# Create a tibble with mean_score data for each set_groups value
 mean_score_groups <- map2_dfr(names(set_groups), set_groups, ~ {
   mean_score(.y) |> 
-    mutate(set_group_name = .x)  # Add a column for the set_group name
+    mutate(group_name = .x)  # Add a column for the set_group name
 }) 
 
 # Print the resulting tibble
@@ -328,13 +328,13 @@ mean_long <- mean_score_groups |>
 
 # Create the grouped column chart. Not to be used (would need polishing)
 
-ggplot(mean_long, aes(x = subject, y = percentage, fill = set_group_name)) +
+ggplot(mean_long, aes(x = subject, y = percentage, fill = group_name)) +
   geom_col(position = "dodge") +  # Use dodge to create grouped columns
   labs(title = "Primary and secondary teaching students had similar Year 12 results for Standard and Advanced mathematics",
        subtitle = "Mean scores in Year 12 mathematics subjects, 2014-2023, by type of teaching degree enrolment",
        x = NA,
        y = NA,
-       fill = "set_group_name") +
+       fill = "group_name") +
   theme_grattan(legend = "bottom") 
 
 ```
@@ -343,22 +343,23 @@ ggplot(mean_long, aes(x = subject, y = percentage, fill = set_group_name)) +
 #Tibble as above but with proportion in each band for each subject. Consider if the proportion of all studnets or of students taking the subject. 
 #May need to do a tibble per subject. TBC if we care about every subject
 ```{r}
+# First, tidy up the variables to enable comparison and charting
 
-#List the names of the variables ending in 'band' from classified_school_leaver_results
+# List the names of the variables ending in 'band' from classified_school_leaver_results
 
 band_vars <- classified_school_leaver_results |> 
   select(ends_with("band")) |> 
   names()
 
-#Identify the unique values of each band variable in the classified_school_leaver_results data frame, to use as the levels for the proportion calculation    
+# Identify the unique values of each band variable in the classified_school_leaver_results data frame, to use as the levels for the proportion calculation    
 
 band_levels <- classified_school_leaver_results |> 
   select(ends_with("band")) |> 
   map(unique)
 
-#View(band_levels)
+# View(band_levels)
 
-#Create new variables in classified_school_leaver_results. First, create a variable mirroring ext1_band, as a factor, but with the letter 'E' removed from the front of all values that include it, and with the levels redefined as 1, 2, 3 and 4. Then do the same for the variable ext2_band.
+# Create new variables in classified_school_leaver_results. First, create a variable mirroring ext1_band, as a factor, but with the letter 'E' removed from the front of all values that include it, with the levels redefined as 1, 2, 3 and 4. Then do the same for the variable ext2_band.
 
 classified_school_leaver_results <- classified_school_leaver_results |> 
   mutate(ext1_num_band = as.factor(str_remove(ext1_band, "E")) |> 
@@ -366,15 +367,85 @@ classified_school_leaver_results <- classified_school_leaver_results |>
          ext2_num_band = as.factor(str_remove(ext2_band, "E")) |> 
            fct_relevel(c("1", "2", "3", "4")))
 
-#Re-run the band_levels code to check that the new variables have been created correctly
+# To enable the band proportions to be summarised, need to make the number of levels / length of the variables the same. This will mean some levels have proportions of 0 in the summary. These can be clarified in the final output.
+
+# Add levels 5 and 6 to the variables ext1_num_band and ext2_num_band, and relevel each with levels 1-6.
+
+classified_school_leaver_results <- classified_school_leaver_results |> 
+  mutate(ext1_num_band = fct_expand(ext1_num_band, c("5", "6")),
+         ext2_num_band = fct_expand(ext2_num_band, c("5", "6"))) |> 
+  mutate(ext1_num_band = fct_relevel(ext1_num_band, c("1", "2", "3", "4", "5", "6")),
+         ext2_num_band = fct_relevel(ext2_num_band, c("1", "2", "3", "4", "5", "6")))
+
+# For the variable std1_band, add levels 1 and 2, and  relevel with levels 1-6.
+
+classified_school_leaver_results <- classified_school_leaver_results |> 
+  mutate(std1_num_band = fct_expand(std1_band, c("1", "2")),
+         std1_num_band = fct_relevel(std1_num_band, c("1", "2", "3", "4", "5", "6")))
+
+# Re-run the band_levels code to check that the new variables have been created correctly
 
 band_levels <- classified_school_leaver_results |> 
   select(ends_with("band")) |> 
   map(unique) 
 
-#View(band_levels)
+View(band_levels)
 
 ```
 
+```{r}
+# Create the data to make a stacked bar chart of the proportion of students in each band for each subject, by type of teaching degree enrolment. Define this more narrowly given that adding the eithers and boths is marginal to the analysis (set_groups2). 
 
 
+set_groups2 <- c(
+  "All teachers" = "", 
+  "Primary" = "primary", 
+  "Secondary" = "secondary" 
+)
+
+# Calculate the proportion of students in each band for the following subject variables (std1_band, st2_band, adv_band, ext1_num_band, ext2_num_band), by type of teaching degree enrolment (set_groups2). Output a tibble with columns for group_name (the values of set_groups2), subject (with the selected variables as the values), band (the levels of the selected variables) and band_proportion (proportion of students in that band, for that variable and group_name).
+
+### Too hard basket for co-pilot, probably need to step it out more/differently
+
+# Calculate the proportion of students in each band for each subject (variable ending in "band"), by type of teaching degree enrolment (set_groups). Use set_groups conditions as defined above.
+
+# Function to calculate proportions for each 'band' variable individually
+calculate_band_proportion <- function(group) {
+  band_proportion <- classified_school_leaver_results |> 
+    filter(enrolment_status == "E") |> 
+    filter(
+      if (group == "") {
+        TRUE  # Include all groups
+      } else {
+        teaching_degree %in% group 
+      }
+    ) |> 
+    select(ends_with("band")) |> 
+    map(~ {
+      # Check if the variable has any data
+      tbl <- table(.x)
+      if (length(tbl) <= 1) {
+        return(NA)  # Return NA if there's insufficient data for proportion calculations
+      } else {
+        return(round(prop.table(tbl) * 100, 0))  # Calculate the proportion
+      }
+    })
+  
+  return(band_proportion)
+}
+
+# Run the function for each set_groups2 value
+band_proportion_groups <- map2_dfr(names(set_groups2), set_groups2, ~ {
+  band_proportion <- calculate_band_proportion(.y)
+  tibble(group_name = .x, band_proportion = band_proportion)  # Return a tibble with group and proportions
+})
+
+# Print the resulting tibble
+print(band_proportion_groups)
+
+# Print the data in each of the tables in the band_proportion_groups list
+
+#View(band_proportion_groups$band_proportion)
+
+
+```
